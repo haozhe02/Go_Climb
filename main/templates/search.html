@@ -1,0 +1,431 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="{% static '/images/GoClimb Logo 50px.png' %}">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+
+		<!-- Bootstrap CSS -->
+		<link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
+		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
+		<title>Search Crags</title>
+
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<!-- Start Header/Navigation -->
+		<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+			<div class="container">
+				<div class="hero-img-wrap">
+					<img src="{% static 'images/GoClimb Logo 50px.png'%}" class="img-fluid">
+				</div>
+
+				<span>&nbsp;&nbsp;&nbsp;</span>
+			
+				<a class="navbar-brand" href="/home" style="color: #F5F0BB;">GoClimb<span>.</span></a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+						<li class="nav-item ">
+							<a class="nav-link" href="/home">Home</a>
+						</li>
+						<li><a class="nav-link" href="/weather">Weather</a></li>
+						<li><a class="nav-link" href="/ARroute">AR Route</a></li>
+						<li><a class="nav-link" href="/forum">Forum</a></li>
+						<li class="active"><a class="nav-link" href="/search">Search Crags</a></li>
+						<li><a class="nav-link" href="/contact">Contact us</a></li>
+						{% if user.account.is_admin %}
+						<li><a class="nav-link" href="/adminPortal">Admin</a></li>
+						{% endif %}
+
+					</ul>
+
+					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg' %}"></a></li>
+						<!-- <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li> -->
+						<li>
+							{% if user.is_authenticated %}
+							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+			</div>
+				
+		</nav>
+		<!-- End Header/Navigation -->
+
+		<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Search Crags</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+<!-- Search Section -->
+
+		<!--Search Bar-->
+		<div style="background-color: #40513B; width: 100%; height: 200px; padding:70px" >
+			<form method="post">
+			{% csrf_token %}
+			<div class="row justify-content-between align-items-center" >
+				<input type="text" name="search" placeholder="Search by name or location" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">
+										
+			</div>
+		</form>
+		</div>
+		<div class="flexbox-container" style="background-color:#F5F0BB;">
+
+		<!-- Start Search Section -->
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3">
+					<!-- Left Column Content -->
+					<div class="search-left-card" >
+						<form method="post">
+							{% csrf_token %}
+						<b><h3>Filter</h3></b>
+						<br> 
+						<div class="accordion" id="accordionPanelsStayOpenExample">
+							
+							<input type="hidden" name="search" value="{{search}}">
+							<div class="accordion-item">
+							<h2 class="accordion-header" id="panelsStayOpen-headingOne">
+								<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+								Crag's Altitude
+								</button>
+							</h2>
+							<div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+
+								<div class="accordion-body">
+									{% if condition == '0' %}
+										<input type="radio" id="a0" name="condition" value="0" checked>
+										<label for="a0">Altitude >= 0</label><br>
+									{% else %}
+										<input type="radio" id="a0" name="condition" value="0">
+										<label for="a0">Altitude >= 0</label><br>
+									{% endif %}
+
+									{% if condition == '200' %}
+										<input type="radio" id="a200" name="condition" value="200" checked>
+										<label for="a200">Altitude >= 200</label><br>
+									{% else %}
+										<input type="radio" id="a200" name="condition" value="200">
+										<label for="a200">Altitude >= 200</label><br>
+									{% endif %}
+
+									{% if condition == '400' %}
+										<input type="radio" id="a400" name="condition" value="400" checked>
+										<label for="a400">Altitude >= 400</label><br>
+									{% else %}
+										<input type="radio" id="a400" name="condition" value="400">
+										<label for="a400">Altitude >= 400</label><br>
+									{% endif %}
+
+									{% if condition == '600' %}
+										<input type="radio" id="a600" name="condition" value="600" checked>
+										<label for="a600">Altitude >= 600</label><br>
+									{% else %}
+										<input type="radio" id="a600" name="condition" value="600">
+										<label for="a600">Altitude >= 600</label><br>
+									{% endif %}
+
+									{% if condition == '800' %}
+										<input type="radio" id="a800" name="condition" value="800" checked>
+										<label for="a800">Altitude >= 800</label><br>
+									{% else %}
+										<input type="radio" id="a800" name="condition" value="800">
+										<label for="a800">Altitude >= 800</label><br>
+									{% endif %}
+
+									{% if condition == '1000' %}
+										<input type="radio" id="a1000" name="condition" value="1000" checked>
+										<label for="a1000">Altitude >= 1000</label><br>
+									{% else %}
+										<input type="radio" id="a1000" name="condition" value="1000">
+										<label for="a1000">Altitude >= 1000</label><br>
+									{% endif %}
+			
+								</div>
+							</div>
+							</div>
+							<!--<div class="accordion-item">
+							<h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+								Number of Routes
+								</button>
+							</h2>
+							<div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+								<div class="accordion-body">
+									<input type="checkbox" id="cond" name="loc1" value="loc1">
+									<label for="loc1">1 to 3 </label><br>
+									<input type="checkbox" id="cond" name="loc2" value="loc2">
+									<label for="loc2">4 to 6</label><br>
+									<input type="checkbox" id="cond" name="loc3" value="loc3">
+									<label for="loc3">7 t0 10</label><br>								</div>
+							</div>
+							</div>-->
+							<!--
+							<div class="accordion-item">
+							<h2 class="accordion-header" id="panelsStayOpen-headingThree">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+								Difficulty Level
+								</button>
+							</h2>
+							<div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+								<div class="accordion-body">
+									<input type="checkbox" id="cond" name="loc1" value="loc1">
+									<label for="loc1"> Beginner</label><br>
+									<input type="checkbox" id="cond" name="loc2" value="loc2">
+									<label for="loc2"> Intermediate</label><br>
+									<input type="checkbox" id="cond" name="loc3" value="loc3">
+									<label for="loc3"> Expert</label><br>
+							</div>
+							</div>
+							</div>-->
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+									Country
+								</button>
+								</h2>
+								<div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+								<div class="accordion-body">
+									{% for country in countries%}
+										{% if country in locations %}
+											<input type="checkbox" id="{{country}}" name="location" value="{{country}}" checked>
+											<label for="{{country}}">{{country}}</label><br>
+										{% else %}
+											<input type="checkbox" id="{{country}}" name="location" value="{{country}}">
+											<label for="{{country}}">{{country}}</label><br>
+										{% endif %}
+									{% endfor %}
+									
+								</div>
+								</div>
+							</div>
+
+							
+							
+						</div>
+						<b><h3>Sort</h3></b>
+						<div class="accordion" id="accordionPanelsStayOpenExample">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="panelsStayOpen-headingOne">
+									<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+										Sort By
+								</button>
+								</h2>
+								<div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+									<div class="accordion-body">
+									{% if sort == 'altAsc' %}
+										<input type="radio" id="altAsc" name="sort" value="altAsc" checked>
+										<label for="altAsc">Altitude - Asc</label><br>
+									{% else %}
+										<input type="radio" id="altAsc" name="sort" value="altAsc">
+										<label for="altAsc">Altitude - Asc</label><br>
+									{% endif %}
+
+									{% if sort == 'altDsc' %}
+										<input type="radio" id="altDsc" name="sort" value="altDsc" checked>
+										<label for="altDsc">Altitude - Dsc</label><br>
+									{% else %}
+										<input type="radio" id="altDsc" name="sort" value="altDsc">
+										<label for="altDsc">Altitude - Dsc</label><br>
+									{% endif %}
+
+									
+								</div>
+								</div>
+							</div>
+							<div class="row justify-content-between align-items-center">
+								<button type="submit" style="border-radius: 40px; margin: auto; width:120px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Filter & Sort</button>
+							</div>
+
+							
+							
+						</div>
+						
+
+					</form>
+					</div>
+				</div>
+				
+				<div class="col-lg-8">
+					<div class="search-right-card" >
+						<div class="flexbox-container">
+							<!--<div class="dropdown" style="margin-bottom: 20px;">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+								Sort By
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+								<li><a class="dropdown-item" href="#">Ascending</a></li>
+								<li><a class="dropdown-item" href="#">Descending</a></li>
+								<li><a class="dropdown-item" href="#">Date</a></li>
+								</ul>
+							</div>-->
+													
+						</div>
+						<div class="container">
+							{% for crag in crags %}
+								{% if forloop.first %}
+									<div class="row">
+								{% endif %}
+								<div class="col">
+									<div  class="search-image-container">
+										<img src="{% static 'images/pexels-robert-forever-ago-2741648.jpg'%}" alt="Image" class="search-image-result">
+										<br>
+										<p class="result">
+											Result {{forloop.counter}}
+											<br>
+											<br>
+											Name: {{crag.name}} <br><br>
+											Country: {{crag.country}} <br><br>
+											Region: {{crag.region}} <br><br>
+											Rock Type: {{crag.rocktype}} <br><br>
+											Altitude: {{crag.altitude}}m <br><br>
+											Description: {{crag.desc}}
+										</p>
+									</div>
+								</div>
+							
+								{% if forloop.counter|divisibleby:4%}	
+									</div>
+									<div class="row">
+								{% endif %}
+								{% if forloop.last %}	
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-center">
+							  <li class="page-item disabled">
+								<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+							  </li>
+							  <li class="page-item"><a class="page-link" href="#">1</a></li>
+							  <li class="page-item"><a class="page-link" href="#">2</a></li>
+							  <li class="page-item"><a class="page-link" href="#">3</a></li>
+							  <li class="page-item">
+								<a class="page-link" href="#">Next</a>
+							  </li>
+							</ul>
+						  </nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<!-- End Search Section -->
+
+		<!-- Start Footer Section -->
+		<footer class="footer-section">
+			<div class="container relative">
+				<div class="row">
+					<div class="col-lg-8">
+						<div class="subscription-form">
+							<h3 class="d-flex align-items-center"><span class="me-1"><img src="{% static 'images/envelope-outline.svg' %}" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+							<form action="#" class="row g-3">
+								<div class="col-auto">
+									<input type="text" class="form-control" placeholder="Enter your name">
+								</div>
+								<div class="col-auto">
+									<input type="email" class="form-control" placeholder="Enter your email">
+								</div>
+								<div class="col-auto">
+									<button class="btn btn-primary">
+										<span class="fa fa-paper-plane"></span>
+									</button>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-5 mb-5">
+					<div class="col-lg-4">
+						<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">GoClimb<span>.</span></a></div>
+						<p class="mb-4">Where Climbing meets peak</p>
+						<ul class="list-unstyled custom-social">
+							<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-8">
+						<div class="row links-wrap">
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">About us</a></li>
+									<li><a href="/home">Home</a></li>
+									<li><a href="/forum">Forum</a></li>
+									<li><a href="/contact">Contact us</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Support</a></li>
+									<li><a href="#">Knowledge base</a></li>
+									<li><a href="#">Live chat</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Jobs</a></li>
+									<li><a href="#">Our team</a></li>
+									<li><a href="#">Leadership</a></li>
+									<li><a href="#">Privacy Policy</a></li>
+								</ul>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</footer>
+		<!-- End Footer Section -->	
+
+
+		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
+		<script src="{% static 'js/custom.js'%}"></script>
+	</body>
+
+</html>

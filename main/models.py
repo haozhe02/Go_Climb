@@ -1,0 +1,102 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+# Create your models here.
+
+class Country(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+    
+
+class Crags(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name="crags")
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+class Section(models.Model):
+    title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
+
+class MainTopic(models.Model):
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name="maintopics")
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    PostCount = models.BigIntegerField()
+    SubTopicCount = models.BigIntegerField()
+
+    def __str__(self):
+        return self.title
+
+class SubTopic(models.Model):
+    mainTopic = models.ForeignKey(MainTopic, on_delete=models.CASCADE, related_name="subtopics")
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    PostCount = models.BigIntegerField()
+
+    def __str__(self):
+        return self.title
+        
+class ForumPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
+    topic = models.ForeignKey(SubTopic, on_delete=models.CASCADE, related_name="posts", null=True)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    image = models.ImageField(null=True, blank=True, upload_to="images/")
+
+    def __str__(self):
+        return self.title
+
+
+class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account")
+    is_admin = models.BooleanField(default=False)
+    suspended = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+    def updateSuspend(self, status):
+        self.suspended = status
+        self.save()
+    
+class ContactUs(models.Model):
+    firstname = models.CharField(max_length=200)
+    lastname = models.CharField(max_length=200)
+    email = models.EmailField()
+    message = models.TextField()
+    status = models.BooleanField(default=False)
+
+    def __str__(self):
+        result = self.firstname + " " + self.lastname + " " + str(self.id)
+        return result
+    
+class FlaggedPost(models.Model):
+    post =  models.OneToOneField(ForumPost, on_delete=models.CASCADE, related_name="post")
+    users = models.ManyToManyField(User, related_name='flaggedPosts')
+
+    def __str__(self):
+        return self.post.title
+    
+class ClimbingActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="activities", null=True)
+    locName = models.CharField(max_length=200)
+    distance = models.IntegerField()
+    date = models.DateField()
+
+    def __str__(self):
+        return self.locName
+
+#class Comment(models.Model):
+#    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name="comments")
+ #   text = models.TextField()
+#
+ #   def __str__(self):
+  #      return str(self.tetx)
+    
+

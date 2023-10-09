@@ -1,0 +1,302 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="{% static '/images/GoClimb Logo 50px.png' %}">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+
+		<!-- Bootstrap CSS -->
+		<link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
+		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
+		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
+		<title>Forum</title>
+	</head>
+
+	<body>
+
+		<!-- Start Header/Navigation -->
+		<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+			<div class="container">
+				<div class="hero-img-wrap">
+					<img src="{% static 'images/GoClimb Logo 50px.png'%}" class="img-fluid">
+				</div>
+
+				<span>&nbsp;&nbsp;&nbsp;</span>
+			
+				<a class="navbar-brand" href="/home" style="color: #F5F0BB;">GoClimb<span>.</span></a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+						<li>
+							<a class="nav-link" href="/home">Home</a>
+						</li>
+						<li><a class="nav-link" href="/weather">Weather</a></li>
+						<li><a class="nav-link" href="/ARroute">AR Route</a></li>
+						<li class="active"><a class="nav-link" href="/forum">Forum</a></li>
+						<li><a class="nav-link" href="/search">Search Crags</a></li>
+						<li><a class="nav-link" href="/contact">Contact us</a></li>
+						{% if user.account.is_admin %}
+						<li><a class="nav-link" href="/adminPortal">Admin</a></li>
+						{% endif %}
+					</ul>
+
+					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg'%}"></a></li>
+						<!-- <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li> -->
+						<li>
+							{% if user.is_authenticated %}
+							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+			</div>
+				
+		</nav>
+		<!-- End Header/Navigation -->
+
+		<!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<a href="/subtopic/{{subtopic.id}}"><h1>Sub Topic - {{subtopic.title}}</h1></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+
+		<!-- Start forum -->
+		<!-- <div class="forum-center"></div>
+			<div class="forum-left">
+				<div class="forum-topic-card">
+					<h3>Forum</h3>
+					<a class="nav-link" href="#"><img src="images/user-profile-icon.png" height="40px"></a></li>
+					<div class="details">
+						<p>@user_name <br> Country of Origin <br>0 Followers &nbsp; 0 Following</p>
+					</div>
+				</div>
+				<div class="forum-topic-card">
+					<div class="favourite-activities">
+						<h3>Favourite Activites</h3>
+						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
+					</div>
+					
+				</div>
+			</div>
+			<div class="forum-right">
+				<div class="forum-topic-card">
+					<h3>About</h3>
+					<div class="details">
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut.</p>
+					</div>
+				</div>
+				<div class="forum-topic-card">
+					<div class="favourite-activities">
+						<h3>History</h3>
+						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
+					</div>
+					
+				</div>
+				<div class="forum-topic-card">
+					<div class="favourite-activities">
+						<h3>Achievements</h3>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut. Duis sollicitudin sapien eget tincidunt ultrices. In nec elit lectus. Etiam maximus eu dui in blandit. Praese</p>
+					</div>
+					
+				</div>
+			</div>
+		</div> -->
+<!--SearchBox Section-->
+<!--<div class="search-box">
+	<div>
+		<select name="" id="">
+			<option value="Everything">Everything</option>
+			<option value="Titles">Titles</option>
+			<option value="Descriptions">Descriptions</option>
+		</select> 
+		<input type="text" name="q" placeholder="search ...">
+		<button><i class="fa fa-search"></i></button>
+	</div>
+</div>-->
+</header>
+<div class="container">
+	<div class="subforum">
+		<div class="subforum-title">
+			<a href="/subtopic/{{subtopic.id}}"><h1>{{subtopic.title}}</h1></a>
+            <a href="/topic/{{maintopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to {{maintopic.title}}</a>
+			{% if user.is_authenticated %}
+            <a href="/createPost/{{subtopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ; " >Create Post</a>
+			{% endif %}
+			<a href="/subtopic/{{subtopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ;" >Clear Search</a>
+		</div>
+		<div style=" width: 100%; height: 100px; padding:20px" >
+			<form action="/searchPost/" method="post">
+			{% csrf_token %}
+			<div class="row justify-content-between align-items-center" >
+				<input type="text" name="search" placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">
+				<input type="hidden" name="id" value="{{subtopic.id}}">		
+			</div>
+			</form>
+			
+		</div>
+		{% for post in posts %}
+		<div class="subforum-row">
+			<div class="subforum-icon subforum-column center">
+				<!-- <i class="fa fa-car center"></i> -->
+			</div>
+			<div class="subforum-description subforum-column">
+				<h4>{{post.title}}</h4>
+				<p>Content: <br> {{post.text|linebreaksbr}}</p>
+                {% if post.image and post.image != 'False'%}
+                <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
+                {% endif %}
+			</div>
+            <div class="subforum-stats subforum-column center">
+				{% if post in user.posts.all or user.account.is_admin %}
+                <a href="/deletePost/{{post.id}}">Delete Post</a>
+                {% endif %}
+				
+			</div>
+			<div class="subforum-info subforum-column">
+				<span>Posted By <a href="/viewProfile/{{post.user.id}}">{{post.user}}</a></span>
+				{% if post in user.posts.all %} 
+				&nbsp;&nbsp;&nbsp;<a href="/editPost/{{post.id}}">Edit Post</a>
+				{% endif %}
+				{% if user.account.is_admin %}
+					{% if post in flaggedPosts %}
+						<br><b>Post Flagged, Please Check!</b>
+					{% else %}
+						<br><b>Post is normal, not flagged!</b>
+					{% endif %}
+				{% else %}
+					{% if post in flaggedPosts %}
+						<br><b>Post Flagged and in Investigation</b>
+					{% else %}
+						<br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+		<hr class="subforum-devider">
+		{% endfor %}
+	</div>
+	<!--More-->
+<!---->
+</div>
+
+<!-- Forum Info -->
+<!--<div class="forum-info">
+<div class="chart">
+	MyForum - Stats &nbsp;<i class="fa fa-bar-chart"></i>
+</div>
+<span><u>5,369</u> Posts in <u>48</u> Topics by <u>8,124</u> Members.</span><br>
+<span>Latest post: <b><a href="">Random post</a></b> on Dec 15 2021 By <a href="">RandomUser</a></span>.<br>
+<span>Check <a href="">the latest posts</a> .</span><br>
+</div>-->
+		<!-- End forum -->
+
+		<!-- Start Footer Section -->
+		<footer class="footer-section">
+			<div class="container relative">
+				<div class="row">
+					<div class="col-lg-8">
+						<div class="subscription-form">
+							<h3 class="d-flex align-items-center"><span class="me-1"><img src="{% static 'images/envelope-outline.svg' %}" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+							<form action="#" class="row g-3">
+								<div class="col-auto">
+									<input type="text" class="form-control" placeholder="Enter your name">
+								</div>
+								<div class="col-auto">
+									<input type="email" class="form-control" placeholder="Enter your email">
+								</div>
+								<div class="col-auto">
+									<button class="btn btn-primary">
+										<span class="fa fa-paper-plane"></span>
+									</button>
+								</div>
+							</form>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-5 mb-5">
+					<div class="col-lg-4">
+						<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">GoClimb<span>.</span></a></div>
+						<p class="mb-4">Where Climbing meets peak</p>
+						<ul class="list-unstyled custom-social">
+							<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+							<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-8">
+						<div class="row links-wrap">
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">About us</a></li>
+									<li><a href="/home">Home</a></li>
+									<li><a href="/forum">Forum</a></li>
+									<li><a href="/contact">Contact us</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Support</a></li>
+									<li><a href="#">Knowledge base</a></li>
+									<li><a href="#">Live chat</a></li>
+								</ul>
+							</div>
+
+							<div class="col-6 col-sm-6 col-md-3">
+								<ul class="list-unstyled">
+									<li><a href="#">Jobs</a></li>
+									<li><a href="#">Our team</a></li>
+									<li><a href="#">Leadership</a></li>
+									<li><a href="#">Privacy Policy</a></li>
+								</ul>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</footer>
+		<!-- End Footer Section -->	
+
+
+		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
+		<script src="{% static 'js/custom.js'%}"></script>
+		<script src="{% static 'js/forum.js' %}"></script>
+	</body>
+
+</html>
