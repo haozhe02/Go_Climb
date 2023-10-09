@@ -52,17 +52,41 @@ class ForumPost(models.Model):
     def __str__(self):
         return self.title
 
+class Achievement(models.Model):
+    title = models.CharField(max_length=150)
+    description = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.title
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account")
     is_admin = models.BooleanField(default=False)
     suspended = models.BooleanField(default=False)
+    totalRoute = models.BigIntegerField(default=0)
+    totalDistance = models.BigIntegerField(default=0)
+    achievements = models.ManyToManyField(Achievement)
 
     def __str__(self):
         return self.user.username
 
     def updateSuspend(self, status):
         self.suspended = status
+        self.save()
+
+    def updateRouteAndDist(self):
+        activities = self.user.activities.all()
+        totalRoute = 0
+        totalDistance = 0
+        for activity in activities:
+            totalRoute += 1
+            totalDistance += activity.distance
+        self.totalRoute = totalRoute
+        self.totalDistance = totalDistance
+        self.save()
+
+    def addAchievement(self, achievement):
+        self.achievements.add(achievement)
         self.save()
     
 class ContactUs(models.Model):
@@ -91,6 +115,10 @@ class ClimbingActivity(models.Model):
 
     def __str__(self):
         return self.locName
+    
+
+
+    
 
 #class Comment(models.Model):
 #    post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name="comments")

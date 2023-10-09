@@ -12,6 +12,9 @@ admin.site.register(SubTopic)
 admin.site.register(ForumPost)
 admin.site.register(ContactUs)
 admin.site.register(FlaggedPost)
+admin.site.register(Account)
+admin.site.register(ClimbingActivity)
+admin.site.register(Achievement)
 
 class AccountInLine(admin.StackedInline):
     model = Account
@@ -23,5 +26,4 @@ class CustomizedUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, CustomizedUserAdmin)
-admin.site.register(Account)
-admin.site.register(ClimbingActivity)
+

@@ -417,16 +417,7 @@ def ARroute(response):
     return render(response, "ARRoute.html")
 
 def profile(response):
-    totalRoute = 0
-    totalDistance = 0
-    for activity in response.user.activities.all():
-        totalRoute+=1
-        totalDistance+=activity.distance
-    summary = {
-        'totalRoute': totalRoute,
-        'totalDistance': totalDistance,
-    }
-    return render(response, "profile.html", {'summary':summary})
+    return render(response, "profile.html")
 
 def createSection(response):
     if response.method == "POST":
@@ -604,12 +595,115 @@ def createClimbActivity(response):
             locName = form.cleaned_data["locName"]
             distance = form.cleaned_data["distance"]
             date = form.cleaned_data["date"]
-            climbActivity = ClimbingActivity(user=user, locName=locName, distance=distance, date=date)
+            climbActivity = ClimbingActivity(user=user, locName=locName, distance=distance, date=date) 
             climbActivity.save()
+            user.account.updateRouteAndDist()
+            checkAchievement(user)
         return redirect('/profile/')
     else:
         createclimbactivity = CreateClimbingActivity()
     return render(response, 'createClimbActivity.html', {'createclimbactivity': createclimbactivity})
+
+def checkAchievement(user):
+    #Beginner
+    if(user.account.totalRoute >= 1):
+        achievement = Achievement.objects.get(title='Beginner Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+    
+    #Intermediate
+    if(user.account.totalRoute >= 20):
+        achievement = Achievement.objects.get(title='Intermediate Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Experienced
+    if(user.account.totalRoute >= 50):
+        achievement = Achievement.objects.get(title='Experienced Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Advanced
+    if(user.account.totalRoute >= 100):
+        achievement = Achievement.objects.get(title='Advanced Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Veteran
+    if(user.account.totalRoute >= 150):
+        achievement = Achievement.objects.get(title='Veteran Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Master
+    if(user.account.totalRoute >= 200):
+        achievement = Achievement.objects.get(title='Master Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Pioneer
+    if(user.account.totalRoute >= 300):
+        achievement = Achievement.objects.get(title='Pioneer Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Elite
+    if(user.account.totalRoute >= 500):
+        achievement = Achievement.objects.get(title='Elite Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #Legendary
+    if(user.account.totalRoute >= 1000):
+        achievement = Achievement.objects.get(title='Legendary Climber')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #1000-Meter Explorer
+    if(user.account.totalDistance >= 1000):
+        achievement = Achievement.objects.get(title='1000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #10000-Meter Explorer
+    if(user.account.totalDistance >= 10000):
+        achievement = Achievement.objects.get(title='10000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #100000-Meter Explorer
+    if(user.account.totalDistance >= 100000):
+        achievement = Achievement.objects.get(title='100000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #500000-Meter Explorer
+    if(user.account.totalDistance >= 500000):
+        achievement = Achievement.objects.get(title='500000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #1000000-Meter Explorer
+    if(user.account.totalDistance >= 1000000):
+        achievement = Achievement.objects.get(title='1000000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #5000000-Meter Explorer
+    if(user.account.totalDistance >= 5000000):
+        achievement = Achievement.objects.get(title='5000000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+    #10000000-Meter Explorer
+    if(user.account.totalDistance >= 10000000):
+        achievement = Achievement.objects.get(title='10000000-Meter Explorer')
+        if(achievement not in user.account.achievements.all()):
+            user.account.addAchievement(achievement)
+
+
+
+
 
 """
 def search(response):

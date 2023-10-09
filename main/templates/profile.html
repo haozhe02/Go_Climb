@@ -135,14 +135,12 @@
 										{% endif %}
 										<p>
 											{% for activity in user.activities.all %}
-											{{activity.locName}}, {{activity.distance}}km, {{activity.date}} <br>
+											{{activity.locName}}, {{activity.distance}}m, {{activity.date}} <br>
 											{% endfor %}
 										</p>
-										{% if summary %}
 										<h3>Summary</h3>
-										Total Route Climbed: {{summary.totalRoute}} <br>
-										Total Distance Climbed: {{summary.totalDistance}}
-										{% endif %}
+										Total Route Climbed: {{user.account.totalRoute}} <br>
+										Total Distance Climbed: {{user.account.totalDistance}}m
 										
 									</div>
 									
@@ -150,7 +148,11 @@
 								<div class="user-profile-card">
 									<div class="favourite-activities">
 										<h3>Achievements</h3>
-										<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut. Duis sollicitudin sapien eget tincidunt ultrices. In nec elit lectus. Etiam maximus eu dui in blandit. Praese</p>
+										<p>
+										{% for achievement in user.account.achievements.all %}
+										<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+										{% endfor %}
+										</p>
 									</div>
 									
 								</div>
