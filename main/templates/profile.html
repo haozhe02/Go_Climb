@@ -138,6 +138,11 @@
 											{{activity.locName}}, {{activity.distance}}km, {{activity.date}} <br>
 											{% endfor %}
 										</p>
+										{% if summary %}
+										<h3>Summary</h3>
+										Total Route Climbed: {{summary.totalRoute}} <br>
+										Total Distance Climbed: {{summary.totalDistance}}
+										{% endif %}
 										
 									</div>
 									

@@ -417,7 +417,16 @@ def ARroute(response):
     return render(response, "ARRoute.html")
 
 def profile(response):
-    return render(response, "profile.html")
+    totalRoute = 0
+    totalDistance = 0
+    for activity in response.user.activities.all():
+        totalRoute+=1
+        totalDistance+=activity.distance
+    summary = {
+        'totalRoute': totalRoute,
+        'totalDistance': totalDistance,
+    }
+    return render(response, "profile.html", {'summary':summary})
 
 def createSection(response):
     if response.method == "POST":

@@ -36,6 +36,7 @@ urlpatterns = [
     path("suspendAccountByUser/<int:id>/", views.suspendAccountByUser, name="suspendAccountByUser"),
     path("createClimbActivity/", views.createClimbActivity, name="createClimbActivity"),
     
+        
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),
     #path("country/", views.list, name="list"),
