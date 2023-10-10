@@ -89,3 +89,11 @@ class EditAbout(forms.Form):
     about = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 30}), strip=False)
 
     about.widget.attrs.update({"class": "form-control"})
+
+class EditSocialMedia(forms.Form):
+    facebook = forms.CharField(max_length=150)
+    youtube = forms.CharField(max_length=150)
+    
+    facebook.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Facebook Link'})
+    youtube.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Youtube Link'})
+

@@ -92,17 +92,35 @@
 											Email: {{user.email}} <br>
 											{% endif %}
 											
-											{% else %}
+										{% else %}
                                             @user_name <br>
-                                            {% endif %} Country of Origin <br>0 Followers &nbsp; 0 Following</p>
+										{% endif %} Country of Origin<br><a href="/viewFollowers/{{user.id}}">{{user.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{user.id}}">{{user.account.followingsCount}} Following</a><br>
 
 											{% if user.is_authenticated %}
 											<b><a href="/editLogin/{{user.id}}">Edit Account</a></b>
 											{% endif %}
 
+											<br>
+											{% if user.account.facebookLink != "Empty" %}
+											<br><a href="{{user.account.facebookLink}}" target="_blank">Facebook</a>
+											{% endif %}
+
+											{% if user.account.youtubeLink != "Empty" %}
+											<br><a href="{{user.account.youtubeLink}}" target="_blank">Youtube</a>
+											{% endif %}
+
+											{% if user.is_authenticated %}
+												{% if user.account.facebookLink == "Empty" and user.account.youtubeLink == "Empty" %}
+													<br><b><a href="/editSocialMedia/{{user.id}}">Add Social Media</a></b>
+												{% else %}
+													<br><b><a href="/editSocialMedia/{{user.id}}">Edit Social Media</a></b>
+												{% endif %}
+											{% endif %}
+
 											{% if user.is_authenticated and user.is_superuser == False %}
 											<br><b><a href="/suspendAccountByUser/{{user.id}}">Delete Profile and Account</a></b>
 											{% endif %}
+										</p>
 									</div>
 								</div>
 								<div class="user-profile-card">

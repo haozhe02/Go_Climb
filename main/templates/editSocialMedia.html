@@ -5,14 +5,14 @@
 * Template URI: https://untree.co/
 * License: https://creativecommons.org/licenses/by/3.0/
 */ -->
-{% load static%}
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="author" content="Untree.co">
-  <link rel="shortcut icon" href="{% static 'images/GoClimb Logo 50px.png' %}">
+  <link rel="shortcut icon" href="{% static '/images/GoClimb Logo 50px.png' %}">
 
   <meta name="description" content="" />
   <meta name="keywords" content="bootstrap, bootstrap4" />
@@ -20,10 +20,9 @@
 		<!-- Bootstrap CSS -->
 		<link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-		<!--<link href="css/tiny-slider.css" rel="stylesheet">-->
-		<link href="{% static '/css/style.css' %}" rel="stylesheet">
-
-		<title>View Profile</title>
+		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
+		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
+		<title>Edit Social Media</title>
 	</head>
 
 	<body>
@@ -33,7 +32,7 @@
 
 			<div class="container">
 				<div class="hero-img-wrap">
-					<img src="{% static 'images/GoClimb Logo 50px.png' %}" class="img-fluid">
+					<img src="{% static 'images/GoClimb Logo 50px.png'%}" class="img-fluid">
 				</div>
 
 				<span>&nbsp;&nbsp;&nbsp;</span>
@@ -58,9 +57,9 @@
 					</ul>
 
 					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg' %}"></a></li>
+						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg'%}"></a></li>
 						<!-- <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li> -->
-                        <li>
+						<li>
 							{% if user.is_authenticated %}
 							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
 							{% endif %}
@@ -75,95 +74,43 @@
 		<!-- Start Hero Section -->
 			<div class="hero">
 				<div class="container" >
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="profile-left">
-								<div class="user-profile-card">
-									<h3>Profile</h3>
-									<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
-									<div class="details">
-										<p>
-                                            @{{userProf}} <br>
-											Name: {{userProf.first_name}} {{userProf.last_name}}<br>
-											Email: {{userProf.email}} <br>
-                                            Country of Origin <br><a href="/viewFollowers/{{userProf.id}}">{{userProf.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{userProf.id}}">{{userProf.account.followingsCount}} Following</a><br>
-											{% if userProf not in user.account.followings.all %}
-											<b><a href="/followUser/{{userProf.id}}">Follow User</a></b>
-											{% else %}
-											<b><a href="/unfollowUser/{{userProf.id}}">Unfollow User</a></b>
-											{% endif %}
+                    <!-- Sign in Section -->
 
-											<br>
-											{% if userProf.account.facebookLink != "Empty" %}
-											<br><a href="{{user.account.facebookLink}}" target="_blank">Facebook</a>
-											{% endif %}
+                    <div class="sign-in-or-sign-up-para">
+                        <h1>Edit Social Media</span></h1>
+                        <form action="/profile/" method="get">
+                            <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Cancel</button>
+                        </form>
+                    </div>
+                
+                    <div>
+                        <form class="form" method="post">
+                            {% csrf_token %}
+                            <p class="fieldset">
+                                <h4>Facebook Link</h4>
+                                {{editSocialMedia.facebook}}
+                            </p>
+        
+                            <p class="fieldset">
+                                <h4>Youtube Link</h4>
+                                {{editSocialMedia.youtube}}
+                            </p>
 
-											{% if userProf.account.youtubeLink != "Empty" %}
-											<br><a href="{{user.account.youtubeLink}}" target="_blank">Youtube</a>
-											{% endif %}
-										</p>
+                            <div class="row justify-content-between align-items-center">
+                                <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Save</button>
+                                
+                            </div>
+                            
 
-										
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Favourite Activites</h3>
-										<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Steps</h3>
-										<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-8">
-							<div class="profile-right">
-								<div class="user-profile-card">
-									<h3>About</h3>
-									<div class="details">
-										<p>
-											{{userProf.account.about|linebreaksbr}}
-										</p>
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>History</h3>
-										<p>
-											{% for activity in userProf.activities.all %}
-											{{activity.locName}}, {{activity.distance}}m, {{activity.date}} <br>
-											{% endfor %}
-										</p>
-										<h3>Summary</h3>
-										Total Route Climbed: {{userProf.account.totalRoute}} <br>
-										Total Distance Climbed: {{userProf.account.totalDistance}}m
-									</div>
-									
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Achievements</h3>
-										<p>
-											{% for achievement in userProf.account.achievements.all %}
-											<b>{{achievement.title}}</b> - {{achievement.description}} <br>
-											{% endfor %}
-										</p>
-									</div>
-									
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                        </form>
+        
+                        <!-- <a href="#0" class="cd-close-form">Close</a> -->
+                    </div>
+                
 			</div>
 		<!-- End Hero Section -->
-        		<!-- Start Footer Section -->
+        
+		<!-- Start Footer Section -->
 		<footer class="footer-section">
 			<div class="container relative">
 				<div class="row">
@@ -206,7 +153,7 @@
 							<div class="col-6 col-sm-6 col-md-3">
 								<ul class="list-unstyled">
 									<li><a href="#">About us</a></li>
-									<li><a href="/index">Home</a></li>
+									<li><a href="/home">Home</a></li>
 									<li><a href="/forum">Forum</a></li>
 									<li><a href="/contact">Contact us</a></li>
 								</ul>
@@ -237,9 +184,14 @@
 		</footer>
 		<!-- End Footer Section -->	
 
-		<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-		<!--<script src="js/tiny-slider.js"></script>-->
-		<script src="{% static 'js/custom.js' %}"></script>
+        <!-- partial -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		<!--<script src="{% static './script.js' %}"></script>-->
+ 
+		<script src="{% static 'js/script.js' %}"></script>
+		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
+		<script src="{% static 'js/custom.js'%}"></script>
 	</body>
 
 </html>

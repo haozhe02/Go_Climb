@@ -407,9 +407,16 @@ def loginUser(response):
             signupform = SignupForm(details)
             if signupform.is_valid():
                 signupform.save()
+                user = User.objects.get(username=signupform.cleaned_data['username'])
+                Account.objects.create(user=user)
                 return render(response, "login.html", {'signupform': signupform, 'successful': 'Account Created Successfully'})
             else:
-                return render(response, "login.html", {'signupform': signupform, 'successful': 'Create Account Failed, Please Try Again!'})
+                errorsDetail = []
+                for field, errors in signupform.errors.items():
+                    for error in errors:
+                        print(f"Field: {field}, Error: {error}")
+                        errorsDetail.append(error)
+                return render(response, "login.html", {'signupform': signupform, 'successful': 'Create Account Failed, Please Try Again!', 'errorDetails':errorsDetail})
         
     return render(response, "login.html", {'signupform': signupform})
 
@@ -716,8 +723,48 @@ def editAbout(response, id):
         editabout = EditAbout(initial={'about': user.account.about})
     return render(response, 'editAbout.html', {'editabout':editabout})
 
+def followUser(response, id):
+    user = response.user
+    userToFollow = User.objects.get(id=id)
+    user.account.addFollowing(userToFollow)
+    userToFollow.account.addFollower(user)
+    return redirect('/viewProfile/'+str(id))
 
+def viewFollowers(response, id):
+    user = User.objects.get(id=id)
+    description = 'Followers of '+ str(user)
+    follows = user.account.followers.all()
+    return render(response, 'viewFollow.html', {'description': description, 'follows':follows})
 
+def viewFollowings(response, id):
+    user = User.objects.get(id=id)
+    description = 'Followings of '+ str(user)
+    follows = user.account.followings.all()
+    return render(response, 'viewFollow.html', {'description': description, 'follows':follows})
+
+def unfollowUser(response, id):
+    user = response.user
+    userToUnfollow = User.objects.get(id=id)
+    user.account.removeFollowing(userToUnfollow)
+    userToUnfollow.account.removeFollower(user)
+    return redirect('/viewProfile/'+str(id))
+
+def editSocialMedia(response, id):
+    if(response.user != User.objects.get(id=id)):
+        return redirect('/profile/')
+    if response.method == "POST":
+        form = EditSocialMedia(response.POST)
+        if form.is_valid():
+            user = User.objects.get(id=id)
+            facebook = form.cleaned_data["facebook"]
+            youtube = form.cleaned_data["youtube"]
+            user.account.updateFacebook(facebook)
+            user.account.updateYoutube(youtube)
+            return redirect('/profile/')
+    else:
+        user = User.objects.get(id=id)
+        editSocialMedia = EditSocialMedia(initial={'facebook': user.account.facebookLink, 'youtube': user.account.youtubeLink})
+    return render(response, 'editSocialMedia.html', {'editSocialMedia':editSocialMedia})
 
 """
 def search(response):

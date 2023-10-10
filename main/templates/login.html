@@ -86,6 +86,12 @@
 						{% if successful %}
 						<h2>{{successful}}</h2>
 						{% endif%}
+
+						{% if errorDetails %}
+							{% for error in errorDetails%}
+							<h4>{{error}}</h4>
+							{% endfor%}
+						{% endif %}
                     </div>
                     <nav class="main-nav">
                         <ul>

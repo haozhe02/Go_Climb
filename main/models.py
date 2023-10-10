@@ -65,8 +65,14 @@ class Account(models.Model):
     suspended = models.BooleanField(default=False)
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
-    achievements = models.ManyToManyField(Achievement)
+    achievements = models.ManyToManyField(Achievement, blank=True)
     about = models.TextField(default="")
+    followers = models.ManyToManyField(User, related_name='followings',blank=True)
+    followings = models.ManyToManyField(User, related_name='followers', blank=True)
+    followersCount = models.BigIntegerField(default=0)
+    followingsCount = models.BigIntegerField(default=0)
+    facebookLink = models.CharField(max_length=150, default="Empty")
+    youtubeLink = models.CharField(max_length=150, default="Empty")
 
     def __str__(self):
         return self.user.username
@@ -92,6 +98,34 @@ class Account(models.Model):
     
     def setAbout(self, about):
         self.about = about
+        self.save()
+
+    def addFollower(self, user):
+        self.followers.add(user)
+        self.followersCount += 1
+        self.save()
+
+    def addFollowing(self, user):
+        self.followings.add(user)
+        self.followingsCount += 1
+        self.save()
+
+    def removeFollower(self, user):
+        self.followers.remove(user)
+        self.followersCount -= 1
+        self.save()
+
+    def removeFollowing(self, user):
+        self.followings.remove(user)
+        self.followingsCount -= 1
+        self.save()
+
+    def updateFacebook(self, facebook):
+        self.facebookLink = facebook
+        self.save()
+
+    def updateYoutube(self, youtube):
+        self.youtubeLink = youtube
         self.save()
     
 class ContactUs(models.Model):

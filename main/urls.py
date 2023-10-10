@@ -36,6 +36,11 @@ urlpatterns = [
     path("suspendAccountByUser/<int:id>/", views.suspendAccountByUser, name="suspendAccountByUser"),
     path("createClimbActivity/", views.createClimbActivity, name="createClimbActivity"),
     path("editAbout/<int:id>/", views.editAbout, name="editAbout"),
+    path("followUser/<int:id>/", views.followUser, name="followUser"),
+    path("viewFollowers/<int:id>/", views.viewFollowers, name="viewFollowers"),
+    path("viewFollowings/<int:id>/", views.viewFollowings, name="viewFollowings"),
+    path("unfollowUser/<int:id>/", views.unfollowUser, name="unfollowUser"),
+    path("editSocialMedia/<int:id>/", views.editSocialMedia, name="editSocialMedia"),
     
         
     #path("search/result", views.result, name="result"),
