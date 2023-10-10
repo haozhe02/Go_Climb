@@ -82,5 +82,10 @@ class CreateClimbingActivity(forms.Form):
     date = forms.DateField(widget=DateInput)
 
     locName.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'locName'})
-    distance.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'distance', 'id': 'distance'})
+    distance.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'distance', 'id': 'distance (m)'})
     date.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'date'})
+
+class EditAbout(forms.Form):    
+    about = forms.CharField(widget=forms.Textarea(attrs={'rows': 5, 'cols': 30}), strip=False)
+
+    about.widget.attrs.update({"class": "form-control"})

@@ -701,6 +701,20 @@ def checkAchievement(user):
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
 
+def editAbout(response, id):
+    if(response.user != User.objects.get(id=id)):
+        return redirect('/profile/')
+    if response.method == "POST":
+        form = EditAbout(response.POST)
+        if form.is_valid():
+            user = User.objects.get(id=id)
+            about = form.cleaned_data["about"]
+            user.account.setAbout(about)
+            return redirect('/profile/')
+    else:
+        user = User.objects.get(id=id)
+        editabout = EditAbout(initial={'about': user.account.about})
+    return render(response, 'editAbout.html', {'editabout':editabout})
 
 
 

@@ -35,6 +35,7 @@ urlpatterns = [
     path("searchAccount/", views.searchAccount, name="searchAccount"),
     path("suspendAccountByUser/<int:id>/", views.suspendAccountByUser, name="suspendAccountByUser"),
     path("createClimbActivity/", views.createClimbActivity, name="createClimbActivity"),
+    path("editAbout/<int:id>/", views.editAbout, name="editAbout"),
     
         
     #path("search/result", views.result, name="result"),

@@ -66,6 +66,7 @@ class Account(models.Model):
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
     achievements = models.ManyToManyField(Achievement)
+    about = models.TextField(default="")
 
     def __str__(self):
         return self.user.username
@@ -87,6 +88,10 @@ class Account(models.Model):
 
     def addAchievement(self, achievement):
         self.achievements.add(achievement)
+        self.save()
+    
+    def setAbout(self, about):
+        self.about = about
         self.save()
     
 class ContactUs(models.Model):
