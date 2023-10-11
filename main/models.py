@@ -155,7 +155,12 @@ class ClimbingActivity(models.Model):
     def __str__(self):
         return self.locName
     
+class SearchHistory(models.Model):
+    text = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="searchHistories", null=True)
 
+    def __str__(self):
+        return self.text
 
     
 

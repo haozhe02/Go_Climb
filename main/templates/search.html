@@ -98,10 +98,15 @@
 			<form method="post">
 			{% csrf_token %}
 			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" placeholder="Search by name or location" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">
-										
+				<input type="text" name="search" placeholder="Search by name or location" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">								
 			</div>
-		</form>
+			</form>
+			<form method="get">
+				<div class="row justify-content-between align-items-center" >
+					<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Clear Search</button>
+				</div>
+
+			</form>
 		</div>
 		<div class="flexbox-container" style="background-color:#F5F0BB;">
 
@@ -277,6 +282,20 @@
 						
 
 					</form>
+					</div>
+
+
+					<div class="search-left-card" >
+						
+						<b><h3>Search History</h3></b>
+						<br> 
+						<div class="accordion" id="accordionPanelsStayOpenExample">
+							<ul>
+								{% for history in limitSearchHistory %}
+								<li style="display: flex; justify-content: space-between;">{{history.text}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="/deleteSearchHistory/{{history.id}}">X</a></li>
+								{% endfor %}
+							</ul>
+						</div>
 					</div>
 				</div>
 				

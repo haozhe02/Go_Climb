@@ -41,7 +41,9 @@ urlpatterns = [
     path("viewFollowings/<int:id>/", views.viewFollowings, name="viewFollowings"),
     path("unfollowUser/<int:id>/", views.unfollowUser, name="unfollowUser"),
     path("editSocialMedia/<int:id>/", views.editSocialMedia, name="editSocialMedia"),
-    
+    path("deleteSearchHistory/<int:id>/", views.deleteSearchHistory, name="deleteSearchHistory"),
+    path("viewPostByUser/<int:id>/", views.viewPostByUser, name="viewPostByUser"),
+    path("searchPostByUser/<int:id>/", views.searchPostByUser, name="searchPostByUser"),
         
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),

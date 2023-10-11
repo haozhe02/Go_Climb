@@ -291,8 +291,20 @@ def search1(response):
     condition = ""
     sort = ""
     locations = []
+
+    limitSearchHistory = SearchHistory.objects.filter(user=response.user).order_by('-id')[:20]
+
     if response.method == 'POST':
         searchInput = response.POST['search']
+        
+        user = response.user
+        exist = False
+        for history in user.searchHistories.all():
+            if searchInput == history.text:
+                exist = True
+
+        if not exist:
+            SearchHistory.objects.create(user=user, text=searchInput)
 
         searchList = []
         if searchInput != "":
@@ -331,7 +343,7 @@ def search1(response):
             else:
                 sortCrags = crags
                 crags = sortCrags
-    return render(response, 'search.html', {'crags':crags, 'countries': countries, 'search':searchInput, 'locations': locations, 'condition': condition, 'sort':sort})
+    return render(response, 'search.html', {'crags':crags, 'countries': countries, 'search':searchInput, 'locations': locations, 'condition': condition, 'sort':sort, 'limitSearchHistory': limitSearchHistory})
 
 
 def color(time):
@@ -765,6 +777,34 @@ def editSocialMedia(response, id):
         user = User.objects.get(id=id)
         editSocialMedia = EditSocialMedia(initial={'facebook': user.account.facebookLink, 'youtube': user.account.youtubeLink})
     return render(response, 'editSocialMedia.html', {'editSocialMedia':editSocialMedia})
+
+def deleteSearchHistory(response, id):
+    searchHistory = SearchHistory.objects.get(id=id)
+    if searchHistory.user == response.user:
+        searchHistory.delete()
+    return redirect('/search/')
+
+def viewPostByUser(response, id):
+    userObj = User.objects.get(id=id)
+    posts = userObj.posts.all()
+    if response.user.account.is_admin:
+        return render(response, 'viewPostByUser.html', {'userObj':userObj, 'posts':posts})
+    else:
+        return redirect('/home/')
+
+def searchPostByUser(response, id):
+    searchInput = response.POST['search'].rstrip()
+    userObj = User.objects.get(id=id)
+    posts = []
+    if searchInput != "":
+        for post in userObj.posts.all():
+            if searchInput.lower() in post.title.lower():
+                posts.append(post)
+    return render(response, 'viewPostByUser.html', {'userObj': userObj, 'posts': posts})
+
+
+
+
 
 """
 def search(response):

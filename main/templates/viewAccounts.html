@@ -129,6 +129,8 @@
                 {% else %}
                 Status: Active
                 {% endif %}
+
+				<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
 			</div>
 			<div class="subforum-stats subforum-column center">
                 {% if userObj.is_superuser == False %}
