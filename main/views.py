@@ -149,7 +149,6 @@ def weather(response):
         }
         if uv_data:
             data['uv'] = uv_data['result']['uv']
-            print(data['uv'])
 
         if air_pollution_data:
             data['air_quality'] =  getQuality(int(air_pollution_data['list'][0]['main']['aqi'])) 
@@ -292,7 +291,9 @@ def search1(response):
     sort = ""
     locations = []
 
-    limitSearchHistory = SearchHistory.objects.filter(user=response.user).order_by('-id')[:20]
+    limitSearchHistory = []
+    if response.user.is_authenticated:
+        limitSearchHistory = SearchHistory.objects.filter(user=response.user).order_by('-id')[:20]
 
     if response.method == 'POST':
         searchInput = response.POST['search']
@@ -335,7 +336,6 @@ def search1(response):
             sort = response.POST['sort']
             if(sort == 'altAsc'):
                 sortCrags = sorted(crags, key=lambda x: int(x['altitude']))
-                print(sortCrags)
                 crags = sortCrags
             elif(sort == 'altDsc'):
                 sortCrags = sorted(crags, key=lambda x: int(x['altitude']), reverse=True)
@@ -369,8 +369,9 @@ def subtopic(response, id):
     maintopic = subtopic.mainTopic
     posts = subtopic.posts.all()
     flaggedPosts = []
-    for flaggedPost in response.user.flaggedPosts.all():
-        flaggedPosts.append(flaggedPost.post)
+    if response.user.is_authenticated:
+        for flaggedPost in response.user.flaggedPosts.all():
+            flaggedPosts.append(flaggedPost.post)
     return render(response, 'subtopic.html', {'subtopic': subtopic, 'maintopic': maintopic, 'posts':posts, 'flaggedPosts': flaggedPosts})
 
 def contact(response):
@@ -564,8 +565,6 @@ def flagPost(response, id):
         flaggedPost.users.add(response.user)
 
     subtopic = post.topic
-    #print(FlaggedPost.objects.all())
-    print(response.user.flaggedPosts.all())
 
     return redirect("/subtopic/"+str(subtopic.id))
 

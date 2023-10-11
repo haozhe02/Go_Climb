@@ -284,7 +284,7 @@
 					</form>
 					</div>
 
-
+					{% if user.is_authenticated %}
 					<div class="search-left-card" >
 						
 						<b><h3>Search History</h3></b>
@@ -297,6 +297,7 @@
 							</ul>
 						</div>
 					</div>
+					{% endif %}
 				</div>
 				
 				<div class="col-lg-8">
