@@ -135,7 +135,7 @@
 										<h3>History</h3>
 										<p>
 											{% for activity in userProf.activities.all %}
-											{{activity.locName}}, {{activity.distance}}m, {{activity.date}} <br>
+											{{activity.locName}}, {{activity.distance}}m, {{activity.date|localtime}} <br>
 											{% endfor %}
 										</p>
 										<h3>Summary</h3>

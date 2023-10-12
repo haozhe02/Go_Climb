@@ -124,12 +124,12 @@ def weather(response):
             forecast_data = requests.get(url2.format(city)).json()
 
     if list_of_data['cod'] != '404':
-        dateNtime = str(datetime.datetime.fromtimestamp(list_of_data['dt'])).split(" ")
-        date = dateNtime[0]
-        timestring = dateNtime[1][0:5]
+        dateNtime = datetime.datetime.fromtimestamp(list_of_data['dt'])
+        date = dateNtime.date()
+        timestring = dateNtime.time()
         day = datetime.datetime.fromtimestamp(list_of_data['dt']).strftime('%A')
-        sunrise = str(datetime.datetime.fromtimestamp(list_of_data['sys']['sunrise'])).split(" ")[1][0:5]
-        sunset = str(datetime.datetime.fromtimestamp(list_of_data['sys']['sunset'])).split(" ")[1][0:5]
+        sunrise = datetime.datetime.fromtimestamp(list_of_data['sys']['sunrise']).time()
+        sunset = datetime.datetime.fromtimestamp(list_of_data['sys']['sunset']).time()
         data = {
             'cod': str(list_of_data['cod']),                
             'date': date,
