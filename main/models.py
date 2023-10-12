@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+"""
 class Country(models.Model):
     name = models.CharField(max_length=200)
 
@@ -16,7 +17,8 @@ class Crags(models.Model):
 
     def __str__(self):
         return self.name
-
+"""
+        
 class Section(models.Model):
     title = models.CharField(max_length=200)
 
@@ -161,6 +163,17 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return self.text
+    
+class Crag(models.Model):
+    country = models.CharField(max_length=150)
+    region = models.CharField(max_length=150)
+    name =  models.CharField(max_length=150)
+    desc =  models.TextField()
+    rocktype =  models.CharField(max_length=150)
+    altitude = models.BigIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
 
     
 

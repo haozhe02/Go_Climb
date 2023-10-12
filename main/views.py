@@ -268,24 +268,16 @@ def getQuality(index):
         return "Not Available"
 
 def search1(response):
-    file = open("static/crags.csv")
-    csvreader = csv.reader(file)
-    crags = []
-    for row in csvreader:
-        data = {
-            'country': row[0],
-            'region': row[1],
-            'name': row[2],
-            'desc': row[3],
-            'rocktype': row[4],
-            'altitude': row[5][:-1]
-        }
-        crags.append(data)
-
+    #file = open("static/crags.csv")
+    #csvreader = csv.reader(file)
+    #crags = []
+    #for row in csvreader:
+    #    Crag.objects.create(country=row[0], region=row[1], name=row[2], desc=row[3], rocktype=row[4], altitude=row[5][:-1])
+    crags=Crag.objects.all()
     countries = []
-    for data in crags:
-        if data['country'] not in countries:
-            countries.append(data['country'])
+    for crag in crags:
+        if crag.country not in countries:
+            countries.append(crag.country)
     searchInput = ""
     condition = ""
     sort = ""
@@ -310,7 +302,7 @@ def search1(response):
         searchList = []
         if searchInput != "":
             for crag in crags:
-                if searchInput in crag['name']:
+                if searchInput in crag.name:
                     searchList.append(crag)
             crags = searchList
         
@@ -319,7 +311,7 @@ def search1(response):
             condition = response.POST['condition']
             if(condition != '0'):
                 for crag in crags:
-                    if int(crag['altitude']) >= int(condition):
+                    if int(crag.altitude) >= int(condition):
                         filterlist1.append(crag)
                 crags = filterlist1
 
@@ -328,17 +320,17 @@ def search1(response):
             locations = response.POST.getlist('location')
             for country in locations:
                 for crag in crags:
-                    if crag['country'] == country:
+                    if crag.country == country:
                         filterlist2.append(crag)
             crags = filterlist2
 
         if(response.POST.get('sort') != None):
             sort = response.POST['sort']
             if(sort == 'altAsc'):
-                sortCrags = sorted(crags, key=lambda x: int(x['altitude']))
+                sortCrags = sorted(crags, key=lambda x: int(x.altitude))
                 crags = sortCrags
             elif(sort == 'altDsc'):
-                sortCrags = sorted(crags, key=lambda x: int(x['altitude']), reverse=True)
+                sortCrags = sorted(crags, key=lambda x: int(x.altitude), reverse=True)
                 crags = sortCrags 
             else:
                 sortCrags = crags

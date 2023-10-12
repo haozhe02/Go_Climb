@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
-admin.site.register(Country)
-admin.site.register(Crags)
+#admin.site.register(Country)
+#admin.site.register(Crags)
 admin.site.register(Section)
 admin.site.register(MainTopic)
 admin.site.register(SubTopic)
@@ -16,6 +16,7 @@ admin.site.register(Account)
 admin.site.register(ClimbingActivity)
 admin.site.register(Achievement)
 admin.site.register(SearchHistory)
+admin.site.register(Crag)
 
 class AccountInLine(admin.StackedInline):
     model = Account
