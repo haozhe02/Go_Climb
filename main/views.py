@@ -8,6 +8,8 @@ import datetime
 import csv
 import ast
 from django.contrib.auth import authenticate, login
+from django.utils import timezone
+from datetime import datetime as dti, timedelta
 
 # Create your views here.
 def home(response):
@@ -124,12 +126,26 @@ def weather(response):
             forecast_data = requests.get(url2.format(city)).json()
 
     if list_of_data['cod'] != '404':
-        dateNtime = datetime.datetime.fromtimestamp(list_of_data['dt'])
-        date = dateNtime.date()
-        timestring = dateNtime.time()
-        day = datetime.datetime.fromtimestamp(list_of_data['dt']).strftime('%A')
-        sunrise = datetime.datetime.fromtimestamp(list_of_data['sys']['sunrise']).time()
-        sunset = datetime.datetime.fromtimestamp(list_of_data['sys']['sunset']).time()
+        offset_seconds = list_of_data['timezone']
+
+        #datentime = list_of_data['dt']
+        #dateNtime_utc = dti.utcfromtimestamp(list_of_data['dt'])
+        #adjusted_datetime = dti.utcfromtimestamp(list_of_data['dt']) + timedelta(seconds=offset_seconds)
+        finaldateNtime = timezone.make_aware((dti.utcfromtimestamp(list_of_data['dt']) + timedelta(seconds=offset_seconds)), timezone.utc)
+
+        #sunrise_time = list_of_data['sys']['sunrise']
+        #sunrise_utc = dti.utcfromtimestamp(list_of_data['sys']['sunrise'])
+        adjusted_sunrise = dti.utcfromtimestamp(list_of_data['sys']['sunrise']) + timedelta(seconds=offset_seconds)
+
+        #sunset_time = list_of_data['sys']['sunset']
+        #sunset_utc = dti.utcfromtimestamp(list_of_data['sys']['sunset'])
+        adjusted_sunset= dti.utcfromtimestamp(list_of_data['sys']['sunset']) + timedelta(seconds=offset_seconds)
+
+        date = finaldateNtime.date()
+        timestring = finaldateNtime.time()
+        day = finaldateNtime.strftime('%A')
+        sunrise = timezone.make_aware(adjusted_sunrise, timezone.utc).time()
+        sunset = timezone.make_aware(adjusted_sunset, timezone.utc).time()
         data = {
             'cod': str(list_of_data['cod']),                
             'date': date,
@@ -159,43 +175,45 @@ def weather(response):
    
     
     if forecast_data['cod'] != '404':
+        offset_seconds = forecast_data['city']['timezone']
         three_hours = forecast_data['list'][0]
         Hours = []
         threeHour = {
-            'time': str(datetime.datetime.fromtimestamp(three_hours['dt'])).split(" ")[1][0:5],
-            'color': color(str(datetime.datetime.fromtimestamp(three_hours['dt'])).split(" ")[1][0:5]),
+            #'time': str(datetime.datetime.fromtimestamp(three_hours['dt'])).split(" ")[1][0:5],
+            'time': timezone.make_aware((dti.utcfromtimestamp(three_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': color(timezone.make_aware((dti.utcfromtimestamp(three_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time()),
             'temp': str(three_hours['main']['temp']) + '°C',
             'windspeed': str(three_hours['wind']['speed']),
             'icon': three_hours['weather'][0]['icon']
         }
         six_hours = forecast_data['list'][1]
         sixHour = {
-            'time': str(datetime.datetime.fromtimestamp(six_hours['dt'])).split(" ")[1][0:5],
-            'color': color(str(datetime.datetime.fromtimestamp(six_hours['dt'])).split(" ")[1][0:5]),
+            'time': timezone.make_aware((dti.utcfromtimestamp(six_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': color(timezone.make_aware((dti.utcfromtimestamp(six_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time()),
             'temp': str(six_hours['main']['temp']) + '°C',
             'windspeed': str(six_hours['wind']['speed']),
             'icon': six_hours['weather'][0]['icon']
         }
         nine_hours = forecast_data['list'][2]
         nineHour = {
-            'time': str(datetime.datetime.fromtimestamp(nine_hours['dt'])).split(" ")[1][0:5],
-            'color': color(str(datetime.datetime.fromtimestamp(nine_hours['dt'])).split(" ")[1][0:5]),
+            'time': timezone.make_aware((dti.utcfromtimestamp(nine_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': color(timezone.make_aware((dti.utcfromtimestamp(nine_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time()),
             'temp': str(nine_hours['main']['temp']) + '°C',
             'windspeed': str(nine_hours['wind']['speed']),
             'icon': nine_hours['weather'][0]['icon']
         }
         twelve_hours = forecast_data['list'][3]
         twelveHour = {
-            'time': str(datetime.datetime.fromtimestamp(twelve_hours['dt'])).split(" ")[1][0:5],
-            'color': color(str(datetime.datetime.fromtimestamp(twelve_hours['dt'])).split(" ")[1][0:5]),
+            'time': timezone.make_aware((dti.utcfromtimestamp(twelve_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': color(timezone.make_aware((dti.utcfromtimestamp(twelve_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time()),
             'temp': str(twelve_hours['main']['temp']) + '°C',
             'windspeed': str(twelve_hours['wind']['speed']),
             'icon': twelve_hours['weather'][0]['icon']
         }
         fifteen_hours = forecast_data['list'][4]
         fifteenHour = {
-            'time': str(datetime.datetime.fromtimestamp(fifteen_hours['dt'])).split(" ")[1][0:5],
-            'color': color(str(datetime.datetime.fromtimestamp(fifteen_hours['dt'])).split(" ")[1][0:5]),
+            'time': timezone.make_aware((dti.utcfromtimestamp(fifteen_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': timezone.make_aware((dti.utcfromtimestamp(fifteen_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
             'temp': str(fifteen_hours['main']['temp']) + '°C',
             'windspeed': str(fifteen_hours['wind']['speed']),
             'icon': fifteen_hours['weather'][0]['icon']
@@ -209,36 +227,36 @@ def weather(response):
 
         day1 = forecast_data['list'][8]
         dayOne = {
-            'date': str(datetime.datetime.fromtimestamp(day1['dt'])).split(" ")[0],
-            'day': datetime.datetime.fromtimestamp(day1['dt']).strftime('%A'),
+            'date': timezone.make_aware((dti.utcfromtimestamp(day1['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date(),
+            'day': timezone.make_aware((dti.utcfromtimestamp(day1['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date().strftime('%A'),
             'temp': str(day1['main']['temp']) + '°C',
             'icon': day1['weather'][0]['icon']
         }
         day2 = forecast_data['list'][16]
         dayTwo = {
-            'date': str(datetime.datetime.fromtimestamp(day2['dt'])).split(" ")[0],
-            'day': datetime.datetime.fromtimestamp(day2['dt']).strftime('%A'),
+            'date': timezone.make_aware((dti.utcfromtimestamp(day2['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date(),
+            'day': timezone.make_aware((dti.utcfromtimestamp(day2['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).strftime('%A'),
             'temp': str(day2['main']['temp']) + '°C',
             'icon': day2['weather'][0]['icon']
         }
         day3 = forecast_data['list'][24]
         dayThree = {
-            'date': str(datetime.datetime.fromtimestamp(day3['dt'])).split(" ")[0],
-            'day': datetime.datetime.fromtimestamp(day3['dt']).strftime('%A'),
+            'date': timezone.make_aware((dti.utcfromtimestamp(day3['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date(),
+            'day': timezone.make_aware((dti.utcfromtimestamp(day3['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).strftime('%A'),
             'temp': str(day3['main']['temp']) + '°C',
             'icon': day3['weather'][0]['icon']
         }
         day4 = forecast_data['list'][32]
         dayFour = {
-            'date': str(datetime.datetime.fromtimestamp(day4['dt'])).split(" ")[0],
-            'day': datetime.datetime.fromtimestamp(day4['dt']).strftime('%A'),
+            'date': timezone.make_aware((dti.utcfromtimestamp(day4['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date(),
+            'day': timezone.make_aware((dti.utcfromtimestamp(day4['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).strftime('%A'),
             'temp': str(day4['main']['temp']) + '°C',
             'icon': day4['weather'][0]['icon']
         }
         day5 = forecast_data['list'][39]
         dayFive = {
-            'date': str(datetime.datetime.fromtimestamp(day5['dt'])).split(" ")[0],
-            'day': datetime.datetime.fromtimestamp(day5['dt']).strftime('%A'),
+            'date': timezone.make_aware((dti.utcfromtimestamp(day5['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).date(),
+            'day': timezone.make_aware((dti.utcfromtimestamp(day5['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).strftime('%A'),
             'temp': str(day5['main']['temp']) + '°C',
             'icon': day5['weather'][0]['icon']
         }
@@ -338,16 +356,30 @@ def search1(response):
     return render(response, 'search.html', {'crags':crags, 'countries': countries, 'search':searchInput, 'locations': locations, 'condition': condition, 'sort':sort, 'limitSearchHistory': limitSearchHistory})
 
 
+#def color(time):
+#    if(time >= '06:00' and time < '08:00'):
+#        return "orange"
+#    elif(time >= '08:00' and time < '17:00' ):
+#        return "blue"
+#    elif(time >= '17:00' and time < '19:00'):
+#        return "orange"
+#    else:
+#        return "purple"
+    
 def color(time):
-    if(time >= '06:00' and time < '08:00'):
+    sixam = dti.now().replace(hour=6, minute=0, second=0, microsecond=0)
+    nineam = dti.now().replace(hour=9, minute=0, second=0, microsecond=0)
+    fivepm = dti.now().replace(hour=17, minute=0, second=0, microsecond=0)
+    sevenpm = dti.now().replace(hour=19, minute=0, second=0, microsecond=0)
+    if(time >= sixam.time() and time < nineam.time()):
         return "orange"
-    elif(time >= '08:00' and time < '17:00' ):
+    elif(time >= nineam.time() and time < fivepm.time()):
         return "blue"
-    elif(time >= '17:00' and time < '19:00'):
+    elif(time >= fivepm.time() and time < sevenpm.time()):
         return "orange"
     else:
         return "purple"
-
+    
 def forum1(response):
     sections = Section.objects.all()
     return render(response, "forum.html", {'sections': sections})
