@@ -19,6 +19,12 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+import environ
+
+env = environ.Env()
+
+environ.Env.read_env()
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -88,9 +94,8 @@ WSGI_APPLICATION = 'Go_Climb.wsgi.application'
 #    }
 #}
 
-DATABASE_URL = 'postgres://go_climb_user:Gi6tknqxwxb0QFVNJAD9PDKRpssWrIHE@dpg-ckjp2o1jrl0c73er1hug-a.ohio-postgres.render.com/go_climb'
 DATABASES = {
-    'default': dj_database_url.parse(DATABASE_URL)
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
 
 # Password validation
