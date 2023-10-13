@@ -80,98 +80,90 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<a href="/topic/{{maintopic.id}}"><h1>Topic - {{maintopic.title}}</h1></a>
+								<h1>Post - {{post.title}}</h1>
+                                <a href="/subtopic/{{subtopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to {{subtopic.title}}</a>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-
-		<!-- Start forum -->
-		<!-- <div class="forum-center"></div>
-			<div class="forum-left">
-				<div class="forum-topic-card">
-					<h3>Forum</h3>
-					<a class="nav-link" href="#"><img src="images/user-profile-icon.png" height="40px"></a></li>
-					<div class="details">
-						<p>@user_name <br> Country of Origin <br>0 Followers &nbsp; 0 Following</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Favourite Activites</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-			</div>
-			<div class="forum-right">
-				<div class="forum-topic-card">
-					<h3>About</h3>
-					<div class="details">
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut.</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>History</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Achievements</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut. Duis sollicitudin sapien eget tincidunt ultrices. In nec elit lectus. Etiam maximus eu dui in blandit. Praese</p>
-					</div>
-					
-				</div>
-			</div>
-		</div> -->
-<!--SearchBox Section-->
-<!--<div class="search-box">
-	<div>
-		 <select name="" id="">
-			<option value="Everything">Everything</option>
-			<option value="Titles">Titles</option>
-			<option value="Descriptions">Descriptions</option>
-		</select> 
-		<input type="text" name="q" placeholder="search ...">
-		<button><i class="fa fa-search"></i></button>
-	</div>
-</div>-->
-		<!--Bye Bye HAHA-->
 </header>
 <div class="container">
 	<div class="subforum">
 		<div class="subforum-title">
-			<h1>{{maintopic.title}}</h1>
-            <a href="/forum" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to Main Forum</a>
-			{% if user.is_authenticated %}
-			<a href="/createSubtopic/{{maintopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ; " >Create SubTopic</a>
-			{% endif %}
+            <h1>Title: {{post.title}}</h1>            
+            <span>
+                Posted By <a href="/viewProfile/{{post.user.id}}">{{post.user}}</a>
+                {% if post.date %} on: {{post.date}} {% endif %}
+            </span>
+            {% if post in user.posts.all or user.account.is_admin %}
+            <br><a href="/deletePost/{{post.id}}">Delete Post</a>
+            {% endif %}
+
+            {% if post in user.posts.all %} 
+            &nbsp;&nbsp;&nbsp;<a href="/editPost/{{post.id}}">Edit Post</a>
+            {% endif %}
+            
+            <p>Content: <br> {{post.text|linebreaksbr}}</p>
+            {% if post.image and post.image != 'False'%}
+            <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
+            {% endif %}
+            
+            {% if user.account.is_admin %}
+                {% if post in flaggedPosts %}
+                    <br><b>Post Flagged, Please Check!</b>
+                {% else %}
+                    <br><b>Post is normal, not flagged!</b>
+                {% endif %}
+            {% else %}
+                {% if post in flaggedPosts %}
+                    <br><b>Post Flagged and in Investigation</b>
+                {% else %}
+                    <br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
+                {% endif %}
+            {% endif %}
 		</div>
-		{% for subtopic in maintopic.subtopics.all %}
-		<div class="subforum-row">
-			<div class="subforum-icon subforum-column center">
-				<!-- <i class="fa fa-car center"></i> -->
-			</div>
-			<div class="subforum-description subforum-column">
-				<h4><a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a></h4>
-				<p>Description Content: {{subtopic.description}}</p>
-			</div>
-			<div class="subforum-stats subforum-column center">
-				<span>{{subtopic.PostCount}} Posts</span>
-			</div>
-			<div class="subforum-info subforum-column">
-				{% if user.account.is_admin or user.is_superuser or user.is_staff %}
-				<a href="/deleteSubtopic/{{subtopic.id}}">Delete Sub Topic</a>
-				{% endif %}
-			</div>
+
+        <div class="subforum-title">
+            <h1>Comments</h1> 
+            {% if user.is_authenticated%}
+            <form action="/comment/{{post.id}}/" method="post" id="comment-form">
+                {% csrf_token %}
+                <br>Type your comment below
+                {{commentform.text}}
+
+                <input type="hidden" name="date" id="date">
+
+                <div class="row justify-content-between align-items-center">
+                    <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Comment</button>
+                    
+                </div>
+            </form>          
+            {% endif %}
+            <br><br>
+            <table style="border-collapse: collapse; width: 100%;">
+                {% for comment in post.comments.all %}
+                <tr>
+                    <td style="border: 1px solid #dddddd;padding: 8px;">
+                        Posted By <a href="/viewProfile/{{comment.user.id}}">{{comment.user}}</a>
+                        {% if comemnt.date %} on: {{comment.date}} {% endif %} 
+                        
+                        {% if post in user.posts.all or user.account.is_admin or comment in user.comments.all %}
+                        &nbsp;&nbsp;&nbsp;<a href="/deleteComment/{{comment.id}}">Delete Comment</a>
+                        {% endif %}
+                        <br>
+
+                        {{comment.text|linebreaksbr}}
+                    </td>   
+                </tr>
+                {% endfor %}
+            </table>
+            
+		</div>
+           
 		</div>
 		<hr class="subforum-devider">
-		{% endfor %}
 	</div>
 	<!--More-->
 <!---->
@@ -264,6 +256,16 @@
 
 
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+        <script>
+			$(document).ready(function() {
+				$('#comment-form').submit(function(event) {
+					var date = document.getElementById("date");
+					var currentTime = new Date();
+					date.value = currentTime
+
+				});
+			});
+		</script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script src="{% static 'js/forum.js' %}"></script>

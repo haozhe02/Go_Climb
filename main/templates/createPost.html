@@ -84,7 +84,7 @@
                     </div>
                 
                     <div>
-                        <form class="form" method="post" enctype="multipart/form-data">
+                        <form class="form" method="post" enctype="multipart/form-data" id="create-post-form">
                             {% csrf_token %}
                             <p class="fieldset">
                                 {{createpost.title}}
@@ -97,7 +97,7 @@
                             <p class="fieldset">
                                 {{createpost.image}}
                             </p>
-        
+							<input type="hidden" name="date" id="date">
                             <div class="row justify-content-between align-items-center">
                                 <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Create Post</button>
 								
@@ -188,6 +188,16 @@
         <!-- partial -->
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 		<!--<script src="{% static './script.js' %}"></script>-->
+		<script>
+			$(document).ready(function() {
+				$('#create-post-form').submit(function(event) {
+					var date = document.getElementById("date");
+					var currentTime = new Date();
+					date.value = currentTime
+
+				});
+			});
+		</script>
  
 		<script src="{% static 'js/script.js' %}"></script>
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>

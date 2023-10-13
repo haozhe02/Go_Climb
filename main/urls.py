@@ -44,6 +44,9 @@ urlpatterns = [
     path("deleteSearchHistory/<int:id>/", views.deleteSearchHistory, name="deleteSearchHistory"),
     path("viewPostByUser/<int:id>/", views.viewPostByUser, name="viewPostByUser"),
     path("searchPostByUser/<int:id>/", views.searchPostByUser, name="searchPostByUser"),
+    path("viewPost/<int:id>/", views.viewPost, name="viewPost"),
+    path("comment/<int:id>/", views.comment, name="comment"),
+    path("deleteComment/<int:id>", views.deleteComment, name="deleteComment"),
         
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),

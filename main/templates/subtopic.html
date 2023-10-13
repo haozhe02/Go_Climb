@@ -168,7 +168,10 @@
 				<!-- <i class="fa fa-car center"></i> -->
 			</div>
 			<div class="subforum-description subforum-column">
-				<h4>{{post.title}}</h4>
+				<a href="/viewPost/{{post.id}}"><h4>{{post.title}}</h4></a>
+				{% if post.date %}
+				Posted on: {{post.date}}
+				{% endif %}
 				<p>Content: <br> {{post.text|linebreaksbr}}</p>
                 {% if post.image and post.image != 'False'%}
                 <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">

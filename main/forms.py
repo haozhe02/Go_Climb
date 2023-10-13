@@ -97,3 +97,6 @@ class EditSocialMedia(forms.Form):
     facebook.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Facebook Link'})
     youtube.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Youtube Link'})
 
+class CommentForm(forms.Form):
+    text = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}), strip=False)
+    text.widget.attrs.update({"class": "form-control"})

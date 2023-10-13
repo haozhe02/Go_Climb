@@ -17,6 +17,7 @@ admin.site.register(ClimbingActivity)
 admin.site.register(Achievement)
 admin.site.register(SearchHistory)
 admin.site.register(Crag)
+admin.site.register(Comment)
 
 class AccountInLine(admin.StackedInline):
     model = Account

@@ -23,16 +23,17 @@ def createPost(response, id):
             title = form.cleaned_data["title"]
             text = form.cleaned_data["text"]
             image = form.cleaned_data["image"]
-            post = ForumPost(title=title, text=text, image=image)
+            inputdate = response.POST['date'][:24]
+            #date = getDateTime(inputdate)
+            post = ForumPost(title=title, text=text, image=image,date=inputdate)
             post.save()
             response.user.posts.add(post)
             subtopic = SubTopic.objects.get(id =id)
             subtopic.posts.add(post)
-            subtopic.PostCount += 1
+            subtopic.addPostCount()
             maintopic = subtopic.mainTopic
-            maintopic.PostCount += 1
-            subtopic.save()
-            maintopic.save()
+            maintopic.addPostCount()
+
 
         return redirect('/subtopic/' +str(id))
     else:
@@ -40,16 +41,29 @@ def createPost(response, id):
         createpost = CreatePost()
     return render(response, 'createPost.html', {'createpost': createpost, 'subtopic': subtopic})
 
+def getDateTime(date):
+    month_map = {
+        'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+        'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
+    }
+
+    dates = date.split()
+    day = int(dates[2])
+    month = month_map.get(dates[1])
+    year = int(dates[3])
+
+    hours, minutes, seconds = map(int, dates[4].split(':'))
+
+    return dti(year, month, day, hours, minutes, seconds)
+
 def deletePost(response, id):
     post = ForumPost.objects.get(id=id)
     subtopic = post.topic
-    if post.user == response.user:
+    if post.user == response.user or response.user.account.is_admin:
         post.delete()
-    subtopic.PostCount -= 1
+    subtopic.minusPostCount()
     maintopic = subtopic.mainTopic
-    maintopic.PostCount -= 1
-    subtopic.save()
-    maintopic.save()
+    maintopic.minusPostCount()
     return redirect('/subtopic/'+str(subtopic.id))
 
 def editPost(response, id):
@@ -514,9 +528,8 @@ def createSubtopic(response, id):
             description = form.cleaned_data["description"]
             maintopic = MainTopic.objects.get(id =id)
             subtopic = SubTopic(mainTopic=maintopic, title=title, description=description, PostCount=0)
-            maintopic.SubTopicCount += 1
+            maintopic.addSubTopicCount()
             subtopic.save()
-            maintopic.save()
 
         return redirect('/topic/' +str(id))
     else:
@@ -527,8 +540,7 @@ def createSubtopic(response, id):
 def deleteSubtopic(response, id):
     subtopic = SubTopic.objects.get(id=id)
     maintopic = subtopic.mainTopic
-    maintopic.SubTopicCount -= 1
-    maintopic.save()
+    maintopic.minusSubTopicCount()
     if(response.user.account.is_admin):
         subtopic.delete()
     return redirect('/topic/'+str(maintopic.id))
@@ -825,6 +837,33 @@ def searchPostByUser(response, id):
                 posts.append(post)
     return render(response, 'viewPostByUser.html', {'userObj': userObj, 'posts': posts})
 
+def viewPost(response, id):
+    post = ForumPost.objects.get(id=id)
+    subtopic = post.topic
+    commentform = CommentForm()
+    return render(response, 'viewPost.html', {'post':post, 'subtopic':subtopic, 'commentform': commentform})
+
+def comment(response, id):
+    if(response.method == 'POST'):
+        post = ForumPost.objects.get(id=id)
+        user = response.user
+    
+        form = CommentForm(response.POST)
+
+        if form.is_valid():
+            text = form.cleaned_data["text"]
+            inputdate = response.POST['date'][:24]
+            comment = Comment(post=post, user=user,text=text, date=inputdate)
+            comment.save()
+    
+    return redirect('/viewPost/'+str(id))
+
+def deleteComment(response, id):
+    comment = Comment.objects.get(id=id)
+    post = comment.post
+    if comment.user == response.user or response.user.account.is_admin or (post in response.user.posts.all()):
+        comment.delete()
+    return redirect('/viewPost/'+str(post.id))
 
 
 
