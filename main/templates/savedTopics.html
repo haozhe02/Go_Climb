@@ -72,6 +72,8 @@
 			</div>
 				
 		</nav>
+
+		
 		<!-- End Header/Navigation -->
 
 		<!-- Start Hero Section -->
@@ -80,7 +82,7 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<a href="/topic/{{maintopic.id}}"><h1>Topic - {{maintopic.title}}</h1></a>
+								<h1>Saved Topics</h1>
 							</div>
 						</div>
 					</div>
@@ -132,7 +134,7 @@
 <!--SearchBox Section-->
 <!--<div class="search-box">
 	<div>
-		 <select name="" id="">
+		< <select name="" id="">
 			<option value="Everything">Everything</option>
 			<option value="Titles">Titles</option>
 			<option value="Descriptions">Descriptions</option>
@@ -141,40 +143,59 @@
 		<button><i class="fa fa-search"></i></button>
 	</div>
 </div>-->
-		<!--Bye Bye HAHA-->
 </header>
 <div class="container">
 	<div class="subforum">
 		<div class="subforum-title">
-			<h1>{{maintopic.title}}</h1>
-            <a href="/forum" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to Main Forum</a>
-			{% if user.is_authenticated %}
-			<a href="/createSubtopic/{{maintopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ; " >Create SubTopic</a>
-			{% endif %}
+			<h1>Main Topics</h1>
 		</div>
-		{% for subtopic in maintopic.subtopics.all %}
+		{% for maintopic in user.account.savedMainTopics.all %}
+		<div class="subforum-row">
+			<div class="subforum-icon subforum-column center">
+				<!-- <i class="fa fa-car center"></i> -->
+			</div>
+			<div class="subforum-description subforum-column">
+				<h4><a href="/topic/{{maintopic.id}}">{{maintopic.title}}</a></h4>
+				<p>
+                    Section: {{maintopic.section}} <br>
+                    Description Content: {{maintopic.description}}
+                </p>
+			</div>
+			<div class="subforum-stats subforum-column center">
+				<span>{{maintopic.PostCount}} Posts</span>
+			</div>
+			<div class="subforum-info subforum-column">
+				<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
+				<br>on <small>12 Dec 2020</small>-->
+				<span>{{maintopic.SubTopicCount}} Topics</span>
+			</div>
+		</div>
+        <hr class="subforum-devider">
+		{% endfor %}
+	</div>
+
+
+    <div class="subforum">
+		<div class="subforum-title">
+			<h1>Sub Topics</h1>
+		</div>
+		{% for subtopic in user.account.savedSubTopics.all %}
 		<div class="subforum-row">
 			<div class="subforum-icon subforum-column center">
 				<!-- <i class="fa fa-car center"></i> -->
 			</div>
 			<div class="subforum-description subforum-column">
 				<h4><a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a></h4>
-				{% if user.is_authenticated %}
-					{% if subtopic not in user.account.savedSubTopics.all %}
-					<a href="/saveSubTopic/{{subtopic.id}}">Save Topic</a> <br>
-					{% else %}
-					Topic Saved! <br>
-					{% endif %}
-				{% endif %}
-				<p>Description Content: {{subtopic.description}}</p>
+				<p>
+                    Section: {{subtopic.mainTopic.section}} <br>
+                    Main Topic: {{subtopic.mainTopic}} <br>
+                    Description Content: {{subtopic.description}}
+                </p>
 			</div>
 			<div class="subforum-stats subforum-column center">
 				<span>{{subtopic.PostCount}} Posts</span>
 			</div>
 			<div class="subforum-info subforum-column">
-				{% if user.account.is_admin or user.is_superuser or user.is_staff %}
-				<a href="/deleteSubtopic/{{subtopic.id}}">Delete Sub Topic</a>
-				{% endif %}
 			</div>
 		</div>
 		<hr class="subforum-devider">

@@ -460,6 +460,8 @@ def loginUser(response):
                 signupform.save()
                 user = User.objects.get(username=signupform.cleaned_data['username'])
                 Account.objects.create(user=user)
+                achievement = Achievement.objects.get(title="Totally New")
+                user.account.achievements.add(achievement)
                 return render(response, "login.html", {'signupform': signupform, 'successful': 'Account Created Successfully'})
             else:
                 errorsDetail = []
@@ -683,21 +685,9 @@ def checkAchievement(user):
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
 
-    #Veteran
-    if(user.account.totalRoute >= 150):
-        achievement = Achievement.objects.get(title='Veteran Climber')
-        if(achievement not in user.account.achievements.all()):
-            user.account.addAchievement(achievement)
-
     #Master
     if(user.account.totalRoute >= 200):
         achievement = Achievement.objects.get(title='Master Climber')
-        if(achievement not in user.account.achievements.all()):
-            user.account.addAchievement(achievement)
-
-    #Pioneer
-    if(user.account.totalRoute >= 300):
-        achievement = Achievement.objects.get(title='Pioneer Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
 
@@ -865,8 +855,49 @@ def deleteComment(response, id):
         comment.delete()
     return redirect('/viewPost/'+str(post.id))
 
+def saveMainTopic(response, id):
+    maintopic = MainTopic.objects.get(id=id)
+    if maintopic not in response.user.account.savedMainTopics.all():
+        response.user.account.addSavedMT(maintopic)
+    return redirect('/forum/')
 
+def saveSubTopic(response, id):
+    subtopic = SubTopic.objects.get(id=id)
+    maintopic = subtopic.mainTopic
+    if subtopic not in response.user.account.savedSubTopics.all():
+        response.user.account.addSavedST(subtopic)
+    return redirect('/topic/'+str(maintopic.id))
 
+def viewSavedTopics(response):
+    return render(response, 'savedTopics.html')
+
+def searchAllMTSTP(response):
+    if response.method == "GET":
+        return redirect('/forum/')
+    
+    searchInput = response.POST['search'].rstrip()
+   
+    maintopics = []
+    subtopics = []
+    posts = []
+
+    if searchInput != "":
+        for maintopic in MainTopic.objects.all():
+            if searchInput.lower() in maintopic.title.lower():
+                maintopics.append(maintopic)
+
+        for subtopic in SubTopic.objects.all():
+            if searchInput.lower() in subtopic.title.lower():
+                subtopics.append(subtopic)
+
+        for post in ForumPost.objects.all():
+            if searchInput.lower() in post.title.lower():
+                posts.append(post)
+    else:
+        maintopics = MainTopic.objects.all()
+        subtopics = SubTopic.objects.all()
+        posts = ForumPost.objects.all()
+    return render(response, 'searchAllMTSTP.html', {'maintopics': maintopics, 'subtopics': subtopics, 'posts': posts})
 
 """
 def search(response):

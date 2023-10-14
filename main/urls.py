@@ -47,6 +47,10 @@ urlpatterns = [
     path("viewPost/<int:id>/", views.viewPost, name="viewPost"),
     path("comment/<int:id>/", views.comment, name="comment"),
     path("deleteComment/<int:id>", views.deleteComment, name="deleteComment"),
+    path("saveMainTopic/<int:id>", views.saveMainTopic, name="saveMainTopic"),
+    path("saveSubTopic/<int:id>", views.saveSubTopic, name="saveSubTopic"),
+    path("viewSavedTopics/", views.viewSavedTopics, name="viewSavedTopics"),
+    path("searchAllMTSTP/", views.searchAllMTSTP, name="searchAllMTSTP"),
         
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),

@@ -93,13 +93,15 @@ class Account(models.Model):
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
     achievements = models.ManyToManyField(Achievement, blank=True)
-    about = models.TextField(default="")
+    about = models.TextField(default="", null=True)
     followers = models.ManyToManyField(User, related_name='followings',blank=True)
     followings = models.ManyToManyField(User, related_name='followers', blank=True)
     followersCount = models.BigIntegerField(default=0)
     followingsCount = models.BigIntegerField(default=0)
     facebookLink = models.CharField(max_length=150, default="Empty")
     youtubeLink = models.CharField(max_length=150, default="Empty")
+    savedMainTopics = models.ManyToManyField(MainTopic, blank=True, related_name='accountMT')
+    savedSubTopics = models.ManyToManyField(SubTopic, blank=True, related_name='accountST')
 
     def __str__(self):
         return self.user.username
@@ -153,6 +155,14 @@ class Account(models.Model):
 
     def updateYoutube(self, youtube):
         self.youtubeLink = youtube
+        self.save()
+
+    def addSavedMT(self, maintopic):
+        self.savedMainTopics.add(maintopic)
+        self.save()
+
+    def addSavedST(self, subtopic):
+        self.savedSubTopics.add(subtopic)
         self.save()
     
 class ContactUs(models.Model):
