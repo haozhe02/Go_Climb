@@ -831,7 +831,8 @@ def viewPost(response, id):
     post = ForumPost.objects.get(id=id)
     subtopic = post.topic
     commentform = CommentForm()
-    return render(response, 'viewPost.html', {'post':post, 'subtopic':subtopic, 'commentform': commentform})
+    posts = ForumPost.objects.all()
+    return render(response, 'viewPost.html', {'post':post, 'subtopic':subtopic, 'commentform': commentform, 'posts':posts})
 
 def comment(response, id):
     if(response.method == 'POST'):
@@ -845,6 +846,13 @@ def comment(response, id):
             inputdate = response.POST['date'][:24]
             comment = Comment(post=post, user=user,text=text, date=inputdate)
             comment.save()
+            if 'quote' in response.POST:
+                inputlist = response.POST.getlist('quote')
+                for entry in inputlist:
+                    if entry != "None":
+                        postID = int(entry)
+                        post = ForumPost.objects.get(id=postID)
+                        comment.addQuote(post)
     
     return redirect('/viewPost/'+str(id))
 

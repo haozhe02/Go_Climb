@@ -217,8 +217,13 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     date = models.TextField(null=True)
+    quotings = models.ManyToManyField(ForumPost, related_name='quotedBy', blank=True)
 
     def __str__(self):
         return str(self.text)
+    
+    def addQuote(self, post):
+        self.quotings.add(post)
+        self.save()
 
 

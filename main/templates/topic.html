@@ -81,6 +81,8 @@
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
 								<a href="/topic/{{maintopic.id}}"><h1>Topic - {{maintopic.title}}</h1></a>
+								<button class="share-button" data-topic-link="{% url 'topic' id=maintopic.id %}" style="border-radius: 40px; margin: auto;height:40px;text-align: center;background-color:#B3C890; border: none;">
+									Share This Topic</button>
 							</div>
 						</div>
 					</div>
@@ -167,6 +169,8 @@
 					{% endif %}
 				{% endif %}
 				<p>Description Content: {{subtopic.description}}</p>
+
+
 			</div>
 			<div class="subforum-stats subforum-column center">
 				<span>{{subtopic.PostCount}} Posts</span>
@@ -269,6 +273,29 @@
 		</footer>
 		<!-- End Footer Section -->	
 
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		<script>
+			function copyToClipboard(text) {
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textarea);
+			}
+			
+			document.addEventListener('DOMContentLoaded', function() {
+				const shareButtons = document.querySelectorAll('.share-button');
+			
+				shareButtons.forEach(button => {
+					button.addEventListener('click', function() {
+						const topicLink =  window.location.origin + this.getAttribute('data-topic-link');
+						copyToClipboard(topicLink);
+						alert('Link copied to clipboard!');
+					});
+				});
+			});
+		</script>
 
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
