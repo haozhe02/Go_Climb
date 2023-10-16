@@ -18,22 +18,25 @@ def home(response):
 def createPost(response, id):
     if response.method == "POST":
         form = CreatePost(response.POST, response.FILES)
-
         if form.is_valid():
             title = form.cleaned_data["title"]
             text = form.cleaned_data["text"]
             image = form.cleaned_data["image"]
             inputdate = response.POST['date'][:24]
-            #date = getDateTime(inputdate)
-            post = ForumPost(title=title, text=text, image=image,date=inputdate)
-            post.save()
-            response.user.posts.add(post)
-            subtopic = SubTopic.objects.get(id =id)
-            subtopic.posts.add(post)
-            subtopic.addPostCount()
-            maintopic = subtopic.mainTopic
-            maintopic.addPostCount()
-
+            if 'create_button' in response.POST:
+                post = ForumPost(title=title, text=text, image=image,date=inputdate)
+                post.save()
+                response.user.posts.add(post)
+                subtopic = SubTopic.objects.get(id =id)
+                subtopic.posts.add(post)
+                subtopic.addPostCount()
+                maintopic = subtopic.mainTopic
+                maintopic.addPostCount()
+            elif 'save_button' in response.POST:
+                subtopic = SubTopic.objects.get(id =id)
+                user = response.user
+                draft = PostDraft(title=title, text=text, image=image, user=user, topic =subtopic)
+                draft.save()
 
         return redirect('/subtopic/' +str(id))
     else:
@@ -74,7 +77,10 @@ def editPost(response, id):
             post = ForumPost.objects.get(id=id)
             post.title = form.cleaned_data["title"]
             post.text = form.cleaned_data["text"]
-            post.image = form.cleaned_data["image"]
+            image = form.cleaned_data["image"]
+            if image == "" or image == None:
+                image = post.image
+            post.image = image
             post.save()
             subtopic = post.topic
         return redirect('/subtopic/' +str(subtopic.id))
@@ -396,10 +402,23 @@ def color(time):
     
 def forum1(response):
     sections = Section.objects.all()
-    return render(response, "forum.html", {'sections': sections})
+    topics = []
+    for section in sections:
+        for maintopic in section.maintopics.all():
+            try:
+                latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+            except ForumPost.DoesNotExist:
+                latest_post = None
+            topic = {
+                'maintopic': maintopic,
+                'latest_post': latest_post
+            }
+            topics.append(topic)
+    return render(response, "forum.html", {'sections': sections, 'topics': topics})
 
 def topic(response, id):
     maintopic = MainTopic.objects.get(id=id)   
+    maintopic.addView()
     return render(response, 'topic.html', {'maintopic': maintopic})
 
 def subtopic(response, id):
@@ -407,10 +426,14 @@ def subtopic(response, id):
     maintopic = subtopic.mainTopic
     posts = subtopic.posts.all()
     flaggedPosts = []
+    subtopic.addView()
     if response.user.is_authenticated:
         for flaggedPost in response.user.flaggedPosts.all():
             flaggedPosts.append(flaggedPost.post)
-    return render(response, 'subtopic.html', {'subtopic': subtopic, 'maintopic': maintopic, 'posts':posts, 'flaggedPosts': flaggedPosts})
+    allFP = []
+    for flaggedPost in FlaggedPost.objects.all():
+            allFP.append(flaggedPost.post)
+    return render(response, 'subtopic.html', {'subtopic': subtopic, 'maintopic': maintopic, 'posts':posts, 'flaggedPosts': flaggedPosts, 'allFP': allFP})
 
 def contact(response):
     contactus = ContactUsForm()
@@ -829,10 +852,18 @@ def searchPostByUser(response, id):
 
 def viewPost(response, id):
     post = ForumPost.objects.get(id=id)
+    post.addView()
     subtopic = post.topic
     commentform = CommentForm()
     posts = ForumPost.objects.all()
-    return render(response, 'viewPost.html', {'post':post, 'subtopic':subtopic, 'commentform': commentform, 'posts':posts})
+    flaggedPosts = []
+    if response.user.is_authenticated:
+        for flaggedPost in response.user.flaggedPosts.all():
+            flaggedPosts.append(flaggedPost.post)
+    allFP = []
+    for flaggedPost in FlaggedPost.objects.all():
+            allFP.append(flaggedPost.post)
+    return render(response, 'viewPost.html', {'post':post, 'subtopic':subtopic, 'commentform': commentform, 'posts':posts, 'flaggedPosts': flaggedPosts, 'allFP': allFP})
 
 def comment(response, id):
     if(response.method == 'POST'):
@@ -877,7 +908,18 @@ def saveSubTopic(response, id):
     return redirect('/topic/'+str(maintopic.id))
 
 def viewSavedTopics(response):
-    return render(response, 'savedTopics.html')
+    topics = []
+    for maintopic in MainTopic.objects.all():
+        try:
+            latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+        except ForumPost.DoesNotExist:
+            latest_post = None
+        topic = {
+            'maintopic': maintopic,
+            'latest_post': latest_post
+        }
+        topics.append(topic)
+    return render(response, 'savedTopics.html', {'topics': topics})
 
 def searchAllMTSTP(response):
     if response.method == "GET":
@@ -888,11 +930,22 @@ def searchAllMTSTP(response):
     maintopics = []
     subtopics = []
     posts = []
+    topics = []
+    
 
     if searchInput != "":
         for maintopic in MainTopic.objects.all():
             if searchInput.lower() in maintopic.title.lower():
                 maintopics.append(maintopic)
+                try:
+                    latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+                except ForumPost.DoesNotExist:
+                    latest_post = None
+                topic = {
+                    'maintopic': maintopic,
+                    'latest_post': latest_post
+                }
+                topics.append(topic)
 
         for subtopic in SubTopic.objects.all():
             if searchInput.lower() in subtopic.title.lower():
@@ -905,7 +958,68 @@ def searchAllMTSTP(response):
         maintopics = MainTopic.objects.all()
         subtopics = SubTopic.objects.all()
         posts = ForumPost.objects.all()
-    return render(response, 'searchAllMTSTP.html', {'maintopics': maintopics, 'subtopics': subtopics, 'posts': posts})
+        for maintopic in MainTopic.objects.all():
+            try:
+                latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+            except ForumPost.DoesNotExist:
+                latest_post = None
+            topic = {
+                'maintopic': maintopic,
+                'latest_post': latest_post
+            }
+            topics.append(topic)
+
+    flaggedPosts = []
+    if response.user.is_authenticated:
+        for flaggedPost in response.user.flaggedPosts.all():
+            flaggedPosts.append(flaggedPost.post)
+    allFP = []
+    for flaggedPost in FlaggedPost.objects.all():
+            allFP.append(flaggedPost.post)
+    return render(response, 'searchAllMTSTP.html', {'maintopics': maintopics, 'subtopics': subtopics, 'posts': posts, 'flaggedPosts': flaggedPosts, 'allFP': allFP, 'topics': topics})
+
+def editDraft(response, id):
+    if response.method == "POST":
+        form = CreatePost(response.POST, response.FILES)
+        if form.is_valid():
+            draft = PostDraft.objects.get(id=id)
+            title = form.cleaned_data["title"]
+            text = form.cleaned_data["text"]
+            inputdate = response.POST['date'][:24]
+            image = form.cleaned_data["image"]
+            if image == "" or image == None:
+                image = draft.image
+            subtopic = PostDraft.objects.get(id=id).topic
+            if 'create_button' in response.POST:
+                post = ForumPost(title=title, text=text, image=image,date=inputdate)
+                post.save()
+                response.user.posts.add(post)
+                subtopic.posts.add(post)
+                subtopic.addPostCount()
+                maintopic = subtopic.mainTopic
+                maintopic.addPostCount()
+                if draft.user == response.user or response.user.account.is_admin:
+                    draft.delete()
+            elif 'save_button' in response.POST:
+                draft = PostDraft.objects.get(id=id)
+                draft.title = title
+                draft.text = text
+                draft.image = image
+                draft.save()
+        return redirect('/subtopic/' +str(subtopic.id))
+    else:
+        draft = PostDraft.objects.get(id=id)
+        subtopic = draft.topic
+        editdraft = CreatePost(initial={'title': draft.title, 'text': draft.text, 'image': draft.image})
+    return render(response, 'editDraft.html', {'editdraft': editdraft, 'subtopic':subtopic, 'draft': draft})
+
+def deleteDraft(response, id):
+    draft = PostDraft.objects.get(id=id)
+    subtopic = draft.topic
+    if draft.user == response.user:
+        draft.delete()
+    return redirect('/subtopic/'+str(subtopic.id))
+
 
 """
 def search(response):

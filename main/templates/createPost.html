@@ -99,8 +99,9 @@
                             </p>
 							<input type="hidden" name="date" id="date">
                             <div class="row justify-content-between align-items-center">
-                                <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Create Post</button>
-								
+                                <!--<button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Create Post</button>-->
+								<input type="submit" name="create_button" value="Create Post" style="border-radius: 25px; margin: auto; width:fit-content; background-color:#B3C890; height:fit-content; color: black; padding: 5px;">
+    							<input type="submit" name="save_button" value="Save As Draft" style="border-radius: 25px; margin: auto; width:fit-content; background-color:#B3C890; height:fit-content; color: black; padding: 5px;">
 							</div>
                         </form>
 						
@@ -197,6 +198,7 @@
 
 				});
 			});
+
 		</script>
  
 		<script src="{% static 'js/script.js' %}"></script>

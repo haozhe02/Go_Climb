@@ -168,7 +168,12 @@
 					Topic Saved! <br>
 					{% endif %}
 				{% endif %}
-				<p>Description Content: {{subtopic.description}}</p>
+				<p>
+					<a href="/forum/">{{subtopic.mainTopic.section}}</a> >
+                    <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}} >
+					<a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a><br>
+					Description Content: {{subtopic.description}}
+				</p>
 
 
 			</div>
@@ -179,6 +184,9 @@
 				{% if user.account.is_admin or user.is_superuser or user.is_staff %}
 				<a href="/deleteSubtopic/{{subtopic.id}}">Delete Sub Topic</a>
 				{% endif %}
+				<br>
+				<span>Total Views: {{subtopic.totalView}}</span> <br>
+				<span>Latest Post: <a href="/viewPost/{{subtopic.posts.last.id}}">{{subtopic.posts.last}}</a> by <a href="/viewProfile/{{subtopic.posts.last.user.id}}">{{subtopic.posts.last.user}}</a> on {{subtopic.posts.last.date}}</span>
 			</div>
 		</div>
 		<hr class="subforum-devider">

@@ -149,28 +149,33 @@
 		<div class="subforum-title">
 			<h1>Main Topics</h1>
 		</div>
-		{% for maintopic in user.account.savedMainTopics.all %}
-		<div class="subforum-row">
-			<div class="subforum-icon subforum-column center">
-				<!-- <i class="fa fa-car center"></i> -->
+		{% for topic in topics%}
+			{% if topic.maintopic in user.account.savedMainTopics.all %}
+			<div class="subforum-row">
+				<div class="subforum-icon subforum-column center">
+					<!-- <i class="fa fa-car center"></i> -->
+				</div>
+				<div class="subforum-description subforum-column">
+					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
+					<p>
+						<a href="/forum/">{{topic.maintopic.section}}</a> >
+						<a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a> <br>
+						Description Content: {{topic.maintopic.description}}
+					</p>
+				</div>
+				<div class="subforum-stats subforum-column center">
+					<span>{{topic.maintopic.PostCount}} Posts</span>
+				</div>
+				<div class="subforum-info subforum-column">
+					<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
+					<br>on <small>12 Dec 2020</small>-->
+					<span>{{topic.maintopic.SubTopicCount}} Topics</span> <br>
+					<span>Total Views: {{topic.maintopic.totalView}}</span> <br>
+					<span>Latest Post: <a href="/viewPost/{{topic.latest_post.id}}">{{topic.latest_post}}</a> by <a href="/viewProfile/{{topic.latest_post.user.id}}">{{topic.latest_post.user}}</a> on {{topic.latest_post.date}}</span>
+				</div>
 			</div>
-			<div class="subforum-description subforum-column">
-				<h4><a href="/topic/{{maintopic.id}}">{{maintopic.title}}</a></h4>
-				<p>
-                    Section: {{maintopic.section}} <br>
-                    Description Content: {{maintopic.description}}
-                </p>
-			</div>
-			<div class="subforum-stats subforum-column center">
-				<span>{{maintopic.PostCount}} Posts</span>
-			</div>
-			<div class="subforum-info subforum-column">
-				<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
-				<br>on <small>12 Dec 2020</small>-->
-				<span>{{maintopic.SubTopicCount}} Topics</span>
-			</div>
-		</div>
-        <hr class="subforum-devider">
+			<hr class="subforum-devider">
+			{% endif %}
 		{% endfor %}
 	</div>
 
@@ -187,8 +192,9 @@
 			<div class="subforum-description subforum-column">
 				<h4><a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a></h4>
 				<p>
-                    Section: <b>{{subtopic.mainTopic.section}}</b> <br>
-                    Main Topic: <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}}</a> <br>
+					<a href="/forum/">{{subtopic.mainTopic.section}}</a> >
+                    <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}} >
+					<a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a><br>
                     Description Content: {{subtopic.description}}
                 </p>
 			</div>
@@ -196,6 +202,9 @@
 				<span>{{subtopic.PostCount}} Posts</span>
 			</div>
 			<div class="subforum-info subforum-column">
+				<span>Total Views: {{subtopic.totalView}}</span> <br>
+				<span>Latest Post: <a href="/viewPost/{{subtopic.posts.last.id}}">{{subtopic.posts.last}}</a> by <a href="/viewProfile/{{subtopic.posts.last.user.id}}">{{subtopic.posts.last.user}}</a> on {{subtopic.posts.last.date}}</span>
+
 			</div>
 		</div>
 		<hr class="subforum-devider">

@@ -31,6 +31,7 @@ class MainTopic(models.Model):
     description = models.TextField()
     PostCount = models.BigIntegerField()
     SubTopicCount = models.BigIntegerField()
+    totalView = models.BigIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -51,11 +52,18 @@ class MainTopic(models.Model):
         self.SubTopicCount -= 1
         self.save()
 
+    def addView(self):
+        self.totalView += 1
+        self.save()
+
+
+
 class SubTopic(models.Model):
     mainTopic = models.ForeignKey(MainTopic, on_delete=models.CASCADE, related_name="subtopics")
     title = models.CharField(max_length=200)
     description = models.TextField()
     PostCount = models.BigIntegerField()
+    totalView = models.BigIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -67,6 +75,10 @@ class SubTopic(models.Model):
     def minusPostCount(self):
         self.PostCount -= 1
         self.save()
+
+    def addView(self):
+        self.totalView += 1
+        self.save()
         
 class ForumPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
@@ -75,6 +87,21 @@ class ForumPost(models.Model):
     text = models.TextField()
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     date = models.TextField(null=True)
+    totalView = models.BigIntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+    
+    def addView(self):
+        self.totalView += 1
+        self.save()
+
+class PostDraft(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="drafts")
+    topic = models.ForeignKey(SubTopic, on_delete=models.CASCADE, related_name="drafts")
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     def __str__(self):
         return self.title

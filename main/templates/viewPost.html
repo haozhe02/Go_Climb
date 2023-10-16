@@ -109,23 +109,34 @@
             &nbsp;&nbsp;&nbsp;<a href="/editPost/{{post.id}}">Edit Post</a>
             {% endif %}
             
-            <p>Content: <br> {{post.text|linebreaksbr}}</p>
+            <p>
+				<a href="/forum/">{{post.topic.mainTopic.section}}</a> >
+				<a href="/topic/{{post.topic.mainTopic.id}}">{{post.topic.mainTopic}}</a> >
+				<a href="/subtopic/{{post.topic.id}}">{{post.topic}}</a> >
+				<a href="/viewPost/{{post.id}}">{{post.title}}</a><br>
+				Content: <br> {{post.text|linebreaksbr}}
+			</p>
             {% if post.image and post.image != 'False'%}
             <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
             {% endif %}
+
+
+			<p>Total Views: {{post.totalView}}</p>
             
             {% if user.account.is_admin %}
-                {% if post in flaggedPosts %}
+                {% if post in allFP %}
                     <br><b>Post Flagged, Please Check!</b>
                 {% else %}
                     <br><b>Post is normal, not flagged!</b>
                 {% endif %}
             {% else %}
-                {% if post in flaggedPosts %}
-                    <br><b>Post Flagged and in Investigation</b>
-                {% else %}
-                    <br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
-                {% endif %}
+				{% if user.is_authenticated %}
+					{% if post in flaggedPosts %}
+						<br><b>Post Flagged and in Investigation</b>
+					{% else %}
+						<br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
+					{% endif %}
+				{% endif %}
             {% endif %}
 		</div>
 

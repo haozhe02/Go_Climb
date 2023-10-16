@@ -100,59 +100,6 @@
 			</form>
 		</div>
 
-		<!-- Start forum -->
-		<!-- <div class="forum-center"></div>
-			<div class="forum-left">
-				<div class="forum-topic-card">
-					<h3>Forum</h3>
-					<a class="nav-link" href="#"><img src="images/user-profile-icon.png" height="40px"></a></li>
-					<div class="details">
-						<p>@user_name <br> Country of Origin <br>0 Followers &nbsp; 0 Following</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Favourite Activites</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-			</div>
-			<div class="forum-right">
-				<div class="forum-topic-card">
-					<h3>About</h3>
-					<div class="details">
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut.</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>History</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Achievements</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut. Duis sollicitudin sapien eget tincidunt ultrices. In nec elit lectus. Etiam maximus eu dui in blandit. Praese</p>
-					</div>
-					
-				</div>
-			</div>
-		</div> -->
-<!--SearchBox Section-->
-<!--<div class="search-box">
-	<div>
-		< <select name="" id="">
-			<option value="Everything">Everything</option>
-			<option value="Titles">Titles</option>
-			<option value="Descriptions">Descriptions</option>
-		</select> 
-		<input type="text" name="q" placeholder="search ...">
-		<button><i class="fa fa-search"></i></button>
-	</div>
-</div>-->
 </header>
 <div class="container">
 	{% if user.is_authenticated %}
@@ -170,35 +117,43 @@
 			<a href="/createTopic/{{section.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890;">Create Topic</a>
 			{% endif %}
 		</div>
-		{% for maintopic in section.maintopics.all %}
-		<div class="subforum-row">
-			<div class="subforum-icon subforum-column center">
-				<!-- <i class="fa fa-car center"></i> -->
-			</div>
-			<div class="subforum-description subforum-column">
-				<h4><a href="/topic/{{maintopic.id}}">{{maintopic.title}}</a></h4>
-				{% if user.is_authenticated %}
-					{% if maintopic not in user.account.savedMainTopics.all %}
-					<a href="/saveMainTopic/{{maintopic.id}}">Save Topic</a> <br>
-					{% else %}
-					Topic Saved! <br>
+		{% for topic in topics %}
+			{% if topic.maintopic in section.maintopics.all %}
+			<div class="subforum-row">
+				<div class="subforum-icon subforum-column center">
+					<!-- <i class="fa fa-car center"></i> -->
+				</div>
+				<div class="subforum-description subforum-column">
+					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
+					{% if user.is_authenticated %}
+						{% if topic.maintopic not in user.account.savedMainTopics.all %}
+						<a href="/saveMainTopic/{{topic.maintopic.id}}">Save Topic</a> <br>
+						{% else %}
+						Topic Saved! <br>
+						{% endif %}
 					{% endif %}
-				{% endif %}
-				<p>Description Content: {{maintopic.description}}</p>
-				{% if user.account.is_admin or user.is_superuser or user.is_staff %}
-				<a href="/deleteTopic/{{maintopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890;">Delete Topic</a>
-				{% endif %}
+					<p>
+						<a href="/forum/">{{topic.maintopic.section}}</a> >
+						<a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a> <br>
+						Description Content: {{topic.maintopic.description}}
+					</p>
+					{% if user.account.is_admin or user.is_superuser or user.is_staff %}
+					<br><a href="/deleteTopic/{{topic.maintopic.id}}">Delete Topic</a>
+					{% endif %}
 
+				</div>
+				<div class="subforum-stats subforum-column center">
+					<span>{{topic.maintopic.PostCount}} Posts</span>
+				</div>
+				<div class="subforum-info subforum-column">
+					<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
+					<br>on <small>12 Dec 2020</small>-->
+					<span>{{topic.maintopic.SubTopicCount}} Topics</span><br>
+					<span>Total Views: {{topic.maintopic.totalView}}</span> <br>
+					<span>Latest Post: <a href="/viewPost/{{topic.latest_post.id}}">{{topic.latest_post}}</a> by <a href="/viewProfile/{{topic.latest_post.user.id}}">{{topic.latest_post.user}}</a> on {{topic.latest_post.date}}</span>
+				</div>
 			</div>
-			<div class="subforum-stats subforum-column center">
-				<span>{{maintopic.PostCount}} Posts</span>
-			</div>
-			<div class="subforum-info subforum-column">
-				<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
-				<br>on <small>12 Dec 2020</small>-->
-				<span>{{maintopic.SubTopicCount}} Topics</span>
-			</div>
-		</div>
+			{% endif%}
 		{% endfor %}
 	</div>
 	{% endfor %}

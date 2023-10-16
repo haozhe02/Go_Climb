@@ -51,7 +51,10 @@ urlpatterns = [
     path("saveSubTopic/<int:id>", views.saveSubTopic, name="saveSubTopic"),
     path("viewSavedTopics/", views.viewSavedTopics, name="viewSavedTopics"),
     path("searchAllMTSTP/", views.searchAllMTSTP, name="searchAllMTSTP"),
-        
+    path("editDraft/<int:id>/", views.editDraft, name="editDraft"),
+    path("deleteDraft/<int:id>/", views.deleteDraft, name="deleteDraft"),
+
+
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),
     #path("country/", views.list, name="list"),

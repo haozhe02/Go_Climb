@@ -174,7 +174,13 @@
 				{% if post.date %}
 				Posted on: {{post.date}}
 				{% endif %}
-				<p>Content: <br> {{post.text|linebreaksbr}}</p>
+				<p>
+					<a href="/forum/">{{post.topic.mainTopic.section}}</a> >
+					<a href="/topic/{{post.topic.mainTopic.id}}">{{post.topic.mainTopic}}</a> >
+                    <a href="/subtopic/{{post.topic.id}}">{{post.topic}}</a> >
+					<a href="/viewPost/{{post.id}}">{{post.title}}</a><br>
+					Content: <br> {{post.text|linebreaksbr}}
+				</p>
                 {% if post.image and post.image != 'False'%}
                 <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
                 {% endif %}
@@ -187,26 +193,70 @@
 			</div>
 			<div class="subforum-info subforum-column">
 				<span>Posted By <a href="/viewProfile/{{post.user.id}}">{{post.user}}</a></span>
+				<br><span>Total Views: {{post.totalView}}</span>
 				{% if post in user.posts.all %} 
 				&nbsp;&nbsp;&nbsp;<a href="/editPost/{{post.id}}">Edit Post</a>
 				{% endif %}
 				{% if user.account.is_admin %}
-					{% if post in flaggedPosts %}
+					{% if post in allFP %}
 						<br><b>Post Flagged, Please Check!</b>
 					{% else %}
 						<br><b>Post is normal, not flagged!</b>
 					{% endif %}
 				{% else %}
-					{% if post in flaggedPosts %}
-						<br><b>Post Flagged and in Investigation</b>
-					{% else %}
-						<br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
+					{% if user.is_authenticated %}
+						{% if post in flaggedPosts %}
+							<br><b>Post Flagged and in Investigation</b>
+						{% else %}
+							<br><a href="/flagPost/{{post.id}}">Flag Post As Inappropriate</a>
+						{% endif %}
 					{% endif %}
 				{% endif %}
 			</div>
 		</div>
 		<hr class="subforum-devider">
 		{% endfor %}
+
+
+		{% if user.is_authenticated %}
+		<div>
+			<div style=" width: 100%; height: 100px; padding:20px" >
+				
+			</div>
+			<div class="subforum-title">
+				<h1>All Drafts</h1>
+			</div>
+			
+			{% for draft in user.drafts.all %}
+			<div class="subforum-row">
+				<div class="subforum-icon subforum-column center">
+					<!-- <i class="fa fa-car center"></i> -->
+				</div>
+				<div class="subforum-description subforum-column">
+					<h4>{{draft.title}}</h4>
+					<p>
+						<a href="/forum/">{{draft.topic.mainTopic.section}}</a> >
+						<a href="/topic/{{post.topic.mainTopic.id}}">{{draft.topic.mainTopic}}</a> >
+						<a href="/subtopic/{{post.topic.id}}">{{draft.topic}}</a> >
+						<b>This Draft</b> <br>
+						Content: <br> {{draft.text|linebreaksbr}}
+					</p>
+					{% if draft.image and draft.image != 'False'%}
+					<img src="{{draft.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
+					{% endif %}
+				</div>
+				<div class="subforum-stats subforum-column center">
+					<a href="/editDraft/{{draft.id}}">Edit Draft</a>
+					
+				</div>
+				<div class="subforum-info subforum-column center">
+					<a href="/deleteDraft/{{draft.id}}">Delete Draft</a>
+				</div>
+			</div>
+			<hr class="subforum-devider">
+			{% endfor %}
+		</div>
+		{% endif %}
 	</div>
 	<!--More-->
 <!---->
