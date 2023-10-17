@@ -191,17 +191,13 @@
 		<script>
 			$(document).ready(function() {
 				$('#climbAct-form').submit(function(event) {
-					var distance = parseInt($('#distance').val());
-					
-					if (Number.isInteger(distance) == false) {
-						alert('Please enter a integer for distance');
+					var distance = $('#distance').val();
+					var isPositiveInteger = /^[1-9]\d*$/.test(distance);
+
+					if (isPositiveInteger == false) {
+						alert('Please enter a positive number with no decimal point for distance');
 						event.preventDefault(); // Prevent form submission
 					}
-
-                    if(Number.isInteger(distance) && distance<=0 ){
-                        alert('Please enter a positive integer for distance');
-						event.preventDefault(); // Prevent form submission
-                    }
 				});
 			});
 		</script>
