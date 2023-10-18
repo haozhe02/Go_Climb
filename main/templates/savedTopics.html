@@ -157,10 +157,15 @@
 				</div>
 				<div class="subforum-description subforum-column">
 					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
+					
 					<p>
 						<a href="/forum/">{{topic.maintopic.section}}</a> >
 						<a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a> <br>
-						Description Content: {{topic.maintopic.description}}
+						Tags:
+						{% for tag in topic.maintopic.tags.all %} 
+						<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForMainTopic/{{topic.maintopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}  
+						{% endfor %}
+						<br><br>Description Content: {{topic.maintopic.description}}
 					</p>
 				</div>
 				<div class="subforum-stats subforum-column center">
@@ -195,7 +200,11 @@
 					<a href="/forum/">{{subtopic.mainTopic.section}}</a> >
                     <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}} >
 					<a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a><br>
-                    Description Content: {{subtopic.description}}
+					Tags: 
+					{% for tag in subtopic.tags.all %} 
+					<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForSubTopic/{{subtopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}  
+					{% endfor %}
+                    <br><br>Description Content: {{subtopic.description}}
                 </p>
 			</div>
 			<div class="subforum-stats subforum-column center">

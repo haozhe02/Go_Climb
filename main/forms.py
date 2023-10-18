@@ -102,3 +102,7 @@ class EditSocialMedia(forms.Form):
 class CommentForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}), strip=False)
     text.widget.attrs.update({"class": "form-control"})
+
+class AddTagsForm(forms.Form):
+    tags = forms.CharField(max_length=500)
+    tags.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Tags'})

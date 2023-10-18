@@ -23,7 +23,7 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>Forum</title>
+		<title>Tag</title>
 	</head>
 
 	<body>
@@ -51,7 +51,7 @@
 						</li>
 						<li><a class="nav-link" href="/weather">Weather</a></li>
 						<li><a class="nav-link" href="/ARroute">AR Route</a></li>
-						<li class="active"><a class="nav-link" href="/forum">Forum</a></li>
+						<li><a class="nav-link" href="/forum">Forum</a></li>
 						<li><a class="nav-link" href="/search">Search Crags</a></li>
 						<li><a class="nav-link" href="/contact">Contact us</a></li>
 						{% if user.account.is_admin %}
@@ -72,6 +72,8 @@
 			</div>
 				
 		</nav>
+
+		
 		<!-- End Header/Navigation -->
 
 		<!-- Start Hero Section -->
@@ -80,9 +82,8 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<a href="/subtopic/{{subtopic.id}}"><h1>Sub Topic - {{subtopic.title}}</h1></a>
-								<button class="share-button" data-subtopic-link="{% url 'subtopic' id=subtopic.id %}" style="border-radius: 40px; margin: auto;height:40px;text-align: center;background-color:#B3C890; border: none;">
-									Share This Sub Topic</button>
+								<h1>Tag #{{tag}}</h1>
+                                <a href="/forum" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to Main Forum</a>
 							</div>
 						</div>
 					</div>
@@ -90,79 +91,82 @@
 			</div>
 		<!-- End Hero Section -->
 
-		<!-- Start forum -->
-		<!-- <div class="forum-center"></div>
-			<div class="forum-left">
-				<div class="forum-topic-card">
-					<h3>Forum</h3>
-					<a class="nav-link" href="#"><img src="images/user-profile-icon.png" height="40px"></a></li>
-					<div class="details">
-						<p>@user_name <br> Country of Origin <br>0 Followers &nbsp; 0 Following</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Favourite Activites</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-			</div>
-			<div class="forum-right">
-				<div class="forum-topic-card">
-					<h3>About</h3>
-					<div class="details">
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut.</p>
-					</div>
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>History</h3>
-						<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-					</div>
-					
-				</div>
-				<div class="forum-topic-card">
-					<div class="favourite-activities">
-						<h3>Achievements</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed libero neque, aliquet in leo non, semper condimentum augue. Praesent vel sagittis elit. Maecenas eget nibh eu diam mattis tristique sed sed lacus. Praesent interdum convallis odio a iaculis. Duis luctus mi non enim dapibus mollis. Integer pharetra mollis nisi, ac malesuada nisl sollicitudin ut. Duis sollicitudin sapien eget tincidunt ultrices. In nec elit lectus. Etiam maximus eu dui in blandit. Praese</p>
-					</div>
-					
-				</div>
-			</div>
-		</div> -->
-<!--SearchBox Section-->
-<!--<div class="search-box">
-	<div>
-		<select name="" id="">
-			<option value="Everything">Everything</option>
-			<option value="Titles">Titles</option>
-			<option value="Descriptions">Descriptions</option>
-		</select> 
-		<input type="text" name="q" placeholder="search ...">
-		<button><i class="fa fa-search"></i></button>
-	</div>
-</div>-->
 </header>
 <div class="container">
 	<div class="subforum">
 		<div class="subforum-title">
-			<a href="/subtopic/{{subtopic.id}}"><h1>{{subtopic.title}}</h1></a>
-            <a href="/topic/{{maintopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Back to {{maintopic.title}}</a>
-			{% if user.is_authenticated %}
-            <a href="/createPost/{{subtopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ; " >Create Post</a>
-			{% endif %}
-			<a href="/subtopic/{{subtopic.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890 ;" >Clear Search</a>
+			<h1>Main Topics</h1>
 		</div>
-		<div style=" width: 100%; height: 100px; padding:20px" >
-			<form action="/searchPost/" method="post">
-			{% csrf_token %}
-			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" placeholder="Search by title" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">
-				<input type="hidden" name="id" value="{{subtopic.id}}">		
+		{% for topic in topics%}
+			<div class="subforum-row">
+				<div class="subforum-icon subforum-column center">
+					<!-- <i class="fa fa-car center"></i> -->
+				</div>
+				<div class="subforum-description subforum-column">
+					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
+					<p>
+						<a href="/forum/">{{topic.maintopic.section}}</a> >
+						<a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a> <br>
+                        Tags:
+						{% for tag in topic.maintopic.tags.all %} 
+						<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForMainTopic/{{topic.maintopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}    
+						{% endfor %}
+						<br><br>Description Content: {{topic.maintopic.description}}
+					</p>
+				</div>
+				<div class="subforum-stats subforum-column center">
+					<span>{{topic.maintopic.PostCount}} Posts</span>
+				</div>
+				<div class="subforum-info subforum-column">
+					<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
+					<br>on <small>12 Dec 2020</small>-->
+					<span>{{topic.maintopic.SubTopicCount}} Topics</span> <br>
+					<span>Total Views: {{topic.maintopic.totalView}}</span> <br>
+					<span>Latest Post: <a href="/viewPost/{{topic.latest_post.id}}">{{topic.latest_post}}</a> by <a href="/viewProfile/{{topic.latest_post.user.id}}">{{topic.latest_post.user}}</a> on {{topic.latest_post.date}}</span>
+				</div>
 			</div>
-			</form>
-			
+			<hr class="subforum-devider">
+		{% endfor %}
+	</div>
+
+
+    <div class="subforum">
+		<div class="subforum-title">
+			<h1>Sub Topics</h1>
+		</div>
+		{% for subtopic in subtopics %}
+		<div class="subforum-row">
+			<div class="subforum-icon subforum-column center">
+				<!-- <i class="fa fa-car center"></i> -->
+			</div>
+			<div class="subforum-description subforum-column">
+				<h4><a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a></h4>
+				<p>
+                    <a href="/forum/">{{subtopic.mainTopic.section}}</a> >
+                    <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}} >
+					<a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a><br>
+                    Tags: 
+					{% for tag in subtopic.tags.all %} 
+					<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForSubTopic/{{subtopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}  
+					{% endfor %}
+                    <br><br>Description Content: {{subtopic.description}}
+                </p>
+			</div>
+			<div class="subforum-stats subforum-column center">
+				<span>{{subtopic.PostCount}} Posts</span>
+			</div>
+			<div class="subforum-info subforum-column">
+				<span>Total Views: {{subtopic.totalView}}</span> <br>
+				<span>Latest Post: <a href="/viewPost/{{subtopic.posts.last.id}}">{{subtopic.posts.last}}</a> by <a href="/viewProfile/{{subtopic.posts.last.user.id}}">{{subtopic.posts.last.user}}</a> on {{subtopic.posts.last.date}}</span>
+			</div>
+		</div>
+		<hr class="subforum-devider">
+		{% endfor %}
+	</div>
+
+    <div class="subforum">
+		<div class="subforum-title">
+			<h1>Posts</h1>
 		</div>
 		{% for post in posts %}
 		<div class="subforum-row">
@@ -170,21 +174,24 @@
 				<!-- <i class="fa fa-car center"></i> -->
 			</div>
 			<div class="subforum-description subforum-column">
-				<a href="/viewPost/{{post.id}}"><h4>{{post.title}}</h4></a>
+				<h4><a href="/viewPost/{{post.id}}">{{post.title}}</a></h4>
+                <p>
+                   
+                </p>
 				{% if post.date %}
 				Posted on: {{post.date}}
 				{% endif %}
-				<p>
-					<a href="/forum/">{{post.topic.mainTopic.section}}</a> >
+				<p> 
+                    <a href="/forum/">{{post.topic.mainTopic.section}}</a> >
 					<a href="/topic/{{post.topic.mainTopic.id}}">{{post.topic.mainTopic}}</a> >
                     <a href="/subtopic/{{post.topic.id}}">{{post.topic}}</a> >
 					<a href="/viewPost/{{post.id}}">{{post.title}}</a><br>
-					Tags: 
-					{% for tag in post.tags.all %} 
-					<a href="tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForPost/{{post.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}
-					{% endfor %}
-					<br><br>Content: <br> {{post.text|linebreaksbr}}
-				</p>
+                    Tags: 
+                    {% for tag in post.tags.all %} 
+                    <a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForPost/{{post.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %} 
+                    {% endfor %}
+                    <br><br>Content: <br> {{post.text|linebreaksbr}}
+                </p>
                 {% if post.image and post.image != 'False'%}
                 <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
                 {% endif %}
@@ -198,6 +205,7 @@
 			<div class="subforum-info subforum-column">
 				<span>Posted By <a href="/viewProfile/{{post.user.id}}">{{post.user}}</a></span>
 				<br><span>Total Views: {{post.totalView}}</span>
+				
 				{% if user.account.is_admin %}
 					{% if post in allFP %}
 						<br><b>Post Flagged, Please Check!</b>
@@ -217,47 +225,6 @@
 		</div>
 		<hr class="subforum-devider">
 		{% endfor %}
-
-
-		{% if user.is_authenticated %}
-		<div>
-			<div style=" width: 100%; height: 100px; padding:20px" >
-				
-			</div>
-			<div class="subforum-title">
-				<h1>All Drafts</h1>
-			</div>
-			
-			{% for draft in user.drafts.all %}
-			<div class="subforum-row">
-				<div class="subforum-icon subforum-column center">
-					<!-- <i class="fa fa-car center"></i> -->
-				</div>
-				<div class="subforum-description subforum-column">
-					<h4>{{draft.title}}</h4>
-					<p>
-						<a href="/forum/">{{draft.topic.mainTopic.section}}</a> >
-						<a href="/topic/{{post.topic.mainTopic.id}}">{{draft.topic.mainTopic}}</a> >
-						<a href="/subtopic/{{post.topic.id}}">{{draft.topic}}</a> >
-						<b>This Draft</b> <br>
-						Content: <br> {{draft.text|linebreaksbr}}
-					</p>
-					{% if draft.image and draft.image != 'False'%}
-					<img src="{{draft.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
-					{% endif %}
-				</div>
-				<div class="subforum-stats subforum-column center">
-					<a href="/editDraft/{{draft.id}}">Edit Draft</a>
-					
-				</div>
-				<div class="subforum-info subforum-column center">
-					<a href="/deleteDraft/{{draft.id}}">Delete Draft</a>
-				</div>
-			</div>
-			<hr class="subforum-devider">
-			{% endfor %}
-		</div>
-		{% endif %}
 	</div>
 	<!--More-->
 <!---->
@@ -348,29 +315,7 @@
 		</footer>
 		<!-- End Footer Section -->	
 
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-		<script>
-			function copyToClipboard(text) {
-				const textarea = document.createElement('textarea');
-				textarea.value = text;
-				document.body.appendChild(textarea);
-				textarea.select();
-				document.execCommand('copy');
-				document.body.removeChild(textarea);
-			}
-			
-			document.addEventListener('DOMContentLoaded', function() {
-				const shareButtons = document.querySelectorAll('.share-button');
-			
-				shareButtons.forEach(button => {
-					button.addEventListener('click', function() {
-						const subtopicLink =  window.location.origin + this.getAttribute('data-subtopic-link');
-						copyToClipboard(subtopicLink);
-						alert('Link copied to clipboard!');
-					});
-				});
-			});
-		</script>
+
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>

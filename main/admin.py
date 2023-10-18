@@ -18,6 +18,9 @@ admin.site.register(Achievement)
 admin.site.register(SearchHistory)
 admin.site.register(Crag)
 admin.site.register(Comment)
+admin.site.register(Tag)
+admin.site.register(Badge)
+admin.site.register(Notification)
 
 class AccountInLine(admin.StackedInline):
     model = Account

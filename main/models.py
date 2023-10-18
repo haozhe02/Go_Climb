@@ -112,6 +112,13 @@ class Achievement(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Badge(models.Model):
+    name = models.CharField(max_length=150)
+    desc = models.TextField(null=True)
+
+    def __str__(self):
+        return self.name
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account")
@@ -129,6 +136,8 @@ class Account(models.Model):
     youtubeLink = models.CharField(max_length=150, default="Empty")
     savedMainTopics = models.ManyToManyField(MainTopic, blank=True, related_name='accountMT')
     savedSubTopics = models.ManyToManyField(SubTopic, blank=True, related_name='accountST')
+    badges = models.ManyToManyField(Badge, blank=True, related_name='accounts')
+    showingBadges = models.ManyToManyField(Badge, blank=True, related_name='accountsShowing')
 
     def __str__(self):
         return self.user.username
@@ -191,6 +200,18 @@ class Account(models.Model):
     def addSavedST(self, subtopic):
         self.savedSubTopics.add(subtopic)
         self.save()
+
+    def addBadge(self, badge):
+        self.badges.add(badge)
+        self.save()
+
+    def addShowingBadge(self, badge):
+        self.showingBadges.add(badge)
+        self.save()
+
+    def removeShowingBadge(self, badge):
+        self.showingBadges.remove(badge)
+        self.save()
     
 class ContactUs(models.Model):
     firstname = models.CharField(max_length=200)
@@ -237,7 +258,6 @@ class Crag(models.Model):
     def __str__(self):
         return self.name
 
-    
 
 class Comment(models.Model):
     post = models.ForeignKey(ForumPost, on_delete=models.CASCADE, related_name="comments")
@@ -253,4 +273,44 @@ class Comment(models.Model):
         self.quotings.add(post)
         self.save()
 
+class Tag(models.Model):
+    name = models.CharField(max_length=150)
+    posts = models.ManyToManyField(ForumPost, related_name='tags', blank=True)
+    maintopics = models.ManyToManyField(MainTopic, related_name='tags', blank=True)
+    subtopics = models.ManyToManyField(SubTopic, related_name='tags', blank=True)
 
+    def __str__(self):
+        return self.name
+    
+    def addPost(self, post):
+        self.posts.add(post)
+        self.save()
+
+    def removePost(self, post):
+        self.posts.remove(post)
+        self.save()
+
+    def addMT(self, maintopic):
+        self.maintopics.add(maintopic)
+        self.save()
+
+    def removeMT(self, maintopic):
+        self.maintopics.remove(maintopic)
+        self.save()
+
+    def addST(self, subtopic):
+        self.subtopics.add(subtopic)
+        self.save()
+
+    def removeST(self, subtopic):
+        self.subtopics.remove(subtopic)
+        self.save()
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications", null=True)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    is_notified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title

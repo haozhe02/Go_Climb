@@ -53,6 +53,17 @@ urlpatterns = [
     path("searchAllMTSTP/", views.searchAllMTSTP, name="searchAllMTSTP"),
     path("editDraft/<int:id>/", views.editDraft, name="editDraft"),
     path("deleteDraft/<int:id>/", views.deleteDraft, name="deleteDraft"),
+    path("addTagsForPost/<int:id>/", views.addTagsForPost, name="addTagsForPost"),
+    path("addTagsForSubTopic/<int:id>/", views.addTagsForSubTopic, name="addTagsForSubTopic"),
+    path("addTagsForMainTopic/<int:id>/", views.addTagsForMainTopic, name="addTagsForMainTopic"),
+    path("tags/<int:id>/", views.tags, name="tags"),
+    path("removeTagsForPost/<int:postid>/<int:tagid>", views.removeTagsForPost, name="removeTagsForPost"),
+    path("removeTagsForSubTopic/<int:stid>/<int:tagid>", views.removeTagsForSubTopic, name="removeTagsForSubTopic"),
+    path("removeTagsForMainTopic/<int:mtid>/<int:tagid>", views.removeTagsForMainTopic, name="removeTagsForMainTopic"),
+    path("viewAvailableBadges/", views.viewAvailableBadges, name="viewAvailableBadges"),
+    path("unshowBadge/<int:id>", views.unshowBadge, name="unshowBadge"),
+    path("showBadge/<int:id>", views.showBadge, name="showBadge"),
+    path("filterTopics/", views.filterTopics, name="filterTopics"),
 
 
     #path("search/result", views.result, name="result"),

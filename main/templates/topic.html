@@ -172,7 +172,14 @@
 					<a href="/forum/">{{subtopic.mainTopic.section}}</a> >
                     <a href="/topic/{{subtopic.mainTopic.id}}">{{subtopic.mainTopic}} >
 					<a href="/subtopic/{{subtopic.id}}">{{subtopic.title}}</a><br>
-					Description Content: {{subtopic.description}}
+					Tags: 
+					{% for tag in subtopic.tags.all %} 
+					<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForSubTopic/{{subtopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %} 
+					{% endfor %}
+					{% if user.is_authenticated%}
+					<br><a href="/addTagsForSubTopic/{{subtopic.id}}">Add Tags</a>
+					{% endif %}
+					<br><br>Description Content: {{subtopic.description}}
 				</p>
 
 
@@ -186,7 +193,11 @@
 				{% endif %}
 				<br>
 				<span>Total Views: {{subtopic.totalView}}</span> <br>
+				{% if subtopic.posts.last != None %}
 				<span>Latest Post: <a href="/viewPost/{{subtopic.posts.last.id}}">{{subtopic.posts.last}}</a> by <a href="/viewProfile/{{subtopic.posts.last.user.id}}">{{subtopic.posts.last.user}}</a> on {{subtopic.posts.last.date}}</span>
+				{% else %}
+				<span>No Post Yet</span>
+				{% endif %}
 			</div>
 		</div>
 		<hr class="subforum-devider">

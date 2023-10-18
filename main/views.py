@@ -3,7 +3,7 @@ from .forms import *
 from .models import *
 import requests
 import json
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import datetime
 import csv
 import ast
@@ -32,6 +32,7 @@ def createPost(response, id):
                 subtopic.addPostCount()
                 maintopic = subtopic.mainTopic
                 maintopic.addPostCount()
+                checkPostCount(response.user)
             elif 'save_button' in response.POST:
                 subtopic = SubTopic.objects.get(id =id)
                 user = response.user
@@ -67,7 +68,13 @@ def deletePost(response, id):
     subtopic.minusPostCount()
     maintopic = subtopic.mainTopic
     maintopic.minusPostCount()
-    return redirect('/subtopic/'+str(subtopic.id))
+
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/viewPost/'+str(post.id))
 
 def editPost(response, id):
     if response.method == "POST":
@@ -82,13 +89,11 @@ def editPost(response, id):
                 image = post.image
             post.image = image
             post.save()
-            subtopic = post.topic
-        return redirect('/subtopic/' +str(subtopic.id))
+        return redirect('/viewPost/' +str(post.id))
     else:
         post = ForumPost.objects.get(id=id)
-        subtopic = post.topic
         editpost = CreatePost(initial={'title': post.title, 'text': post.text, 'image': post.image})
-    return render(response, 'editPost.html', {'editpost': editpost, 'subtopic':subtopic})
+    return render(response, 'editPost.html', {'editpost': editpost, 'post':post})
 
 def searchPost(response):
     id = response.POST['id']
@@ -403,6 +408,11 @@ def color(time):
 def forum1(response):
     sections = Section.objects.all()
     topics = []
+    month = ""
+    year = ""
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    years = []
+    topview = ""
     for section in sections:
         for maintopic in section.maintopics.all():
             try:
@@ -414,7 +424,14 @@ def forum1(response):
                 'latest_post': latest_post
             }
             topics.append(topic)
-    return render(response, "forum.html", {'sections': sections, 'topics': topics})
+
+    for topic in topics:
+        if topic['latest_post'] != None:
+            yearitem = topic['latest_post'].date[11:15]
+            if yearitem not in years:
+                years.append(int(yearitem))
+    years.sort()
+    return render(response, "forum.html", {'sections': sections, 'topics': topics, 'month': month, 'months': months, 'year': year, 'years': years, 'topview': topview})
 
 def topic(response, id):
     maintopic = MainTopic.objects.get(id=id)   
@@ -484,7 +501,10 @@ def loginUser(response):
                 user = User.objects.get(username=signupform.cleaned_data['username'])
                 Account.objects.create(user=user)
                 achievement = Achievement.objects.get(title="Totally New")
-                user.account.achievements.add(achievement)
+                badge = Badge.objects.get(name="New")
+                user.account.addAchievement(achievement)
+                user.account.addBadge(badge)
+                user.account.addShowingBadge(badge)
                 return render(response, "login.html", {'signupform': signupform, 'successful': 'Account Created Successfully'})
             else:
                 errorsDetail = []
@@ -627,7 +647,12 @@ def flagPost(response, id):
 
     subtopic = post.topic
 
-    return redirect("/subtopic/"+str(subtopic.id))
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect("/subtopic/"+str(subtopic.id))
 
 def viewAccounts(response):
     users = []
@@ -689,42 +714,70 @@ def checkAchievement(user):
         achievement = Achievement.objects.get(title='Beginner Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Beginner")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
     
     #Intermediate
     if(user.account.totalRoute >= 20):
         achievement = Achievement.objects.get(title='Intermediate Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Intermediate")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #Experienced
     if(user.account.totalRoute >= 50):
         achievement = Achievement.objects.get(title='Experienced Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Experienced")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #Advanced
     if(user.account.totalRoute >= 100):
         achievement = Achievement.objects.get(title='Advanced Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Advanced")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #Master
     if(user.account.totalRoute >= 200):
         achievement = Achievement.objects.get(title='Master Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Master")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #Elite
     if(user.account.totalRoute >= 500):
         achievement = Achievement.objects.get(title='Elite Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Elite")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #Legendary
     if(user.account.totalRoute >= 1000):
         achievement = Achievement.objects.get(title='Legendary Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+        badge = Badge.objects.get(name="Legendary")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
 
     #1000-Meter Explorer
     if(user.account.totalDistance >= 1000):
@@ -998,6 +1051,7 @@ def editDraft(response, id):
                 subtopic.addPostCount()
                 maintopic = subtopic.mainTopic
                 maintopic.addPostCount()
+                checkPostCount(response.user)
                 if draft.user == response.user or response.user.account.is_admin:
                     draft.delete()
             elif 'save_button' in response.POST:
@@ -1013,6 +1067,34 @@ def editDraft(response, id):
         editdraft = CreatePost(initial={'title': draft.title, 'text': draft.text, 'image': draft.image})
     return render(response, 'editDraft.html', {'editdraft': editdraft, 'subtopic':subtopic, 'draft': draft})
 
+def checkPostCount(user):
+    post_count = 0
+    for post in user.posts.all():
+        post_count += 1
+    if post_count >= 1:
+        badge = Badge.objects.get(name="Bronze Contributor")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
+    
+    if post_count >= 10:
+        badge = Badge.objects.get(name="Silver Contributor")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
+
+    if post_count >= 100:
+        badge = Badge.objects.get(name="Gold Contributor")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
+
+    if post_count >= 1000:
+        badge = Badge.objects.get(name="Gold Contributor")
+        if badge not in user.account.badges.all():
+            user.account.addBadge(badge)
+            user.account.addShowingBadge(badge)
+
 def deleteDraft(response, id):
     draft = PostDraft.objects.get(id=id)
     subtopic = draft.topic
@@ -1020,98 +1102,252 @@ def deleteDraft(response, id):
         draft.delete()
     return redirect('/subtopic/'+str(subtopic.id))
 
-
-"""
-def search(response):
-    form = SearchCrag()
-    countries = Country.objects.all()
-    return render(response, 'search.html', {'form':form, 'countries': countries})
-
-def result(response):
+def addTagsForPost(response, id):
+    post = ForumPost.objects.get(id=id)
     if response.method == "POST":
-        form = SearchCrag(response.POST)
-
+        form = AddTagsForm(response.POST)
         if form.is_valid():
-            n = form.cleaned_data["name"]
-            countryFilter = response.POST['country']
-            result = []
-            if countryFilter != 'empty':
-                country = Country.objects.get(name = countryFilter)
-                crags = country.crags.all()
-                for crag in crags:
-                    if n in crag.name:
-                            result.append(crag)
-            else:
-                c = Country.objects.all()
-                for country in c:
-                    crags = country.crags.all()
-                    for crag in crags:
-                        if n in crag.name:
-                                result.append(crag)
-            if not result:
-                return render(response, 'result.html', {'empty':'No Result Found'})
-            else:
-                return  render(response, 'result.html', {'result': result})
-    
-    return redirect('/result')
-
-def createCountry(response):
-    if response.method == "POST":
-        form = CreateCountry(response.POST)
-
-        if form.is_valid():
-            n = form.cleaned_data["name"]
-            c = Country(name=n)
-            c.save()
-
-        return redirect("/country")
+            tags = form.cleaned_data["tags"].split(", ")
+            for tag in tags:
+                exist = False
+                for tagAvail in Tag.objects.all():
+                    if str(tag) == tagAvail.name:
+                        exist=True
+                if exist:
+                    name = str(tag)
+                    tagExist = Tag.objects.get(name=name)
+                    tagExist.addPost(post)
+                else:
+                    newTag = Tag(name=tag)
+                    newTag.save()
+                    newTag.addPost(post)
+        return redirect('/viewPost/' +str(post.id))
     else:
-        form = CreateCountry()
-    return render(response, 'createCountry.html', {'form': form})
+        addtags = AddTagsForm()
+        tags = []
+        for tag in Tag.objects.all():
+            if post in tag.posts.all():
+                tags.append(tag)
+    return render(response, 'addTags.html', {'addtags': addtags, 'post': post, 'tags': tags})
 
-def index(response, id):
-    cs = Country.objects.get(id=id)
-
+def addTagsForSubTopic(response, id):
+    subtopic = SubTopic.objects.get(id=id)
     if response.method == "POST":
-        if response.POST.get("newCrags"):
-            name = response.POST.get("new")
+        form = AddTagsForm(response.POST)
+        if form.is_valid():
+            tags = form.cleaned_data["tags"].split(", ")
+            for tag in tags:
+                exist = False
+                for tagAvail in Tag.objects.all():
+                    if str(tag) == tagAvail.name:
+                        exist=True
+                if exist:
+                    name = str(tag)
+                    tagExist = Tag.objects.get(name=name)
+                    tagExist.addST(subtopic)
+                else:
+                    newTag = Tag(name=tag)
+                    newTag.save()
+                    newTag.addST(subtopic)
+        return redirect('/topic/' +str(subtopic.mainTopic.id))
+    else:
+        addtags = AddTagsForm()
+        tags = []
+        for tag in Tag.objects.all():
+            if subtopic in tag.subtopics.all():
+                tags.append(tag)
+    return render(response, 'addTags.html', {'addtags': addtags, 'subtopic': subtopic, 'tags': tags})
 
-            if len(name) > 2:
-                cs.crags.create(name=name)
-            else:
-                print("invalid")
-    return render(response, 'countryDetail.html', {'cs':cs})
+def addTagsForMainTopic(response, id):
+    maintopic = MainTopic.objects.get(id=id)
+    if response.method == "POST":
+        form = AddTagsForm(response.POST)
+        if form.is_valid():
+            tags = form.cleaned_data["tags"].split(", ")
+            for tag in tags:
+                exist = False
+                for tagAvail in Tag.objects.all():
+                    if str(tag) == tagAvail.name:
+                        exist=True
+                if exist:
+                    name = str(tag)
+                    tagExist = Tag.objects.get(name=name)
+                    tagExist.addMT(maintopic)
+                else:
+                    newTag = Tag(name=tag)
+                    newTag.save()
+                    newTag.addMT(maintopic)
+        return redirect('/forum/')
+    else:
+        addtags = AddTagsForm()
+        tags = []
+        for tag in Tag.objects.all():
+            if maintopic in tag.maintopics.all():
+                tags.append(tag)
+    return render(response, 'addTags.html', {'addtags': addtags, 'maintopic': maintopic, 'tags': tags})
+
+def tags(response, id):    
+    tag = Tag.objects.get(id=id)
+
+    maintopics = []
+    subtopics = []
+    posts = []
+    topics = []
     
+    for maintopic in MainTopic.objects.all():
+        for tagCheck in maintopic.tags.all():
+            if tagCheck == tag:
+                maintopics.append(maintopic)
+                try:
+                    latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+                except ForumPost.DoesNotExist:
+                    latest_post = None
+                topic = {
+                    'maintopic': maintopic,
+                    'latest_post': latest_post
+                }
+                topics.append(topic)
+
+    for subtopic in SubTopic.objects.all():
+        for tagCheck in subtopic.tags.all():
+            if tagCheck == tag:
+                subtopics.append(subtopic)
+
+    for post in ForumPost.objects.all():
+        for tagCheck in post.tags.all():
+            if tagCheck == tag:
+                posts.append(post)
     
 
-def list(response):
-    cs = Country.objects.all()
-    return render(response, 'countries.html', {'cs':cs})
+    flaggedPosts = []
+    if response.user.is_authenticated:
+        for flaggedPost in response.user.flaggedPosts.all():
+            flaggedPosts.append(flaggedPost.post)
+    allFP = []
+    for flaggedPost in FlaggedPost.objects.all():
+            allFP.append(flaggedPost.post)
+    return render(response, 'tags.html',  {'tag': tag, 'maintopics': maintopics, 'subtopics': subtopics, 'posts': posts, 'flaggedPosts': flaggedPosts, 'allFP': allFP, 'topics': topics})
 
+def removeTagsForPost(response, postid, tagid):
+    post = ForumPost.objects.get(id=postid)
+    tag = Tag.objects.get(id=tagid)
+    if response.user.is_authenticated:
+        tag.posts.remove(post)
+        tag.save()
 
-def forum(response):
-    forums = ForumPost.objects.all()
-    return render(response, 'forum.html', {'posts': forums})
+    referring_page = response.META.get('HTTP_REFERER')
 
-def comment(response, id):
-    post = ForumPost.objects.get(id=id)
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/viewPost/'+str(post.id))
     
-    form = CreateComment(response.POST)
+def removeTagsForSubTopic(response, stid, tagid):
+    subtopic = SubTopic.objects.get(id=stid)
+    tag = Tag.objects.get(id=tagid)
+    if response.user.is_authenticated:
+        tag.subtopics.remove(subtopic)
+        tag.save()
 
-    if form.is_valid():
-        text = form.cleaned_data["text"]
-        post.comments.create(text=text)
+    referring_page = response.META.get('HTTP_REFERER')
 
-        return redirect("/forum")
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/subtopic/'+str(subtopic.id))
     
-    return render(response, 'createComment.html', {'form':form, 'post':post})
+def removeTagsForMainTopic(response, mtid, tagid):
+    maintopic = MainTopic.objects.get(id=mtid)
+    tag = Tag.objects.get(id=tagid)
 
-def deletePost1(response, id):
-    post = ForumPost.objects.get(id=id)
+    if response.user.is_authenticated:
+        tag.maintopics.remove(maintopic)
+        tag.save()
 
-    if post in response.user.posts.all() or response.user.is_staff:
-        p = ForumPost.objects.get(id=id)
-        p.delete()
+    referring_page = response.META.get('HTTP_REFERER')
 
-    return redirect('/forum')
-"""
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/forum/')
+
+def viewAvailableBadges(response):
+    allbadges = Badge.objects.all()   
+    return render(response, 'viewBadges.html', {'allbadges': allbadges}) 
+
+def unshowBadge(response, id):
+    badge = Badge.objects.get(id=id)
+    if badge in response.user.account.showingBadges.all():
+        response.user.account.removeShowingBadge(badge)
+    return redirect('/viewAvailableBadges/')
+
+def showBadge(response, id):
+    badge = Badge.objects.get(id=id)
+    if badge not in response.user.account.showingBadges.all():
+        response.user.account.addShowingBadge(badge)
+    return redirect('/viewAvailableBadges/')
+
+def filterTopics(response):
+    month = ""
+    year = ""
+    topview = ""
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    sections = Section.objects.all()
+    topics = []
+    for section in sections:
+        for maintopic in section.maintopics.all():
+            try:
+                latest_post = ForumPost.objects.filter(topic__mainTopic=maintopic).last()
+            except ForumPost.DoesNotExist:
+                latest_post = None
+            topic = {
+                'maintopic': maintopic,
+                'latest_post': latest_post
+            }
+            topics.append(topic)
+
+    years = []
+    for topic in topics:
+        if topic['latest_post'] != None:
+            yearitem = topic['latest_post'].date[11:15]
+            if yearitem not in years:
+                years.append(int(yearitem))
+    years.sort()
+
+    if response.method == 'POST':
+        filterlist1 = []
+        if 'topview' in response.POST:
+            topview = response.POST['topview']
+            if topview == 'on':
+                for section in sections: 
+                    highestView = 0
+                    toptopic = None
+                    for topic in topics:
+                        if topic["maintopic"] in section.maintopics.all():
+                            if topic["maintopic"].totalView >= highestView:
+                                highestView = topic["maintopic"].totalView
+                                toptopic = topic
+                    if toptopic != None:
+                        filterlist1.append(toptopic)
+                topics = filterlist1
+
+        filterlist2 = []
+        if(response.POST.get('month') != None):
+            month = response.POST['month']
+            for section in sections:  
+                for topic in topics:
+                    if topic['latest_post'] != None and topic["maintopic"] in section.maintopics.all():
+                        if month in topic['latest_post'].date:
+                            filterlist2.append(topic)
+            topics = filterlist2
+
+        filterlist3 = []
+        if(response.POST.get('year') != None):
+            year = response.POST['year']
+            for section in sections:  
+                for topic in topics:
+                    if topic['latest_post'] != None and topic["maintopic"] in section.maintopics.all():
+                        if year in topic['latest_post'].date:
+                            filterlist3.append(topic)
+            topics = filterlist3
+    return render(response, "forum.html", {'sections': sections, 'topics': topics, 'months': months, 'month': month, 'years': years, 'year': year, 'topview': topview})

@@ -108,8 +108,10 @@
 								</div>
 								<div class="user-profile-card">
 									<div class="favourite-activities">
-										<h3>Favourite Activites</h3>
-										<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
+										<h3>Badges Showing</h3>
+										{% for badge in user.account.showingBadges.all %}
+										{{badge}} <br>
+										{% endfor %}
 									</div>
 								</div>
 								<div class="user-profile-card">
