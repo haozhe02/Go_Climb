@@ -76,6 +76,9 @@
 			<div class="hero">
 				<div class="container" >
 					{% if user.is_authenticated %}
+					{% if user.account.profileSuspended %}
+					<h1>Profile Suspended</h1>
+					{% else %}
 					<div class="row">
 						<div class="col-lg-4">
 							<div class="profile-left">
@@ -118,7 +121,7 @@
 											{% endif %}
 
 											{% if user.is_authenticated and user.is_superuser == False %}
-											<br><b><a href="/suspendAccountByUser/{{user.id}}">Delete Profile and Account</a></b>
+											<br><b><a href="/suspendProfile/{{user.id}}">Delete Profile</a></b>
 											{% endif %}
 										</p>
 									</div>
@@ -184,6 +187,7 @@
 						</div>
 					</div>
 				</div>
+				{% endif %}
 				{% else%}
 				<h1>Please Login First</h1>
 				{% endif %}

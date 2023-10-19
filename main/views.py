@@ -481,7 +481,7 @@ def loginUser(response):
             user = authenticate(response, username=username, password=password)
             if user is None:
                 return render(response, "login.html", {'error': "Invalid username or password", "signupform": SignupForm()})
-            if(user.account.suspended):
+            if(user.account.accountSuspended):
                 return render(response, "login.html", {'error': "Account Suspended or Deleted", "signupform": SignupForm()})
             login(response, user)
             return redirect("/home")
@@ -663,15 +663,40 @@ def viewAccounts(response):
 def suspendAccount(response, id):
     if response.user.account.is_admin:
         userObj = User.objects.get(id=id)
-        userObj.account.updateSuspend(status=True)
+        userObj.account.updateAccountSuspend(status=True)
     return redirect('/viewAccounts/')
 
 def activateAccount(response, id):
     if response.user.account.is_admin:
         userObj = User.objects.get(id=id)
-        userObj.account.updateSuspend(status=False)
+        userObj.account.updateAccountSuspend(status=False)
     return redirect('/viewAccounts/')
 
+def suspendProfile(response, id):
+    userObj = User.objects.get(id=id)
+    if response.user.account.is_admin or response.user == userObj:
+        print("yes")
+        userObj.account.updateProfileSuspend(status=True)
+        print(userObj.account.profileSuspended)
+    
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/profile/')
+
+def activateProfile(response, id):
+    userObj = User.objects.get(id=id)
+    if response.user.account.is_admin or response.user == userObj:
+        userObj.account.updateProfileSuspend(status=False)
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/profile/')
+    
 def searchAccount(response):
     searchInput = response.POST['search'].rstrip()
    

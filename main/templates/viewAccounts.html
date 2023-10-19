@@ -117,7 +117,7 @@
                 {% else%}
                 User <br>
                 {% endif %}
-                Username: {{userObj}} <br>
+                Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
                 {% if userObj.first_name and userObj.last_name%}
                 Name: {{userObj.first_name}} {{userObj.last_name}}<br>
                 {% endif %}
@@ -134,15 +134,22 @@
 			</div>
 			<div class="subforum-stats subforum-column center">
                 {% if userObj.is_superuser == False %}
-                    {% if userObj.account.suspended == False %}
-                    <a href="/suspendAccount/{{userObj.id}}">Suspend</a>	
+                    {% if userObj.account.accountSuspended == False %}
+                    <a href="/suspendAccount/{{userObj.id}}">Suspend Account</a>	
                     {% else %}
-                    <a href="/activateAccount/{{userObj.id}}">Activate</a>
-                    {% endif %}		
+                    <a href="/activateAccount/{{userObj.id}}">Activate Account</a>
+                    {% endif %}	
+							
                 {% endif %}	
 			</div>
-			<div class="subforum-info subforum-column">
-				
+			<div class="subforum-info subforum-column center">
+				{% if userObj.is_superuser == False %}
+					{% if userObj.account.profileSuspended == False %}
+                    <a href="/suspendProfile/{{userObj.id}}">Suspend Profile</a>	
+                    {% else %}
+                    <a href="/activateProfile/{{userObj.id}}">Activate Profile</a>
+                    {% endif %}
+				{% endif %}	
 			</div>
 		</div>
 		<hr class="subforum-devider">

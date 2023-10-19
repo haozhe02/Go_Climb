@@ -123,7 +123,8 @@ class Badge(models.Model):
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="account")
     is_admin = models.BooleanField(default=False)
-    suspended = models.BooleanField(default=False)
+    accountSuspended = models.BooleanField(default=False)
+    profileSuspended = models.BooleanField(default=False)
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
     achievements = models.ManyToManyField(Achievement, blank=True)
@@ -142,8 +143,12 @@ class Account(models.Model):
     def __str__(self):
         return self.user.username
 
-    def updateSuspend(self, status):
-        self.suspended = status
+    def updateAccountSuspend(self, status):
+        self.accountSuspended = status
+        self.save()
+
+    def updateProfileSuspend(self, status):
+        self.profileSuspended = status
         self.save()
 
     def updateRouteAndDist(self):

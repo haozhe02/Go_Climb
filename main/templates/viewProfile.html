@@ -75,6 +75,12 @@
 		<!-- Start Hero Section -->
 			<div class="hero">
 				<div class="container" >
+					{% if userProf.account.profileSuspended%}
+					<h1>Profile Suspended</h1>
+					{% if user.account.is_admin %}
+					<a href="/activateProfile/{{userProf.id}}/">Activate profile</a>
+					{% endif %}
+					{% else %}
 					<div class="row">
 						<div class="col-lg-4">
 							<div class="profile-left">
@@ -100,6 +106,10 @@
 
 											{% if userProf.account.youtubeLink != "Empty" %}
 											<br><a href="{{user.account.youtubeLink}}" target="_blank">Youtube</a>
+											{% endif %}
+
+											{% if user.account.is_admin and userProf.is_superuser == False %}
+											<br><b><a href="/suspendProfile/{{userProf.id}}">Suspend Profile</a></b>
 											{% endif %}
 										</p>
 
@@ -160,6 +170,7 @@
 							</div>
 						</div>
 					</div>
+					{% endif %}
 				</div>
 			</div>
 		</div>
