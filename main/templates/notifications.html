@@ -23,7 +23,7 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>Forum</title>
+		<title>Notifications</title>
 	</head>
 
 	<body>
@@ -51,7 +51,7 @@
 						</li>
 						<li><a class="nav-link" href="/weather">Weather</a></li>
 						<li><a class="nav-link" href="/ARroute">AR Route</a></li>
-						<li class="active"><a class="nav-link" href="/forum">Forum</a></li>
+						<li><a class="nav-link" href="/forum">Forum</a></li>
 						<li><a class="nav-link" href="/search">Search Crags</a></li>
 						<li><a class="nav-link" href="/contact">Contact us</a></li>
 						{% if user.account.is_admin %}
@@ -77,8 +77,6 @@
 			</div>
 				
 		</nav>
-
-		
 		<!-- End Header/Navigation -->
 
 		<!-- Start Hero Section -->
@@ -87,153 +85,37 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<h1>Forum</h1>
+								<h1>Notifications</h1>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-		
-		<!--Advanced Search-->
-		<div style="background-color: #40513B; width: 100%; height: 200px; padding:70px" >
-			<form method="post" action="/searchAllMTSTP/">
-			{% csrf_token %}
-			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" placeholder="Search for all Main Topics, Sub Topics and Posts" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">								
-			</div>
-			</form>
-		</div>
-
 </header>
 <div class="container">
-	{% if user.is_authenticated %}
-		<a href="/createSection/" class="btn btn-secondary me-2" style="background-color:#B3C890; margin-top:20px;">Create Section</a>
-		<a href="/viewSavedTopics/" class="btn btn-secondary me-2" style="background-color:#B3C890; margin-top:20px;">View Saved Topics</a>
-	{% endif %}
-	<div class="search-left-card" >
-		<form method="post" action="/filterTopics/">
-			{% csrf_token %}
-		<b><h3>Filter</h3></b>
-		<a href="/forum/"><u>Clear Filter</u></a>
-		<br><br> 
-		<label for="my_checkbox">Show Top Views Main Topic Only</label>
-		{% if topview == "on" %}
-		<input type="checkbox" name="topview" id="topview" checked>
-		{% else %}
-		<input type="checkbox" name="topview" id="topview">
-		{% endif %}
-		<div class="accordion">
-			<div class="accordion-item">
-			<h2 class="accordion-header" id="panelsStayOpen-headingThree">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-				Latest Post In Month
-				</button>
-			</h2>
-			<div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-
-				<div class="accordion-body">
-					{% for monthItem in months%}
-						{% if month == monthItem %}
-							<input type="radio" id="{{monthItem}}" name="month" value="{{monthItem}}" checked>
-							<label for="{{monthItem}}">{{monthItem}}</label><br>
-						{% else %}
-							<input type="radio" id="{{monthItem}}" name="month" value="{{monthItem}}">
-							<label for="{{monthItem}}">{{monthItem}}</label><br>
-						{% endif %}
-					{% endfor %}
-				</div>
-			</div>
-			</div>
-			<div class="accordion-item">
-				<h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-				<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-				Latest Post In	Year
-				</button>
-				</h2>
-				<div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-				<div class="accordion-body">
-					{% for yearItem in years%}
-						{% if year == yearItem %}
-							<input type="radio" id="{{yearItem}}" name="year" value="{{yearItem}}" checked>
-							<label for="{{yearItem}}">{{yearItem}}</label><br>
-						{% else %}
-							<input type="radio" id="{{yearItem}}" name="year" value="{{yearItem}}">
-							<label for="{{yearItem}}">{{yearItem}}</label><br>
-						{% endif %}
-					{% endfor %}
-					
-				</div>
-				</div>
-			</div>	
-		</div>
-		<div class="row justify-content-between align-items-center">
-			<button type="submit" style="border-radius: 40px; margin: auto; width:120px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Filter</button>
-		</div>
-	</form>
-	</div>
-	{% for section in sections %}
 	<div class="subforum">
-		<div class="subforum-title">
-			<h1>{{section.title}}</h1>
-			{% if user.account.is_admin or user.is_superuser or user.is_staff %}
-			<a href="/deleteSection/{{section.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890;">Delete Section</a>
-			{% endif %}
-			{% if user.is_authenticated %}
-			<a href="/createTopic/{{section.id}}" class="btn btn-secondary me-2" style="background-color:#B3C890;">Create Topic</a>
-			{% endif %}
+        {% if user.is_authenticated%}
+        <div class="subforum-title"> 
+			<h1>Notifications</h1>
+            <table style="border-collapse: collapse; width: 100%;">
+                {% for notification in notifications %}
+                <tr>
+                    <td style="border: 1px solid #dddddd;padding: 8px;">
+                        {{notification}}
+                    </td>   
+                </tr>
+                {% endfor %}
+            </table>
+            
 		</div>
-		{% for topic in topics %}
-			{% if topic.maintopic in section.maintopics.all %}
-			<div class="subforum-row">
-				<div class="subforum-icon subforum-column center">
-					<!-- <i class="fa fa-car center"></i> -->
-				</div>
-				<div class="subforum-description subforum-column">
-					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
-					{% if user.is_authenticated %}
-						{% if topic.maintopic not in user.account.savedMainTopics.all %}
-						<a href="/saveMainTopic/{{topic.maintopic.id}}">Save Topic</a> <br>
-						{% else %}
-						Topic Saved! <br>
-						{% endif %}
-					{% endif %}
-					<p>
-						<a href="/forum/">{{topic.maintopic.section}}</a> >
-						<a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a> <br>
-						Tags:
-						{% for tag in topic.maintopic.tags.all %} 
-						<a href="/tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForMainTopic/{{topic.maintopic.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}   
-						{% endfor %}
-						{% if user.is_authenticated %}
-						<br><a href="/addTagsForMainTopic/{{topic.maintopic.id}}">Add Tags</a>
-						{% endif %}
-						<br><br>Description Content: {{topic.maintopic.description}}
-					</p>
-					{% if user.account.is_admin or user.is_superuser or user.is_staff %}
-					<br><a href="/deleteTopic/{{topic.maintopic.id}}">Delete Topic</a>
-					{% endif %}
-
-				</div>
-				<div class="subforum-stats subforum-column center">
-					<span>{{topic.maintopic.PostCount}} Posts</span>
-				</div>
-				<div class="subforum-info subforum-column">
-					<!--<b><a href="">Last post</a></b> by <a href="">JustAUser</a> 
-					<br>on <small>12 Dec 2020</small>-->
-					<span>{{topic.maintopic.SubTopicCount}} Topics</span><br>
-					<span>Total Views: {{topic.maintopic.totalView}}</span> <br>
-					{% if topic.latest_post != None %}
-					<span>Latest Post: <a href="/viewPost/{{topic.latest_post.id}}">{{topic.latest_post}}</a> by <a href="/viewProfile/{{topic.latest_post.user.id}}">{{topic.latest_post.user}}</a> on {{topic.latest_post.date}}</span>
-					{% else%}
-					<span>No Post Yet</span>
-					{% endif %}
-				</div>
-			</div>
-			{% endif%}
-		{% endfor %}
+		{% else %}
+		Please Login First
+        {% endif %}
+        
+           
+		</div>
 	</div>
-	{% endfor %}
 	<!--More-->
 <!---->
 </div>

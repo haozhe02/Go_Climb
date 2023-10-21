@@ -3,7 +3,7 @@ from .forms import *
 from .models import *
 import requests
 import json
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import datetime
 import csv
 import ast
@@ -505,6 +505,11 @@ def loginUser(response):
                 user.account.addAchievement(achievement)
                 user.account.addBadge(badge)
                 user.account.addShowingBadge(badge)
+                for userObj in User.objects.all():
+                    if userObj.account.is_admin:
+                        text = "A new account is created - " + str(user)
+                        newNoti = Notification(user=userObj, text=text)
+                        newNoti.save()
                 return render(response, "login.html", {'signupform': signupform, 'successful': 'Account Created Successfully'})
             else:
                 errorsDetail = []
@@ -520,7 +525,22 @@ def ARroute(response):
     return render(response, "ARRoute.html")
 
 def profile(response):
-    return render(response, "profile.html")
+    recommendations = []
+    experienced = Achievement.objects.get(title='Experienced Climber')
+    advanced = Achievement.objects.get(title='Advanced Climber')  
+    master = Achievement.objects.get(title='Master Climber')      
+    elite = Achievement.objects.get(title='Elite Climber')    
+    legendary = Achievement.objects.get(title='Legendary Climber')
+    achievements = response.user.account.achievements.all()
+
+
+    if legendary in achievements or elite in achievements:
+        recommendations  = Crag.objects.filter(altitude__gte=800).order_by('?')[:5]
+    elif master in achievements or advanced in achievements or experienced in achievements:
+        recommendations  = Crag.objects.filter(altitude__range=(500, 799)).order_by('?')[:5]
+    else:
+        recommendations = Crag.objects.filter(altitude__lt=500).order_by('?')[:5]
+    return render(response, "profile.html", {'recommendations': recommendations})
 
 def createSection(response):
     if response.method == "POST":
@@ -739,112 +759,176 @@ def checkAchievement(user):
         achievement = Achievement.objects.get(title='Beginner Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Beginner")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
+        
     
     #Intermediate
     if(user.account.totalRoute >= 20):
         achievement = Achievement.objects.get(title='Intermediate Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Intermediate")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #Experienced
     if(user.account.totalRoute >= 50):
         achievement = Achievement.objects.get(title='Experienced Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Experienced")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #Advanced
     if(user.account.totalRoute >= 100):
         achievement = Achievement.objects.get(title='Advanced Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Advanced")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #Master
     if(user.account.totalRoute >= 200):
         achievement = Achievement.objects.get(title='Master Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Master")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #Elite
     if(user.account.totalRoute >= 500):
         achievement = Achievement.objects.get(title='Elite Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Elite")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #Legendary
     if(user.account.totalRoute >= 1000):
         achievement = Achievement.objects.get(title='Legendary Climber')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
         badge = Badge.objects.get(name="Legendary")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #1000-Meter Explorer
     if(user.account.totalDistance >= 1000):
         achievement = Achievement.objects.get(title='1000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #10000-Meter Explorer
     if(user.account.totalDistance >= 10000):
         achievement = Achievement.objects.get(title='10000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #100000-Meter Explorer
     if(user.account.totalDistance >= 100000):
         achievement = Achievement.objects.get(title='100000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #500000-Meter Explorer
     if(user.account.totalDistance >= 500000):
         achievement = Achievement.objects.get(title='500000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #1000000-Meter Explorer
     if(user.account.totalDistance >= 1000000):
         achievement = Achievement.objects.get(title='1000000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #5000000-Meter Explorer
     if(user.account.totalDistance >= 5000000):
         achievement = Achievement.objects.get(title='5000000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     #10000000-Meter Explorer
     if(user.account.totalDistance >= 10000000):
         achievement = Achievement.objects.get(title='10000000-Meter Explorer')
         if(achievement not in user.account.achievements.all()):
             user.account.addAchievement(achievement)
+            text = "You have a new achievement - " + str(achievement)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
 def editAbout(response, id):
     if(response.user != User.objects.get(id=id)):
@@ -864,6 +948,9 @@ def editAbout(response, id):
 def followUser(response, id):
     user = response.user
     userToFollow = User.objects.get(id=id)
+    text = "You have a new follower - " + str(user)
+    newNotification = Notification(user=userToFollow, text=text)
+    newNotification.save()
     user.account.addFollowing(userToFollow)
     userToFollow.account.addFollower(user)
     return redirect('/viewProfile/'+str(id))
@@ -1101,24 +1188,36 @@ def checkPostCount(user):
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
     
     if post_count >= 10:
         badge = Badge.objects.get(name="Silver Contributor")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     if post_count >= 100:
         badge = Badge.objects.get(name="Gold Contributor")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
     if post_count >= 1000:
         badge = Badge.objects.get(name="Gold Contributor")
         if badge not in user.account.badges.all():
             user.account.addBadge(badge)
             user.account.addShowingBadge(badge)
+            text = "You have a new badge - " + str(badge)
+            newNoti = Notification(user=user, text=text)
+            newNoti.save()
 
 def deleteDraft(response, id):
     draft = PostDraft.objects.get(id=id)
@@ -1376,3 +1475,51 @@ def filterTopics(response):
                             filterlist3.append(topic)
             topics = filterlist3
     return render(response, "forum.html", {'sections': sections, 'topics': topics, 'months': months, 'month': month, 'years': years, 'year': year, 'topview': topview})
+
+def checkAltitude(response):
+    if response.method == "POST":
+        altitude = response.POST.get("altitude", None)
+        if altitude:
+            if int(altitude) >= 2500:
+                data = {
+                    'result': "Altitude greater or equal 2500m, Please be aware",
+                    'danger': True
+                }
+                
+            else:
+                data = {
+                    'result': "Altitude normal",
+                    'danger': False
+                }
+            return JsonResponse({"data": data})
+        else:
+            data = {
+                    'result': "Data not received.",
+                    'danger': False
+                }
+            return JsonResponse({"data": data})
+
+def checkAuthentication(response):
+    if response.user.is_authenticated:
+        return JsonResponse({'is_authenticated': True})
+    else:
+        return JsonResponse({'is_authenticated': False})
+    
+def checkNotifications(response):
+    notifications = []
+
+    for notification in response.user.notifications.all():
+        #notification.setNotified(status=False)
+        if notification.is_notified == False:
+            notifications.append(notification.text)
+            notification.setNotified(status=True)
+    if len(notifications) == 0:
+        return JsonResponse({'notify': False})
+    else:
+        return JsonResponse({'notify': True, 'notifications': notifications})
+
+def notifications(response):
+    notifications = []
+    if response.user.is_authenticated:
+        notifications = response.user.notifications.all().order_by("-id")
+    return render(response, 'notifications.html', {'notifications': notifications})    

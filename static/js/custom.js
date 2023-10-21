@@ -1,3 +1,55 @@
+function checkNotifications(){
+	$.ajax({
+		url: '/checkNotifications/',
+		type: 'GET',
+		success: function(response) {
+			if (response.notify) {
+				var noti = "";
+				var counter = 0;
+				for(var i in response.notifications){
+					noti  += response.notifications[i] + "\n";
+					counter++;
+					if (counter >= 5){
+						alert(noti);
+						noti = "";
+						counter = 0;
+					}
+				};
+				if (noti != ""){
+					alert(noti);
+				};
+			}; 
+		},
+		error: function() {
+			console.log("An error occurred");
+		}
+	});
+};
+
+function checkAuthentication(){
+	$.ajax({
+		url: '/checkAuthentication/',
+		type: 'GET',
+		success: function(response) {
+			if (response.is_authenticated) {
+				console.log("User is authenticated");
+				checkNotifications();
+
+				const interval = setInterval(checkNotifications, 5000);
+			} else {
+				console.log("User is not authenticated");
+			}
+		},
+		error: function() {
+			console.log("An error occurred");
+		}
+	});
+};
+
+$(document).ready(function() {
+    checkAuthentication();
+});
+
 (function() {
 	'use strict';
 
@@ -71,3 +123,4 @@
 
 
 })()
+

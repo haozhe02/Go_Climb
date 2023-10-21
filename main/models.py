@@ -313,9 +313,12 @@ class Tag(models.Model):
     
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications", null=True)
-    title = models.CharField(max_length=200)
     text = models.TextField()
     is_notified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.text
+    
+    def setNotified(self, status):
+        self.is_notified = status
+        self.save()
