@@ -335,12 +335,13 @@ def search1(response):
         
         user = response.user
         exist = False
-        for history in user.searchHistories.all():
-            if searchInput == history.text:
-                exist = True
+        if user.is_authenticated:
+            for history in user.searchHistories.all():
+                if searchInput == history.text:
+                    exist = True
 
-        if not exist:
-            SearchHistory.objects.create(user=user, text=searchInput)
+            if not exist:
+                SearchHistory.objects.create(user=user, text=searchInput)
 
         searchList = []
         if searchInput != "":
