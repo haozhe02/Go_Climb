@@ -1523,3 +1523,11 @@ def notifications(response):
     if response.user.is_authenticated:
         notifications = response.user.notifications.all().order_by("-id")
     return render(response, 'notifications.html', {'notifications': notifications})    
+
+def autoSuggest(response):
+    query = response.GET.get('query', '')
+    suggestionsOri = Crag.objects.filter(name__icontains=query)[:7]
+    suggestions = []
+    for suggestion in suggestionsOri:
+        suggestions.append(suggestion.name)
+    return JsonResponse({'suggestions': suggestions})

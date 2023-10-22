@@ -1,3 +1,5 @@
+let interval;
+
 function checkNotifications(){
 	$.ajax({
 		url: '/checkNotifications/',
@@ -22,6 +24,7 @@ function checkNotifications(){
 		},
 		error: function() {
 			console.log("An error occurred");
+			clearInterval(interval);
 		}
 	});
 };
@@ -35,13 +38,14 @@ function checkAuthentication(){
 				console.log("User is authenticated");
 				checkNotifications();
 
-				const interval = setInterval(checkNotifications, 5000);
+				interval = setInterval(checkNotifications, 5000);
 			} else {
 				console.log("User is not authenticated");
 			}
 		},
 		error: function() {
 			console.log("An error occurred");
+			clearInterval(interval);
 		}
 	});
 };

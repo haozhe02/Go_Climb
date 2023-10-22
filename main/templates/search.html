@@ -99,16 +99,22 @@
 <!-- Search Section -->
 
 		<!--Search Bar-->
-		<div style="background-color: #40513B; width: 100%; height: 300px; padding:70px" >
+		<div style="background-color: #40513B; width: 100%; height: max-content; padding:70px" >
 			<form method="post">
 			{% csrf_token %}
 			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">								
+				<input type="text" name="search" id="search" placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;" autocomplete="off">								
+			</div>
+			<br>
+			<div style="background-color: white; height: max-content; text-align: center; border-radius: 25px; margin: auto; width: max-content;">
+				<h2>Auto suggestion</h2>
+				<ul id="suggestion-list" style="list-style-type: none;"></ul>
 			</div>
 			<div class="row justify-content-between align-items-center" >
 				<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Search</button>
 			</div>
 			</form>
+			
 			<form method="get">
 				<div class="row justify-content-between align-items-center" >
 					<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Clear Search</button>
@@ -451,6 +457,44 @@
 		<!-- End Footer Section -->	
 
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		<script>
+		document.getElementById('search').addEventListener('input', function() {
+			var query = this.value;
+			
+			fetch(`/autoSuggest/?query=${query}`)
+				.then(response => response.json())
+				.then(data => {
+					var suggestions = data.suggestions;
+					var suggestionList = document.getElementById('suggestion-list');
+					suggestionList.innerHTML = '';
+
+					suggestions.forEach(suggestion => {
+						var li = document.createElement('li');
+						li.textContent = suggestion;
+						suggestionList.appendChild(li);
+					});
+				});
+		});
+
+		function fetchSuggestion(){
+			fetch(`/autoSuggest/`)
+				.then(response => response.json())
+				.then(data => {
+					var suggestions = data.suggestions;
+					var suggestionList = document.getElementById('suggestion-list');
+					suggestionList.innerHTML = '';
+
+					suggestions.forEach(suggestion => {
+						var li = document.createElement('li');
+						li.textContent = suggestion;
+						suggestionList.appendChild(li);
+					});
+				});
+		};
+
+		fetchSuggestion();
+		</script>
+
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
