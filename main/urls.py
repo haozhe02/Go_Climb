@@ -71,6 +71,8 @@ urlpatterns = [
     path('checkNotifications/', views.checkNotifications, name="checkNotifications"),
     path('notifications/', views.notifications, name="notifications"),
     path('autoSuggest/', views.autoSuggest, name='autoSuggest'),
+    path('loginAR/', views.loginAR, name="loginAR"),
+    path('logoutAR/', views.logoutAR, name="logoutAR"),
 
 
     #path("search/result", views.result, name="result"),

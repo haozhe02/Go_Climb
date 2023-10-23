@@ -125,6 +125,7 @@ class Account(models.Model):
     is_admin = models.BooleanField(default=False)
     accountSuspended = models.BooleanField(default=False)
     profileSuspended = models.BooleanField(default=False)
+    is_premium = models.BooleanField(default=False)
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
     achievements = models.ManyToManyField(Achievement, blank=True)

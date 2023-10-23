@@ -7,9 +7,10 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import datetime
 import csv
 import ast
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 from datetime import datetime as dti, timedelta
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def home(response):
@@ -1532,3 +1533,32 @@ def autoSuggest(response):
     for suggestion in suggestionsOri:
         suggestions.append(suggestion.name)
     return JsonResponse({'suggestions': suggestions})
+
+@csrf_exempt
+def loginAR(response):
+    if response.method == 'POST':
+        try:
+            if response.user.is_authenticated:
+                logout(response)    
+            username = response.POST.get('username')
+            password = response.POST.get('password')
+            user = authenticate(response, username=username, password=password)
+            if user is None:
+                return JsonResponse({'success': False, 'error': 'Error! User not found'})
+            if(user.account.accountSuspended):
+                return JsonResponse({'success': False, 'message': "Error! Account Suspended or Deleted"})
+            if(user.account.is_premium == False):
+                return JsonResponse({'success': False, 'message': "Error! Account Is Not Premium"})
+            login(response, user)
+            return JsonResponse({'success': True, 'message': 'Login Successfully'})
+        except Exception as e:
+            return JsonResponse({'message': 'Error processing form data'}, status=400)
+    else:
+        return JsonResponse({'message': 'Only POST requests accepted'}, status=405)
+
+def logoutAR(response):
+    if response.user.is_authenticated:
+        logout(response)
+        return JsonResponse({'success': True, 'message': 'Logout Successfully'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Logout Failed'})
