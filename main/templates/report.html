@@ -23,7 +23,7 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>Admin Portal</title>
+		<title>Report</title>
 	</head>
 
 	<body>
@@ -55,7 +55,7 @@
 						<li><a class="nav-link" href="/search">Search Crags</a></li>
 						<li><a class="nav-link" href="/contact">Contact us</a></li>
 						{% if user.account.is_admin %}
-						<li class="active"><a class="nav-link" href="/adminPortal">Admin</a></li>
+						<li><a class="nav-link" href="/adminPortal">Admin</a></li>
 						{% endif %}
 					</ul>
 
@@ -85,36 +85,45 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<h1>Admin Portal</h1>
+								<h1>Report</h1>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-
 </header>
 <div class="container">
 	<div class="subforum">
-		<div class="subforum-title">
-			<h1>Contact US</h1>
+        {% if user.is_authenticated and user.account.is_admin %}
+        <div class="subforum-title"> 
+			<h1>Report</h1>
+            <p>
+                <b>Date Created:</b> <span id="date"></span> <br>
+                <b>New User In Last Week:</b> {% for user in report.recent_users %}{{user}}, {% if forloop.last %}{{user}}{% endif %}{% endfor %} <br>
+                <b>Total New User In Last Week:</b> {{report.totalUserPastWeek}} <br>
+                <b>New User In Last Month:</b> {% for user in report.last_month_users %}{{user}}, {% if forloop.last %}{{user}}{% endif %}{% endfor %} <br>
+                <b>Total New User In Last Month:</b> {{report.totalUserPastMonth}} <br>
+                <b>Total Post Created In Last Week:</b> {{report.recent_posts_count}} <br>
+                <b>Total Post Created In Last Month:</b> {{report.last_month_posts_count}} <br> 
+                <br>
+                <b>Total Main Topic In Forum:</b> {{report.total_topic_view}} <br>
+                <b>Most Popular Main Topic:</b> {{report.most_popular_topic}} <br>
+                <b>Most Popular Main Topic View Count:</b> {{report.most_popular_topic.totalView}} <br>
+                <b>Total Sub Topic In Forum:</b> {{report.total_subtopic_view}} <br>
+                <b>Most Popular Sub Topic:</b> {{report.most_popular_subtopic}} <br>
+                <b>Most Popular Sub Topic View Count:</b> {{report.most_popular_subtopic.totalView}} <br>
+                <b>Total Post In Forum:</b> {{report.total_post_view}} <br>
+                <b>Most Popular Post:</b> {{report.most_popular_post}} <br>
+                <b>Most Popular Post View Count:</b> {{report.most_popular_post.totalView}} <br>
+            </p>
+            
 		</div>
-		{% for item in contactus %}
-		<div class="subforum">
-			<div class="subforum-title">
-                <p>First Name: {{item.firstname}}</p>
-				<p>Last Name: {{item.lastname}}</p>
-				<p>Email {{item.email}}</p>
-                <p>Message: <br>{{item.message|linebreaksbr}}</p>
-                <p>Done Contacting: {{item.status}}</p>
-                <a href="/markContactDone/{{item.id}}">Mark as Done</a>
-			</div>
-		</div>
-		{% endfor %}
-		<br>
-		<div class="subforum-title">
-			<a href="/viewAccounts" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">View All Accounts</a>
-			<a href="/generateReport" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate Report</a>
+        {% else %}
+        <h1>Only Admin can access this page!</h1>
+        {% endif %}
+        
+           
 		</div>
 	</div>
 	<!--More-->
@@ -206,8 +215,18 @@
 		</footer>
 		<!-- End Footer Section -->	
 
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script>
+			$(document).ready(function() {
+                var date = document.getElementById("date");
+                var currentTime = new Date();
+                date.value = currentTime;
+                date.innerHTML = currentTime;
+			});
+
+		</script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script src="{% static 'js/forum.js' %}"></script>

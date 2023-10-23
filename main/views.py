@@ -1565,18 +1565,66 @@ def logoutAR(response):
         return JsonResponse({'success': False, 'message': 'Logout Failed'})
     
 def generateReport(response):
-    one_week_ago = dti.now() - timedelta(days=30)
+    one_week_ago = dti.now() - timedelta(days=7)
 
-    # Query for users created in the last week
     recent_users = User.objects.filter(date_joined__gte=one_week_ago)
 
-    print(recent_users)
-
-    recent_users_name = []
+    totalUserPastWeek = 0
     for user in recent_users:
-        recent_users_name.append(user.username)
+        totalUserPastWeek +=1
 
-    return JsonResponse({'recent_users': recent_users_name })
+    one_month_ago = dti.now() - timedelta(days=30)
+
+    last_month_users = User.objects.filter(date_joined__gte=one_month_ago)
+
+    totalUserPastMonth = 0
+    for user in last_month_users:
+        totalUserPastMonth +=1
+
+    recent_posts_count = 0
+    last_month_posts_count = 0
+    for post in ForumPost.objects.all():
+        if getDateTime(post.date) >= one_week_ago:
+            recent_posts_count += 1
+
+        if getDateTime(post.date) >= one_month_ago:
+            last_month_posts_count +=1
+
+    total_topic_view = 0
+    most_popular_topic = MainTopic.objects.all().first()
+    for topic in MainTopic.objects.all():
+        total_topic_view += topic.totalView
+        if topic.totalView >= most_popular_topic.totalView:
+            most_popular_topic = topic
+
+    total_subtopic_view = 0
+    most_popular_subtopic = SubTopic.objects.all().first()
+    for subtopic in SubTopic.objects.all():
+        total_subtopic_view += subtopic.totalView
+        if subtopic.totalView >= most_popular_subtopic.totalView:
+            most_popular_subtopic = subtopic
+
+    total_post_view = 0
+    most_popular_post = ForumPost.objects.all().first()
+    for post in ForumPost.objects.all():
+        total_post_view += post.totalView
+        if post.totalView >= most_popular_post.totalView:
+            most_popular_post = post
+    report = {
+        'recent_users': recent_users, 
+        'totalUserPastWeek': totalUserPastWeek,
+        'last_month_users': last_month_users,
+        'totalUserPastMonth': totalUserPastMonth,
+        'recent_posts_count': recent_posts_count,
+        'last_month_posts_count': last_month_posts_count,
+        'total_topic_view': total_topic_view,
+        'most_popular_topic': most_popular_topic,
+        'total_subtopic_view': total_subtopic_view,
+        'most_popular_subtopic': most_popular_subtopic,
+        'total_post_view': total_post_view,
+        'most_popular_post': most_popular_post.title,
+    }
+    return render(response, 'report.html',{'report': report})
 
 def ARcreateClimbActivity(response):
     if response.user.is_authenticated == False:
