@@ -102,6 +102,10 @@
                             <p class="fieldset"> 
                                 {{createclimbactivity.date}}
                             </p>
+
+							<p class="fieldset"> 
+                                {{createclimbactivity.timeCompleted}}
+                            </p>
                         
         
                             <div class="row justify-content-between align-items-center">
@@ -201,8 +205,16 @@
 
 					if (isPositiveInteger == false) {
 						alert('Please enter a positive number with no decimal point for distance');
-						event.preventDefault(); // Prevent form submission
+						event.preventDefault();
 					}
+
+					var timeCompleted = $('#timeCompleted').val();
+					var inFormat = /^[0-9]*:([0-5]\d):([0-5]\d)$/.test(timeCompleted);
+
+					if (inFormat == false){
+						alert('Please enter time in the correct format hh:mm:ss and ensure minute and second is smaller than 60!');
+						event.preventDefault(); 
+					};
 				});
 			});
 		</script>

@@ -242,6 +242,7 @@ class ClimbingActivity(models.Model):
     locName = models.CharField(max_length=200)
     distance = models.IntegerField()
     date = models.DateField()
+    timeCompleted = models.CharField(max_length=150, null=True)
 
     def __str__(self):
         return self.locName

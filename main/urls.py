@@ -73,6 +73,8 @@ urlpatterns = [
     path('autoSuggest/', views.autoSuggest, name='autoSuggest'),
     path('loginAR/', views.loginAR, name="loginAR"),
     path('logoutAR/', views.logoutAR, name="logoutAR"),
+    path('generateReport/', views.generateReport, name='generateReport'),
+    path('ARcreateClimbActivity/', views.ARcreateClimbActivity, name="ARcreateClimbActivity"),
 
 
     #path("search/result", views.result, name="result"),

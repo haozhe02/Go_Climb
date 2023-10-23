@@ -746,7 +746,8 @@ def createClimbActivity(response):
             locName = form.cleaned_data["locName"]
             distance = form.cleaned_data["distance"]
             date = form.cleaned_data["date"]
-            climbActivity = ClimbingActivity(user=user, locName=locName, distance=distance, date=date) 
+            timeCompleted = form.cleaned_data["timeCompleted"]
+            climbActivity = ClimbingActivity(user=user, locName=locName, distance=distance, date=date, timeCompleted=timeCompleted) 
             climbActivity.save()
             user.account.updateRouteAndDist()
             checkAchievement(user)
@@ -1562,3 +1563,38 @@ def logoutAR(response):
         return JsonResponse({'success': True, 'message': 'Logout Successfully'})
     else:
         return JsonResponse({'success': False, 'message': 'Logout Failed'})
+    
+def generateReport(response):
+    one_week_ago = dti.now() - timedelta(days=30)
+
+    # Query for users created in the last week
+    recent_users = User.objects.filter(date_joined__gte=one_week_ago)
+
+    print(recent_users)
+
+    recent_users_name = []
+    for user in recent_users:
+        recent_users_name.append(user.username)
+
+    return JsonResponse({'recent_users': recent_users_name })
+
+def ARcreateClimbActivity(response):
+    if response.user.is_authenticated == False:
+        return JsonResponse({'success': False, 'message': 'User Not Logged In'})
+    if response.method == "POST":
+        try:
+            user = response.user
+            locName = response.POST.get('locName')
+            distance = response.POST.get('distance')
+            dateReceived = response.POST.get('date')
+            timeCompleted = response.POST.get('timeCompleted')
+            date = dti.strptime(dateReceived, "%Y-%m-%dT%H:%M:%S")
+            climbActivity = ClimbingActivity(user=user, locName=locName, distance=distance, date=date, timeCompleted=timeCompleted) 
+            climbActivity.save()
+            user.account.updateRouteAndDist()
+            checkAchievement(user)
+            return JsonResponse({'success': True, 'message': 'Upload Successfully'})
+        except Exception as e:
+            return JsonResponse({'message': 'Error processing form data'}, status=400)
+    else:
+        return JsonResponse({'message': 'Only POST requests accepted'}, status=405)
