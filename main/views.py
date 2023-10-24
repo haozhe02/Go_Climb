@@ -1626,6 +1626,7 @@ def generateReport(response):
     }
     return render(response, 'report.html',{'report': report})
 
+@csrf_exempt
 def ARcreateClimbActivity(response):
     if response.user.is_authenticated == False:
         return JsonResponse({'success': False, 'message': 'User Not Logged In'})
