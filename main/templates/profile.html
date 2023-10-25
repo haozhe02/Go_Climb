@@ -177,7 +177,22 @@
 										<h3>Summary</h3>
 										Total Route Climbed: {{user.account.totalRoute}} <br>
 										Total Distance Climbed: {{user.account.totalDistance}}m
-										
+										<br> <br>
+										<h3>Statistics</h3>
+										<h5>Last Week</h5>
+										<p>
+											Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+											Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+											Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+											Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+										</p>
+										<h5>Last Month</h5>
+										<p>
+											Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+											Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+											Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+											Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+										</p>
 									</div>
 									
 								</div>

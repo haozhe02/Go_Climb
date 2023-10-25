@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextFormField
 
 class SearchCrag(forms.Form):
     name = forms.CharField(label="Name", max_length=200)
@@ -10,13 +11,13 @@ class CreateCountry(forms.Form):
 
 class CreatePost(forms.Form):
     title = forms.CharField(label="Title", max_length=200)
-    text = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 40, 'style': " width: 100%;padding: 12px 20px 12px 50px;"}), strip=False)
+    text = RichTextFormField()
+    #text = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 40, 'style': " width: 100%;padding: 12px 20px 12px 50px;"}), strip=False)
     image = forms.ImageField(required=False)
-    create_button = forms.CharField(label="Create Post", widget=forms.HiddenInput(attrs={'class': 'submit-button'}), required=False)
-    save_button = forms.CharField(label="Save As Draft", widget=forms.HiddenInput(attrs={'class': 'submit-button'}), required=False)
+    #create_button = forms.CharField(label="Create Post", widget=forms.HiddenInput(attrs={'class': 'submit-button'}), required=False)
+    #save_button = forms.CharField(label="Save As Draft", widget=forms.HiddenInput(attrs={'class': 'submit-button'}), required=False)
 
     title.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Title'})
-    text.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Content'})
 
 class CreateComment(forms.Form):
     text = forms.CharField(max_length=500)

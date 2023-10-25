@@ -126,7 +126,7 @@
 				{% if user.is_authenticated %}
 				<br><a href="/addTagsForPost/{{post.id}}">Add Tags</a>
 				{% endif %}
-				<br><br>Content: <br> {{post.text|linebreaksbr}}
+				<br><br>Content: <br> {{post.text|safe}}
 			</p>
             {% if post.image and post.image != 'False'%}
             <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">

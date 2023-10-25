@@ -188,7 +188,7 @@
 					{% for tag in post.tags.all %} 
 					<a href="tags/{{tag.id}}">#{{tag}}</a>&nbsp;&nbsp;{% if user.is_authenticated %}&nbsp;<a href="/removeTagsForPost/{{post.id}}/{{tag.id}}" title="Remove tag #{{tag}}"><u>X</u></a>&nbsp;,&nbsp;&nbsp;{% endif %}
 					{% endfor %}
-					<br><br>Content: <br> {{post.text|linebreaksbr}}
+					<br><br>Content: <br> {{post.text|safe}}
 				</p>
                 {% if post.image and post.image != 'False'%}
                 <img src="{{post.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">
@@ -245,7 +245,7 @@
 						<a href="/topic/{{post.topic.mainTopic.id}}">{{draft.topic.mainTopic}}</a> >
 						<a href="/subtopic/{{post.topic.id}}">{{draft.topic}}</a> >
 						<b>This Draft</b> <br>
-						Content: <br> {{draft.text|linebreaksbr}}
+						Content: <br> {{draft.text|safe}}
 					</p>
 					{% if draft.image and draft.image != 'False'%}
 					<img src="{{draft.image.url}}" alt="Image" style="max-width: 100%;max-height: 100%;">

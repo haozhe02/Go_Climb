@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from .forms import *
 from .models import *
 import requests
-import json
+#import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import datetime
-import csv
-import ast
+#import csv
+#import ast
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 from datetime import datetime as dti, timedelta
@@ -19,6 +19,7 @@ def home(response):
 def createPost(response, id):
     if response.method == "POST":
         form = CreatePost(response.POST, response.FILES)
+        print(response.POST)
         if form.is_valid():
             title = form.cleaned_data["title"]
             text = form.cleaned_data["text"]
@@ -120,6 +121,8 @@ def weather(response):
     forecast_data = requests.get(url2.format(city)).json()
     uv_data = None
     air_pollution_data = None
+    reminder = None
+    hazards = []
 
     if response.method == 'POST':
         if(response.POST.get('city')) == None:
@@ -191,10 +194,44 @@ def weather(response):
         }
         if uv_data:
             data['uv'] = uv_data['result']['uv']
+            if uv_data['result']['uv'] >= 9:
+                hazards.append("UV index Too High, not recommended for climbing!")
 
         if air_pollution_data:
             data['air_quality'] =  getQuality(int(air_pollution_data['list'][0]['main']['aqi'])) 
             data['air_pollution_component'] = air_pollution_data['list'][0]['components']
+
+            if int(air_pollution_data['list'][0]['main']['aqi']) >= 4:
+                hazards.append("Air Quality Not Good, not recommended for climbing!")
+
+        if str(list_of_data['weather'][0]['id']).startswith("7"):
+            reminder = "Having " + str(list_of_data['weather'][0]['description']) + " in this area now. Not recommended for climbing"
+
+        if str(list_of_data['weather'][0]['id']).startswith("2"):
+            reminder = "It is having THUNDERSTORM in this area now. Not recommended for climbing!"
+
+        if str(list_of_data['weather'][0]['id']).startswith("8"):
+            reminder = "Weather is ok in this area now. Climbing is considered safe."
+
+        if str(list_of_data['weather'][0]['id']).startswith("5"):
+            reminder = "It is raining now in this area now. Please consider carefully before climbing!"
+
+        if str(list_of_data['weather'][0]['id']).startswith("3"):
+            reminder = "It is drizzling in this area now. Please consider carefully before climbing!"
+
+        if str(list_of_data['weather'][0]['id']).startswith("6"):
+            reminder = "It is snowing in this area now. Please consider carefully before climbing!"
+
+        if list_of_data['main']['temp'] >= 40:
+            hazards.append("Temperature Too High, not recommended for climbing!")
+
+        if list_of_data['main']['temp'] <= -10:
+            hazards.append("Temperature Too Low, not recommended for climbing!")
+
+        if list_of_data['wind']['speed'] >= 13:
+            hazards.append('Wind Speed Too Strong, not recommended for climbing!')
+        
+        
     else:
         data = {'message': str(list_of_data['message']), 'cod': str(list_of_data['cod'])}
 
@@ -295,7 +332,7 @@ def weather(response):
     else:
         Hours = []
         Days = []
-    return render(response, 'weather.html', {'data':data, 'Hours': Hours, 'Days': Days})
+    return render(response, 'weather.html', {'data':data, 'Hours': Hours, 'Days': Days, 'reminder':reminder, 'hazards': hazards})
 
 def getQuality(index):
     if(index == 1):
@@ -443,7 +480,7 @@ def topic(response, id):
 def subtopic(response, id):
     subtopic = SubTopic.objects.get(id=id) 
     maintopic = subtopic.mainTopic
-    posts = subtopic.posts.all()
+    posts = subtopic.posts.all().order_by('id')
     flaggedPosts = []
     subtopic.addView()
     if response.user.is_authenticated:
@@ -528,21 +565,83 @@ def ARroute(response):
 
 def profile(response):
     recommendations = []
-    experienced = Achievement.objects.get(title='Experienced Climber')
-    advanced = Achievement.objects.get(title='Advanced Climber')  
-    master = Achievement.objects.get(title='Master Climber')      
-    elite = Achievement.objects.get(title='Elite Climber')    
-    legendary = Achievement.objects.get(title='Legendary Climber')
-    achievements = response.user.account.achievements.all()
+    if response.user.is_authenticated:
+        experienced = Achievement.objects.get(title='Experienced Climber')
+        advanced = Achievement.objects.get(title='Advanced Climber')  
+        master = Achievement.objects.get(title='Master Climber')      
+        elite = Achievement.objects.get(title='Elite Climber')    
+        legendary = Achievement.objects.get(title='Legendary Climber')
+        achievements = response.user.account.achievements.all()
+        result = calculateStatitic(response.user)
+        if legendary in achievements or elite in achievements:
+            recommendations  = Crag.objects.filter(altitude__gte=800).order_by('?')[:5]
+        elif master in achievements or advanced in achievements or experienced in achievements:
+            recommendations  = Crag.objects.filter(altitude__range=(500, 799)).order_by('?')[:5]
+        else:
+            recommendations = Crag.objects.filter(altitude__lt=500).order_by('?')[:5]
+    return render(response, "profile.html", {'recommendations': recommendations, 'result': result})
 
+def calculateStatitic(user):
+    one_week_ago = dti.now() - timedelta(days=7)
+    one_month_ago = dti.now() - timedelta(days=30)
 
-    if legendary in achievements or elite in achievements:
-        recommendations  = Crag.objects.filter(altitude__gte=800).order_by('?')[:5]
-    elif master in achievements or advanced in achievements or experienced in achievements:
-        recommendations  = Crag.objects.filter(altitude__range=(500, 799)).order_by('?')[:5]
-    else:
-        recommendations = Crag.objects.filter(altitude__lt=500).order_by('?')[:5]
-    return render(response, "profile.html", {'recommendations': recommendations})
+    routes_last_week = user.activities.all().filter(date__gte=one_week_ago)
+    total_route_climbed_last_week = routes_last_week.count()
+    
+    total_dist_last_week = 0
+    total_time_last_week = 0
+    for route in routes_last_week:
+        total_dist_last_week += route.distance
+        if route.timeCompleted != None:
+            total_time_last_week += convertToSec(route.timeCompleted)
+    
+    time_per_route_week = 0
+    distance_per_route_week = 0
+    if total_route_climbed_last_week != 0:
+        time_per_route_week = convertBackToSec(round(total_time_last_week/total_route_climbed_last_week))
+        distance_per_route_week = total_dist_last_week/total_route_climbed_last_week
+
+    
+    routes_last_month = user.activities.all().filter(date__gte=one_month_ago)
+    total_route_climbed_last_month = routes_last_month.count()
+
+    total_dist_last_month = 0
+    total_time_last_month = 0
+    for route in routes_last_month:
+        total_dist_last_month += route.distance
+        if route.timeCompleted != None:
+            total_time_last_month += convertToSec(route.timeCompleted)
+    
+    time_per_route_month = 0
+    distance_per_route_month = 0
+    if total_route_climbed_last_week != 0:
+        time_per_route_month = convertBackToSec(round(total_time_last_month/total_route_climbed_last_month))
+        distance_per_route_month = total_dist_last_month/total_route_climbed_last_month
+
+    result = {
+        'total_route_climbed_last_week': total_route_climbed_last_week,
+        'total_dist_last_week': total_dist_last_week,
+        'time_per_route_week': time_per_route_week,
+        'distance_per_route_week': distance_per_route_week,
+        'total_route_climbed_last_month': total_route_climbed_last_month,
+        'total_dist_last_month': total_dist_last_month,
+        'time_per_route_month': time_per_route_month,
+        'distance_per_route_month': distance_per_route_month
+    }
+    return result 
+
+def convertToSec(time):
+    time_array = time.split(":")
+    hour = time_array[0]
+    minutes = time_array[1]
+    seconds = time_array[2]
+    total_seconds = ((int(hour) * 60) + int(minutes))* 60 + int(seconds)
+    return total_seconds 
+
+def convertBackToSec(totalseconds):
+    hours, remainder = divmod(totalseconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return (str(hours)+":"+str(minutes)+":"+str(seconds))
 
 def createSection(response):
     if response.method == "POST":

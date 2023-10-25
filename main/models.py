@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 # Create your models here.
 
@@ -84,7 +85,8 @@ class ForumPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True)
     topic = models.ForeignKey(SubTopic, on_delete=models.CASCADE, related_name="posts", null=True)
     title = models.CharField(max_length=200)
-    text = models.TextField()
+    text = RichTextField(blank=True, null=True)
+    #text = models.TextField()
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     date = models.TextField(null=True)
     totalView = models.BigIntegerField(default=0)
@@ -100,7 +102,8 @@ class PostDraft(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="drafts")
     topic = models.ForeignKey(SubTopic, on_delete=models.CASCADE, related_name="drafts")
     title = models.CharField(max_length=200)
-    text = models.TextField()
+    #text = models.TextField()
+    text = RichTextField(blank=True, null=True)
     image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     def __str__(self):

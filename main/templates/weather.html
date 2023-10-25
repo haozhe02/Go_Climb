@@ -106,7 +106,7 @@
 				
 				</div>
 			</form>	
-			<form method="post">
+			<form method="post" id="latitude-longitude">
 				{% csrf_token %}
 				<input type="hidden" name="latitude" id="latitude">
 				<input type="hidden" name="longitude" id="longitude">
@@ -149,6 +149,22 @@
 							
 						</div>
 						{% endif %}
+						
+						<div>
+							<p id="reminder" style="display: none;">
+								{% if reminder %}
+								  {{ reminder }}
+								{% endif %}
+							  </p>
+							
+							  <ul id="hazards" style="display: none;">
+								{% if hazards %}
+								  {% for hazard in hazards %}
+									<li>{{ hazard }}</li>
+								  {% endfor %}
+								{% endif %}
+							  </ul>
+						</div>
 					</div>
 					<div class="col-md-8">
 						<!-- Right Column Content -->
@@ -219,7 +235,6 @@
 								</div>
 							</div>
 						</div>
-
 						<!-- Hourly Forecast-->
 						<div class="weather-card">
 							<h1>Hourly Forecast</h1>
@@ -358,6 +373,25 @@
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script>
+			function reminderAndHazard(){
+				const reminder = document.getElementById('reminder');
+				const hazards = document.getElementById('hazards');
+				if (reminder && reminder.textContent.trim() !== '') {
+				  alert("Reminder:" + "\n" + reminder.textContent.trim());
+				}
+			
+				// Check if hazardsList exists and has list items
+				if (hazards && hazards.children.length > 0) {
+				  const hazardItems = hazards.getElementsByTagName('li');
+				  var noti = "Hazards:" + "\n";
+				  for (let i = 0; i < hazardItems.length; i++) {
+					noti += hazardItems[i].textContent + "\n";
+				  }
+				  alert(noti)
+				}
+			};
+
+			reminderAndHazard();
 
 			function getGeolocation(){
 				if (navigator.geolocation) {
@@ -414,59 +448,12 @@
 				};
 			};
 			getAltitude();
-
-			const interval = setInterval(getAltitude, 10000);
-
-			/*function checkNotifications(){
-				$.ajax({
-					url: '/checkNotifications/',
-					type: 'GET',
-					success: function(response) {
-						if (response.notify) {
-							var noti = "";
-							var counter = 0;
-							for(var i in response.notifications){
-								noti  += response.notifications[i] + "\n";
-								counter++;
-								if (counter >= 5){
-									alert(noti);
-									noti = "";
-									counter = 0;
-								}
-							};
-							if (noti != ""){
-								alert(noti);
-							};
-						} else {
-							console.log("User is not authenticated");
-						}
-					},
-					error: function() {
-						console.log("An error occurred");
-					}
-				});
-			};
-
-			function checkAuthentication(){
-				$.ajax({
-					url: '/checkAuthentication/',
-					type: 'GET',
-					success: function(response) {
-						if (response.is_authenticated) {
-							console.log("User is authenticated");
-							checkNotifications();
-						} else {
-							console.log("User is not authenticated");
-						}
-					},
-					error: function() {
-						console.log("An error occurred");
-					}
-				});
-			};
-
-			checkAuthentication();*/
-
+			const interval1 = setInterval(getAltitude, 10000);
+			setTimeout(function() {
+				location.reload(); 
+			}, 30000); 
+			
+			
 			
 		</script>
 	</body>
