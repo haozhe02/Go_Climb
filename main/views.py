@@ -565,6 +565,7 @@ def ARroute(response):
 
 def profile(response):
     recommendations = []
+    result = {}
     if response.user.is_authenticated:
         experienced = Achievement.objects.get(title='Experienced Climber')
         advanced = Achievement.objects.get(title='Advanced Climber')  
@@ -1746,3 +1747,38 @@ def ARcreateClimbActivity(response):
             return JsonResponse({'message': 'Error processing form data'}, status=400)
     else:
         return JsonResponse({'message': 'Only POST requests accepted'}, status=405)
+    
+def reactPost(response, postid, number):
+    post = ForumPost.objects.get(id=postid)
+    if response.user.is_authenticated:
+        post.reaction(number, response.user)
+
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/subtopic/'+str(post.topic.id))
+
+def removeReactPost(response, postid, number):
+    post = ForumPost.objects.get(id=postid)
+    if response.user.is_authenticated:
+        post.cancelReaction(number, response.user)
+
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/subtopic/'+str(post.topic.id))
+    
+
+def moveup(response, boxid):
+    user = response.user
+    user.account.moveup(boxid)
+    return redirect('/profile/')
+
+def movedown(response, boxid):
+    user = response.user
+    user.account.movedown(boxid)
+    return redirect('/profile/')

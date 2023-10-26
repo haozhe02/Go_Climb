@@ -23,7 +23,14 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>Forum</title>
+		<title>Post</title>
+	
+		<style>
+			#reactions th, #reactions td{
+				border: 5px solid white;
+				padding: 2px;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -133,7 +140,68 @@
             {% endif %}
 
 
-			<p>Total Views: {{post.totalView}}</p>
+			<p>
+				Total Views: {{post.totalView}} <br>
+				<table style="text-align: center;" id="reactions">
+					{% if user.is_authenticated%}
+					<tr>
+						{% if user in post.likeReactions.all %}
+						<th style="background-color: #F5F0BB; "><a href="/removeReactPost/{{post.id}}/1/" title="Remove Like">&#128077</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/1/" title="React Like">&#128077</a></th>
+						{% endif %}
+
+						{% if user in post.laughReactions.all %}
+						<th style="background-color: #F5F0BB;"><a href="/removeReactPost/{{post.id}}/2/" title="Remove Laugh">&#128514</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/2/" title="React Laugh">&#128514</a></th>
+						{% endif %}
+
+						{% if user in post.loveReactions.all %}
+						<th style="background-color: #F5F0BB;"><a href="/removeReactPost/{{post.id}}/3/" title="Remove Love">&#128525</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/3/" title="React Love">&#128525</a></th>
+						{% endif %}
+
+						{% if user in post.angryReactions.all %}
+						<th style="background-color: #F5F0BB;"><a href="/removeReactPost/{{post.id}}/4/" title="Remove Angry">&#128545</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/4/" title="React Angry">&#128545</a></th>
+						{% endif %}
+
+						{% if user in post.scareReactions.all %}
+						<th style="background-color: #F5F0BB;"><a href="/removeReactPost/{{post.id}}/5/" title="Remove Scare">&#128561</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/5/" title="React Scare">&#128561</a></th>
+						{% endif %}
+
+						{% if user in post.cryReactions.all %}
+						<th style="background-color: #F5F0BB;"><a href="/removeReactPost/{{post.id}}/6/" title="Remove Cry">&#128557</a></th>
+						{% else %}
+						<th><a href="/reactPost/{{post.id}}/6/" title="React Cry">&#128557</a></th>
+						{% endif %}
+					</tr>
+					{% else %}
+					<tr>
+						<th>&#128077</th>
+						<th>&#128514</th>
+						<th>&#128525</th>
+						<th>&#128545</th>
+						<th>&#128561</th>
+						<th>&#128557</th>
+					</tr>
+					{% endif %}
+					<tr>
+						<td >{{post.likeCount}}</td>
+						<td>{{post.laughCount}}</td>
+						<td>{{post.loveCount}}</td>
+						<td>{{post.angryCount}}</td>
+						<td>{{post.scareCount}}</td>
+						<td>{{post.cryCount}}</td>
+					</tr>
+				</table>
+			</p>
+
             
             {% if user.account.is_admin %}
                 {% if post in allFP %}

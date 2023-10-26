@@ -79,145 +79,410 @@
 
 		<!-- Start Hero Section -->
 			<div class="hero">
-				<div class="container" >
-					{% if user.is_authenticated %}
-					{% if user.account.profileSuspended %}
-					<h1>Profile Suspended</h1>
-					{% else %}
-					<div class="row">
-						<div class="col-lg-4">
-							<div class="profile-left">
-								<div class="user-profile-card">
-									<h3>Profile</h3>
-									<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
-									<div class="details">
-										<p>{% if user.is_authenticated%}
-                                            @{{user}} <br>
-											{% if user.first_name and user.last_name%}
-											Name: {{user.first_name}} {{user.last_name}}<br>
-											{% endif %}
-											{% if user.email %}
-											Email: {{user.email}} <br>
-											{% endif %}
-											
-										{% else %}
-                                            @user_name <br>
-										{% endif %} Country of Origin<br><a href="/viewFollowers/{{user.id}}">{{user.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{user.id}}">{{user.account.followingsCount}} Following</a><br>
-
-											{% if user.is_authenticated %}
-											<b><a href="/editLogin/{{user.id}}">Edit Account</a></b>
-											{% endif %}
-
-											<br>
-											{% if user.account.facebookLink != "Empty" %}
-											<br><a href="{{user.account.facebookLink}}" target="_blank">Facebook</a>
-											{% endif %}
-
-											{% if user.account.youtubeLink != "Empty" %}
-											<br><a href="{{user.account.youtubeLink}}" target="_blank">Youtube</a>
-											{% endif %}
-
-											{% if user.is_authenticated %}
-												{% if user.account.facebookLink == "Empty" and user.account.youtubeLink == "Empty" %}
-													<br><b><a href="/editSocialMedia/{{user.id}}">Add Social Media</a></b>
+					<div class="container" >
+						{% if user.is_authenticated %}
+							{% if user.account.profileSuspended %}
+							<h1>Profile Suspended</h1>
+							{% else %}
+							<div class="row">
+								<div class="col-lg-4">
+									<div class="profile-left">
+										<div class="user-profile-card">
+											<h3>Profile</h3>
+											<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
+											<div class="details">
+												<p>{% if user.is_authenticated%}
+													@{{user}} <br>
+													{% if user.first_name and user.last_name%}
+													Name: {{user.first_name}} {{user.last_name}}<br>
+													{% endif %}
+													{% if user.email %}
+													Email: {{user.email}} <br>
+													{% endif %}
+													
 												{% else %}
-													<br><b><a href="/editSocialMedia/{{user.id}}">Edit Social Media</a></b>
-												{% endif %}
-											{% endif %}
+													@user_name <br>
+												{% endif %}<a href="/viewFollowers/{{user.id}}">{{user.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{user.id}}">{{user.account.followingsCount}} Following</a><br>
 
-											{% if user.is_authenticated and user.is_superuser == False %}
-											<br><b><a href="/suspendProfile/{{user.id}}">Delete Profile</a></b>
+													{% if user.is_authenticated %}
+													<b><a href="/editLogin/{{user.id}}">Edit Account</a></b>
+													{% endif %}
+
+													<br>
+													{% if user.account.facebookLink != "Empty" %}
+													<br><a href="{{user.account.facebookLink}}" target="_blank">Facebook</a>
+													{% endif %}
+
+													{% if user.account.youtubeLink != "Empty" %}
+													<br><a href="{{user.account.youtubeLink}}" target="_blank">Youtube</a>
+													{% endif %}
+
+													{% if user.is_authenticated %}
+														{% if user.account.facebookLink == "Empty" and user.account.youtubeLink == "Empty" %}
+															<br><b><a href="/editSocialMedia/{{user.id}}">Add Social Media</a></b>
+														{% else %}
+															<br><b><a href="/editSocialMedia/{{user.id}}">Edit Social Media</a></b>
+														{% endif %}
+													{% endif %}
+
+													{% if user.is_authenticated and user.is_superuser == False %}
+													<br><b><a href="/suspendProfile/{{user.id}}">Delete Profile</a></b>
+													{% endif %}
+												</p>
+											</div>
+										</div>
+										{% if user.account.badgePosition == 1 %}
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>Badges Showing</h3>
+													{% for badge in user.account.showingBadges.all %}
+													{{badge}} <br>
+													{% endfor %}
+													<br><a href="/viewAvailableBadges/">View All Badges</a>
+												</div>
+												<br>
+												<a href="/movedown/4/"><u>Move Down</u></a>
+											</div>
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>Recommended Routes</h3>
+													<p>
+														{% for recommendation in recommendations%}
+														{{recommendation}} 	&#40;Altitude: {{recommendation.altitude}}m&#41; <br>
+														{% endfor %}
+													</p>
+												</div>
+												<a href="/moveup/5/"><u>Move Up</u></a>
+											</div>
+										{% else %}
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>Recommended Routes</h3>
+													<p>
+														{% for recommendation in recommendations%}
+														{{recommendation}} 	&#40;Altitude: {{recommendation.altitude}}m&#41; <br>
+														{% endfor %}
+													</p>
+												</div>
+												<a href="/movedown/5/"><u>Move Down</u></a>
+											</div>
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>Badges Showing</h3>
+													{% for badge in user.account.showingBadges.all %}
+													{{badge}} <br>
+													{% endfor %}
+													<br><a href="/viewAvailableBadges/">View All Badges</a>
+												</div>
+												<br>
+												<a href="/moveup/4/"><u>Move Up</u></a>
+											</div>
+										{% endif%}
+									</div>
+								</div>
+								<div class="col-lg-8">
+									<div class="profile-right">
+										{% if user.account.aboutPosition == 1 %}
+											<div class="user-profile-card">
+												<h3>About</h3>
+												<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
+												<div class="details">
+													<p>
+														{{user.account.about|linebreaksbr}}
+													</p>
+												</div>
+												<a href="/movedown/1/"><u>Move Down</u></a>
+											</div>
+											{% if user.account.historyPosition == 2 %}
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>History</h3> 
+														{% if user.is_authenticated %}
+														<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
+														{% endif %}
+														<p>
+															{% for activity in user.activities.all %}
+															{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
+															{% endfor %}
+														</p>
+														<h3>Summary</h3>
+														Total Route Climbed: {{user.account.totalRoute}} <br>
+														Total Distance Climbed: {{user.account.totalDistance}}m
+														<br> <br>
+														<h3>Statistics</h3>
+														<h5>Last Week</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+															Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+															Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+														</p>
+														<h5>Last Month</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+															Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+															Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+														</p>
+													</div>
+													<a href="/moveup/2/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/2/"><u>Move Down</u></a>
+												</div>
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>Achievements</h3>
+														<p>
+														{% for achievement in user.account.achievements.all %}
+														<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+														{% endfor %}
+														</p>
+													</div>	
+													<a href="/moveup/3/"><u>Move Up</u></a>
+												</div>
+											{% else %}
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>Achievements</h3>
+														<p>
+														{% for achievement in user.account.achievements.all %}
+														<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+														{% endfor %}
+														</p>
+													</div>
+													<a href="/moveup/3/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/3/"><u>Move Down</u></a>
+												</div>
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>History</h3> 
+														{% if user.is_authenticated %}
+														<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
+														{% endif %}
+														<p>
+															{% for activity in user.activities.all %}
+															{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
+															{% endfor %}
+														</p>
+														<h3>Summary</h3>
+														Total Route Climbed: {{user.account.totalRoute}} <br>
+														Total Distance Climbed: {{user.account.totalDistance}}m
+														<br> <br>
+														<h3>Statistics</h3>
+														<h5>Last Week</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+															Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+															Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+														</p>
+														<h5>Last Month</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+															Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+															Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+														</p>
+													</div>
+													<a href="/moveup/2/"><u>Move Up</u></a>
+												</div>
 											{% endif %}
-										</p>
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Badges Showing</h3>
-										{% for badge in user.account.showingBadges.all %}
-										{{badge}} <br>
-										{% endfor %}
-										<br><a href="/viewAvailableBadges/">View All Badges</a>
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Recommended Routes</h3>
-										<p>
-											{% for recommendation in recommendations%}
-											{{recommendation}} 	&#40;Altitude: {{recommendation.altitude}}m&#41; <br>
-											{% endfor %}
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-8">
-							<div class="profile-right">
-								<div class="user-profile-card">
-									<h3>About</h3>
-									<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
-									<div class="details">
-										<p>
-											{{user.account.about|linebreaksbr}}
-										</p>
-									</div>
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>History</h3> 
-										{% if user.is_authenticated %}
-										<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
 										{% endif %}
-										<p>
-											{% for activity in user.activities.all %}
-											{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
-											{% endfor %}
-										</p>
-										<h3>Summary</h3>
-										Total Route Climbed: {{user.account.totalRoute}} <br>
-										Total Distance Climbed: {{user.account.totalDistance}}m
-										<br> <br>
-										<h3>Statistics</h3>
-										<h5>Last Week</h5>
-										<p>
-											Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
-											Total Distance Climbed: {{result.total_dist_last_week}}m <br>
-											Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
-											Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
-										</p>
-										<h5>Last Month</h5>
-										<p>
-											Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
-											Total Distance Climbed: {{result.total_dist_last_month}}m <br>
-											Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
-											Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
-										</p>
+										
+										{% if user.account.historyPosition == 1 %}
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>History</h3> 
+													{% if user.is_authenticated %}
+													<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
+													{% endif %}
+													<p>
+														{% for activity in user.activities.all %}
+														{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
+														{% endfor %}
+													</p>
+													<h3>Summary</h3>
+													Total Route Climbed: {{user.account.totalRoute}} <br>
+													Total Distance Climbed: {{user.account.totalDistance}}m
+													<br> <br>
+													<h3>Statistics</h3>
+													<h5>Last Week</h5>
+													<p>
+														Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+														Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+														Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+														Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+													</p>
+													<h5>Last Month</h5>
+													<p>
+														Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+														Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+														Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+														Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+													</p>
+												</div>
+												<a href="/movedown/2/"><u>Move Down</u></a>
+											</div>
+											{% if user.account.aboutPosition == 2 %}
+												<div class="user-profile-card">
+													<h3>About</h3>
+													<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
+													<div class="details">
+														<p>
+															{{user.account.about|linebreaksbr}}
+														</p>
+													</div>
+													<a href="/moveup/1/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/1/"><u>Move Down</u></a>
+												</div>
+												
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>Achievements</h3>
+														<p>
+														{% for achievement in user.account.achievements.all %}
+														<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+														{% endfor %}
+														</p>
+													</div>	
+													<a href="/moveup/3/"><u>Move Up</u></a> 
+												</div>
+											{% else %}
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>Achievements</h3>
+														<p>
+														{% for achievement in user.account.achievements.all %}
+														<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+														{% endfor %}
+														</p>
+													</div>
+													<a href="/moveup/3/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/3/"><u>Move Down</u></a>
+												</div>
+												<div class="user-profile-card">
+													<h3>About</h3>
+													<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
+													<div class="details">
+														<p>
+															{{user.account.about|linebreaksbr}}
+														</p>
+													</div>
+													<a href="/moveup/1/"><u>Move Up</u></a> 
+												</div>
+											{% endif %}
+										{% endif %}
+
+										{% if user.account.achievementPosition == 1 %}
+											<div class="user-profile-card">
+												<div class="favourite-activities">
+													<h3>Achievements</h3>
+													<p>
+													{% for achievement in user.account.achievements.all %}
+													<b>{{achievement.title}}</b> - {{achievement.description}} <br>
+													{% endfor %}
+													</p>
+												</div>	
+												<a href="/movedown/3/"><u>Move Down</u></a>
+											</div>
+											
+											{% if user.account.aboutPosition == 2 %}
+												<div class="user-profile-card">
+													<h3>About</h3>
+													<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
+													<div class="details">
+														<p>
+															{{user.account.about|linebreaksbr}}
+														</p>
+													</div>
+													<a href="/moveup/1/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/1/"><u>Move Down</u></a>
+												</div>
+												
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>History</h3> 
+														{% if user.is_authenticated %}
+														<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
+														{% endif %}
+														<p>
+															{% for activity in user.activities.all %}
+															{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
+															{% endfor %}
+														</p>
+														<h3>Summary</h3>
+														Total Route Climbed: {{user.account.totalRoute}} <br>
+														Total Distance Climbed: {{user.account.totalDistance}}m
+														<br> <br>
+														<h3>Statistics</h3>
+														<h5>Last Week</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+															Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+															Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+														</p>
+														<h5>Last Month</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+															Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+															Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+														</p>
+													</div>
+													<a href="/moveup/2/"><u>Move Up</u></a>
+												</div>
+											{% else %}
+												<div class="user-profile-card">
+													<div class="favourite-activities">
+														<h3>History</h3> 
+														{% if user.is_authenticated %}
+														<b><a href="/createClimbActivity">Add A New Climbing Activity</a></b>
+														{% endif %}
+														<p>
+															{% for activity in user.activities.all %}
+															{{activity.locName}}, {{activity.distance}}m, {{activity.date}}, {{activity.timeCompleted}} <br>
+															{% endfor %}
+														</p>
+														<h3>Summary</h3>
+														Total Route Climbed: {{user.account.totalRoute}} <br>
+														Total Distance Climbed: {{user.account.totalDistance}}m
+														<br> <br>
+														<h3>Statistics</h3>
+														<h5>Last Week</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_week}} <br>
+															Total Distance Climbed: {{result.total_dist_last_week}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_week}} &#40;hh:mm:ss&#41;<br>
+															Average Distance Per Climbing: {{result.distance_per_route_week}}m <br>
+														</p>
+														<h5>Last Month</h5>
+														<p>
+															Total Route Climbed: {{result.total_route_climbed_last_month}} <br>
+															Total Distance Climbed: {{result.total_dist_last_month}}m <br>
+															Average Time Per Climbing: {{result.time_per_route_month}} &#40;hh:mm:ss&#41; <br>
+															Average Distance Per Climbing: {{result.distance_per_route_month}}m <br>
+														</p>
+													</div>
+													<a href="/moveup/2/"><u>Move Up</u></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/movedown/2/"><u>Move Down</u></a>
+												</div>
+												<div class="user-profile-card">
+													<h3>About</h3>
+													<b><a href="/editAbout/{{user.id}}">Edit About</a></b>
+													<div class="details">
+														<p>
+															{{user.account.about|linebreaksbr}}
+														</p>
+													</div>
+													<a href="/moveup/1/"><u>Move Up</u></a>
+												</div>
+											{% endif %}
+										{% endif %}
+										
 									</div>
-									
-								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Achievements</h3>
-										<p>
-										{% for achievement in user.account.achievements.all %}
-										<b>{{achievement.title}}</b> - {{achievement.description}} <br>
-										{% endfor %}
-										</p>
-									</div>
-									
 								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-				{% endif %}
-				{% else%}
-				<h1>Please Login First</h1>
-				{% endif %}
+							{% endif %}
+						{% else%}
+						<h1>Please Login First</h1>
+						{% endif %}
+					</div>	
 			</div>
-		</div>
-			</div>
+
 		<!-- End Hero Section -->
         		<!-- Start Footer Section -->
 		<footer class="footer-section">

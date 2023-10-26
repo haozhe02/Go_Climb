@@ -97,6 +97,11 @@
 <div class="container">
 	<div class="subforum">
 		<div class="subforum-title">
+			<a href="/viewAccounts" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">View All Accounts</a>
+			<a href="/generateReport" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate Report</a>
+		</div>
+		<br>
+		<div class="subforum-title">
 			<h1>Contact US</h1>
 		</div>
 		{% for item in contactus %}
@@ -110,12 +115,7 @@
                 <a href="/markContactDone/{{item.id}}">Mark as Done</a>
 			</div>
 		</div>
-		{% endfor %}
-		<br>
-		<div class="subforum-title">
-			<a href="/viewAccounts" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">View All Accounts</a>
-			<a href="/generateReport" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate Report</a>
-		</div>
+		{% endfor %}		
 	</div>
 	<!--More-->
 <!---->

@@ -96,8 +96,8 @@
 										<p>
                                             @{{userProf}} <br>
 											Name: {{userProf.first_name}} {{userProf.last_name}}<br>
-											Email: {{userProf.email}} <br>
-                                            Country of Origin <br><a href="/viewFollowers/{{userProf.id}}">{{userProf.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{userProf.id}}">{{userProf.account.followingsCount}} Following</a><br>
+											Email: {{userProf.email}} 
+											<br><a href="/viewFollowers/{{userProf.id}}">{{userProf.account.followersCount}} Followers</a> &nbsp; <a href="/viewFollowings/{{userProf.id}}">{{userProf.account.followingsCount}} Following</a><br>
 											{% if userProf not in user.account.followings.all %}
 											<b><a href="/followUser/{{userProf.id}}">Follow User</a></b>
 											{% else %}
@@ -129,12 +129,7 @@
 										{% endfor %}
 									</div>
 								</div>
-								<div class="user-profile-card">
-									<div class="favourite-activities">
-										<h3>Steps</h3>
-										<p>Route 1<br>Route 2<br>Route 3<br>Route 4</p>
-									</div>
-								</div>
+
 							</div>
 						</div>
 						<div class="col-lg-8">

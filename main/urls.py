@@ -75,6 +75,10 @@ urlpatterns = [
     path('logoutAR/', views.logoutAR, name="logoutAR"),
     path('generateReport/', views.generateReport, name='generateReport'),
     path('ARcreateClimbActivity/', views.ARcreateClimbActivity, name="ARcreateClimbActivity"),
+    path("reactPost/<int:postid>/<int:number>/", views.reactPost, name="reactPost"),
+    path("removeReactPost/<int:postid>/<int:number>/", views.removeReactPost, name="removeReactPost"),
+    path("moveup/<int:boxid>/", views.moveup, name="moveup"),
+    path("movedown/<int:boxid>/", views.movedown, name="movedown"),
 
 
     #path("search/result", views.result, name="result"),

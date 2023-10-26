@@ -91,12 +91,77 @@ class ForumPost(models.Model):
     date = models.TextField(null=True)
     totalView = models.BigIntegerField(default=0)
 
+    likeReactions = models.ManyToManyField(User, related_name="reactLike", blank=True)
+    likeCount = models.BigIntegerField(default=0)
+    laughReactions = models.ManyToManyField(User, related_name="reactLaugh", blank=True)
+    laughCount = models.BigIntegerField(default=0)
+    loveReactions = models.ManyToManyField(User, related_name="reactLove", blank=True)
+    loveCount = models.BigIntegerField(default=0)
+    angryReactions = models.ManyToManyField(User, related_name="reactAngry", blank=True)
+    angryCount = models.BigIntegerField(default=0)
+    scareReactions = models.ManyToManyField(User, related_name="reactScare", blank=True)
+    scareCount = models.BigIntegerField(default=0)
+    cryReactions = models.ManyToManyField(User, related_name="reactCry", blank=True)
+    cryCount = models.BigIntegerField(default=0)
+
     def __str__(self):
         return self.title
     
     def addView(self):
         self.totalView += 1
         self.save()
+
+    def reaction(self, number, user):
+        if number == 1:
+            self.likeReactions.add(user)
+            self.likeCount+=1
+            self.save()
+        elif number == 2:
+            self.laughReactions.add(user)
+            self.laughCount+=1
+            self.save()
+        elif number == 3:
+            self.loveReactions.add(user)
+            self.loveCount+=1
+            self.save()
+        elif number == 4:
+            self.angryReactions.add(user)
+            self.angryCount+=1
+            self.save()
+        elif number == 5:
+            self.scareReactions.add(user)
+            self.scareCount+=1
+            self.save()
+        elif number == 6:
+            self.cryReactions.add(user)
+            self.cryCount+=1
+            self.save()
+
+    def cancelReaction(self, number, user):
+        if number == 1:
+            self.likeReactions.remove(user)
+            self.likeCount-=1
+            self.save()
+        elif number == 2:
+            self.laughReactions.remove(user)
+            self.laughCount-=1
+            self.save()
+        elif number == 3:
+            self.loveReactions.remove(user)
+            self.loveCount-=1
+            self.save()
+        elif number == 4:
+            self.angryReactions.remove(user)
+            self.angryCount-=1
+            self.save()
+        elif number == 5:
+            self.scareReactions.remove(user)
+            self.scareCount-=1
+            self.save()
+        elif number == 6:
+            self.cryReactions.remove(user)
+            self.cryCount-=1
+            self.save()
 
 class PostDraft(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="drafts")
@@ -108,6 +173,7 @@ class PostDraft(models.Model):
 
     def __str__(self):
         return self.title
+    
 
 class Achievement(models.Model):
     title = models.CharField(max_length=150)
@@ -143,6 +209,13 @@ class Account(models.Model):
     savedSubTopics = models.ManyToManyField(SubTopic, blank=True, related_name='accountST')
     badges = models.ManyToManyField(Badge, blank=True, related_name='accounts')
     showingBadges = models.ManyToManyField(Badge, blank=True, related_name='accountsShowing')
+
+    aboutPosition = models.IntegerField(default=1)
+    historyPosition = models.IntegerField(default=2)
+    achievementPosition = models.IntegerField(default=3)
+
+    badgePosition = models.IntegerField(default=1)
+    routesPosition = models.IntegerField(default=2)
 
     def __str__(self):
         return self.user.username
@@ -222,6 +295,161 @@ class Account(models.Model):
         self.showingBadges.remove(badge)
         self.save()
     
+    def moveup(self, boxid):
+        if boxid == 1:
+            if self.aboutPosition != 1:
+                self.aboutPosition -= 1
+
+                #if about becomes first
+                if self.aboutPosition == 1:
+                    #if history is at first now
+                    if self.historyPosition == 1:
+                        self.historyPosition = 2
+                    #if achievement is at first now 
+                    else:
+                        self.achievementPosition = 2
+                #if about becomes second        
+                else:
+                    #if history is at second now
+                    if self.historyPosition == 2:
+                        self.historyPosition = 3
+                    #if achievement is at second now 
+                    else:
+                        self.achievementPosition = 3
+            self.save()       
+        elif boxid == 2:
+            if self.historyPosition != 1:
+                self.historyPosition -= 1
+
+                #if history becomes first
+                if self.historyPosition == 1:
+                    #if about is at first now
+                    if self.aboutPosition == 1:
+                        self.aboutPosition = 2
+                    #if achievement is at first now 
+                    else:
+                        self.achievementPosition = 2
+                #if history becomes second        
+                else:
+                    #if about is at second now
+                    if self.aboutPosition == 2:
+                        self.aboutPosition = 3
+                    #if achievement is at second now 
+                    else:
+                        self.achievementPosition = 3
+            self.save()
+        elif boxid == 3:
+            if self.achievementPosition != 1:
+                self.achievementPosition -= 1
+
+                #if achievement becomes first
+                if self.achievementPosition == 1:
+                    #if about is at first now
+                    if self.aboutPosition == 1:
+                        self.aboutPosition = 2
+                    #if history is at first now 
+                    else:
+                        self.historyPosition = 2
+                #if achievement becomes second        
+                else:
+                    #if about is at second now
+                    if self.aboutPosition == 2:
+                        self.aboutPosition = 3
+                    #if history is at second now 
+                    else:
+                        self.historyPosition = 3
+            self.save()
+
+        elif boxid == 4:
+            if self.badgePosition != 1:
+                self.badgePosition = 1
+                self.routesPosition = 2
+            self.save()
+
+        elif boxid == 5:
+            if self.routesPosition != 1:
+                self.routesPosition = 1
+                self.badgePosition = 2
+            self.save()
+
+    def movedown(self, boxid):
+        if boxid == 1:
+            if self.aboutPosition != 3:
+                self.aboutPosition += 1
+
+                #if about becomes second
+                if self.aboutPosition == 2:
+                    #if history is at second now
+                    if self.historyPosition == 2:
+                        self.historyPosition = 1
+                        self.save()
+                    #if achievement is at second now 
+                    else:
+                        self.achievementPosition = 1
+                #if about becomes third        
+                else:
+                    #if history is at third now
+                    if self.historyPosition == 3:
+                        self.historyPosition = 2
+                    #if achievement is at third now 
+                    else:
+                        self.achievementPosition = 2
+            self.save()       
+        elif boxid == 2:
+            if self.historyPosition != 3:
+                self.historyPosition += 1
+
+                #if history becomes second
+                if self.historyPosition == 2:
+                    #if about is at second now
+                    if self.aboutPosition == 2:
+                        self.aboutPosition = 1
+                    #if achievement is at second now 
+                    else:
+                        self.achievementPosition = 1
+                #if history becomes third        
+                else:
+                    #if about is at third now
+                    if self.aboutPosition == 3:
+                        self.aboutPosition = 2
+                    #if achievement is at third now 
+                    else:
+                        self.achievementPosition = 2
+            self.save()
+        elif boxid == 3:
+            if self.achievementPosition != 3:
+                self.achievementPosition -= 1
+
+                #if achievement becomes second
+                if self.achievementPosition == 2:
+                    #if about is at second now
+                    if self.aboutPosition == 2:
+                        self.aboutPosition = 1
+                    #if history is at second now 
+                    else:
+                        self.historyPosition = 1
+                #if achievement becomes third        
+                else:
+                    #if about is at third now
+                    if self.aboutPosition == 3:
+                        self.aboutPosition = 2
+                    #if history is at second now 
+                    else:
+                        self.historyPosition = 2
+            self.save()
+
+        elif boxid == 4:
+            if self.badgePosition != 2:
+                self.badgePosition = 2
+                self.routesPosition = 1
+            self.save()
+                
+        elif boxid == 5:
+            if self.routesPosition != 2:
+                self.routesPosition = 2
+                self.badgePosition = 1
+            self.save()
+
 class ContactUs(models.Model):
     firstname = models.CharField(max_length=200)
     lastname = models.CharField(max_length=200)
