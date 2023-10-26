@@ -105,6 +105,12 @@
 			<div class="row justify-content-between align-items-center" >
 				<input type="text" name="search" id="search" placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;" autocomplete="off">								
 			</div>
+			<div class="row justify-content-between align-items-center" >
+				<button id="startButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Start Recording to Search By Voice</button><br>
+			</div>
+			<div class="row justify-content-between align-items-center" >
+				<button id="stopButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Stop Recording</button>			
+			</div>
 			<br>
 			<div style="background-color: white; height: max-content; text-align: center; border-radius: 25px; margin: auto; width: max-content;">
 				<h2>Auto suggestion</h2>
@@ -493,6 +499,31 @@
 		};
 
 		fetchSuggestion();
+
+		const startButton = document.getElementById('startButton');
+		const stopButton = document.getElementById('stopButton');
+		const search_bar = document.getElementById('search');
+	
+		const recognition = new webkitSpeechRecognition();
+		recognition.continuous = true;
+		recognition.interimResults = true;
+		recognition.lang = 'en-US';
+	
+		startButton.addEventListener('click', (event) => {
+			event.preventDefault();
+			recognition.start();
+		});
+
+		stopButton.addEventListener('click', (event) => {
+			event.preventDefault();
+			recognition.stop();
+		});
+	
+		recognition.onresult = (event) => {
+			const result = event.results[event.results.length - 1];
+			search_bar.innerText = result[0].transcript;
+			search_bar.value = result[0].transcript;
+		};
 		</script>
 
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>

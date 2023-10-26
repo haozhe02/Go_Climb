@@ -384,7 +384,7 @@ def search1(response):
         searchList = []
         if searchInput != "":
             for crag in crags:
-                if searchInput in crag.name:
+                if searchInput in crag.name.lower():
                     searchList.append(crag)
             crags = searchList
         
