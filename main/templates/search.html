@@ -512,9 +512,11 @@
 		startButton.addEventListener('click', (event) => {
 			event.preventDefault();
 			recognition.start();
+			startButton.innerHTML = "Recording...";
 		});
 
 		stopButton.addEventListener('click', (event) => {
+			startButton.innerHTML = "Start Recording to Search By Voice";
 			event.preventDefault();
 			recognition.stop();
 		});
