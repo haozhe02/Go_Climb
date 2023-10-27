@@ -97,7 +97,7 @@
 </header>
 <div class="container">
 	<div class="subforum">
-        <div id="map" style="height: 400px;"></div>
+        <div id="map" style="height: 600px;"></div>
 	</div>
 	<!--More-->
 <!---->
@@ -203,11 +203,11 @@
                         url : "/getCrags/",
                         success: function(response){
                             var crags = response.crags;
-                            console.log(crags)
                             for (var key in crags)
                             {
+								var message = crags[key].name + '<br>'  + crags[key].desc + '<br>'  + crags[key].altitude + 'm';
                                 L.marker([crags[key].latitude, crags[key].longitude]).addTo(map)
-                                .bindPopup(crags[key].name);
+                                .bindPopup(message);
     
                             }
                         },

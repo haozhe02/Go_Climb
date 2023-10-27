@@ -1926,6 +1926,8 @@ def getCrags(response):
         crags_to_send.append({
             'name': crag.name,
             'latitude': crag.latitude,
-            'longitude': crag.longitude
+            'longitude': crag.longitude,
+            'desc': crag.desc,
+            'altitude': crag.altitude
         })
     return JsonResponse({'crags': crags_to_send})
