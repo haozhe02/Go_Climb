@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
+from django.db.models import Q
 
 # Create your models here.
 
@@ -492,6 +493,8 @@ class Crag(models.Model):
     desc =  models.TextField()
     rocktype =  models.CharField(max_length=150)
     altitude = models.BigIntegerField(default=0)
+    latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
 
     def __str__(self):
         return self.name
@@ -555,3 +558,20 @@ class Notification(models.Model):
     def setNotified(self, status):
         self.is_notified = status
         self.save()
+
+class Chat(models.Model):
+    name = models.CharField(max_length=1000)
+    users = models.ManyToManyField(User, related_name="chats", blank=True)
+
+    def __str__(self):
+        return self.name
+    
+class Message(models.Model):
+    text = models.TextField()
+    date = models.TextField(null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages", null=True)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages", null=True)
+
+    def __str__(self):
+        return self.text
+    

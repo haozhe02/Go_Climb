@@ -151,6 +151,12 @@
 														{{recommendation}} 	&#40;Altitude: {{recommendation.altitude}}m&#41; <br>
 														{% endfor %}
 													</p>
+													<h3>Recommended Training Plans</h3>
+													<p>
+														{% for plan in training_plans %}
+														<a href="{{plan.link}}"><u>{{plan.title}}</u></a><br>
+														{% endfor %}
+													</p>
 												</div>
 												<a href="/moveup/5/"><u>Move Up</u></a>
 											</div>
@@ -161,6 +167,12 @@
 													<p>
 														{% for recommendation in recommendations%}
 														{{recommendation}} 	&#40;Altitude: {{recommendation.altitude}}m&#41; <br>
+														{% endfor %}
+													</p>
+													<h3>Recommended Training Plans</h3>
+													<p>
+														{% for plan in training_plans %}
+														<a href="{{plan.link}}"><u>{{plan.title}}</u></a><br>
 														{% endfor %}
 													</p>
 												</div>

@@ -79,8 +79,16 @@ urlpatterns = [
     path("removeReactPost/<int:postid>/<int:number>/", views.removeReactPost, name="removeReactPost"),
     path("moveup/<int:boxid>/", views.moveup, name="moveup"),
     path("movedown/<int:boxid>/", views.movedown, name="movedown"),
-
-
+    path('chat/<int:id>/', views.chat, name="chat"),
+    path('sendMessage/<int:id>/', views.sendMessage, name="sendMessage"),
+    path('getMessages/<int:id>/', views.getMessages, name="getMessages"),
+    path('map/', views.map, name="map"),
+    path('getCrags/', views.getCrags, name="getCrags"),
+    
+    
+    
+    
+    #path("get_lat_long/", views.get_lat_long, name="get_lat_long"),
     #path("search/result", views.result, name="result"),
     #path("create/", views.createCountry, name="createCountry"),
     #path("country/", views.list, name="list"),

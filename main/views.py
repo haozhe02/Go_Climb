@@ -5,12 +5,13 @@ import requests
 #import json
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import datetime
-#import csv
+import csv
 #import ast
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 from datetime import datetime as dti, timedelta
 from django.views.decorators.csrf import csrf_exempt
+from geopy.geocoders import Nominatim
 
 # Create your views here.
 def home(response):
@@ -348,6 +349,37 @@ def getQuality(index):
     else:
         return "Not Available"
 
+#def get_lat_long(response):
+    geolocator = Nominatim(user_agent="my_geocoder")
+
+    file = open("static/crags.csv")
+    csvreader = csv.reader(file)
+    locations = []
+    for row in csvreader:
+        locations.append({
+            'country': row[0],
+            'region': row[1], 
+            'name':row[2],
+            'desc':row[3], 
+            'rocktype':row[4], 
+            'altitude':row[5][:-1]
+        })
+
+    counter=0
+    crags = []
+    for loc in locations:
+        counter+=1
+        print(counter)
+        location = geolocator.geocode(loc['name'])
+        if location is not None:
+            loc['latitude'] = location.latitude
+            loc['longitude'] = location.longitude
+            crags.append(loc)
+    
+    for crag in crags:
+        Crag.objects.create(country=crag['country'], region=crag['region'], name=crag['name'], desc=crag['desc'], rocktype=crag['rocktype'], altitude=crag['altitude'], latitude=crag['latitude'], longitude=crag['longitude'])
+    return JsonResponse({'wow': "wow"})
+
 def search1(response):
     #file = open("static/crags.csv")
     #csvreader = csv.reader(file)
@@ -566,6 +598,7 @@ def ARroute(response):
 def profile(response):
     recommendations = []
     result = {}
+    training_plans = []
     if response.user.is_authenticated:
         experienced = Achievement.objects.get(title='Experienced Climber')
         advanced = Achievement.objects.get(title='Advanced Climber')  
@@ -576,11 +609,69 @@ def profile(response):
         result = calculateStatitic(response.user)
         if legendary in achievements or elite in achievements:
             recommendations  = Crag.objects.filter(altitude__gte=800).order_by('?')[:5]
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=-cSUBVA9TK8',
+                'title': '5 Ways to Maximise Your Grip (without a Hangboard)'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=3q9oeoku0jM',
+                'title': '13 Tips to improve your climbing'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=kR1buRTIKhk',
+                'title': '20 Pro Tips EVERY Climber should know'
+            })
+
+            training_plans.append({
+                'link:': 'https://www.youtube.com/watch?v=2LEnGELJxw0',
+                'title': '7 Key Techniques to Master in Climbing (with Huge Announcement!)'
+            })
+            
         elif master in achievements or advanced in achievements or experienced in achievements:
             recommendations  = Crag.objects.filter(altitude__range=(500, 799)).order_by('?')[:5]
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=-cSUBVA9TK8',
+                'title': '5 Ways to Maximise Your Grip (without a Hangboard)'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=3q9oeoku0jM',
+                'title': '13 Tips to improve your climbing'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=kR1buRTIKhk',
+                'title': '20 Pro Tips EVERY Climber should know'
+            })
+
+            training_plans.append({
+                'link:': 'https://www.youtube.com/watch?v=2LEnGELJxw0',
+                'title': '7 Key Techniques to Master in Climbing (with Huge Announcement!)'
+            })
         else:
             recommendations = Crag.objects.filter(altitude__lt=500).order_by('?')[:5]
-    return render(response, "profile.html", {'recommendations': recommendations, 'result': result})
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=2SaOEUZQ2G8',
+                'title': 'Basic Skills for Mountain Climbing - How to Climb a Mountain'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=b2v4brHpdxY',
+                'title': 'TOP 10 Tips for Beginner Boulderers'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=Lb8QkUemXiM',
+                'title': 'How to Maximize Your First Year of Climbing'
+            })
+
+            training_plans.append({
+                'link':'https://www.youtube.com/watch?v=TIudRBkNjWA',
+                'title': 'The 5 Basic Principles of Climbing'
+            })
+    return render(response, "profile.html", {'recommendations': recommendations, 'result': result, 'training_plans': training_plans})
 
 def calculateStatitic(user):
     one_week_ago = dti.now() - timedelta(days=7)
@@ -1782,3 +1873,59 @@ def movedown(response, boxid):
     user = response.user
     user.account.movedown(boxid)
     return redirect('/profile/')
+
+def chat(response, id):
+    user1 = response.user
+    user2 = User.objects.get(id=id)
+
+    chats_with_both_users = None
+
+    for chat in Chat.objects.all():
+        if user1 in chat.users.all() and user2 in chat.users.all():
+            chats_with_both_users = chat
+
+    if chats_with_both_users == None:
+        name = "Chat Between " + str(user1.username) + " and " + str(user2.username)
+        chats_with_both_users = Chat.objects.create(name=name)
+        chats_with_both_users.users.add(user1)
+        chats_with_both_users.users.add(user2)
+        chats_with_both_users.save()
+    print(chats_with_both_users)
+    return render(response, 'chat.html', {'chat': chats_with_both_users})
+
+def sendMessage(response, id):
+    message = response.POST['message']
+    date = response.POST['date']
+    user = response.user
+    chat = Chat.objects.get(id=id)
+
+    new_message = Message.objects.create(text=message, user=user, chat=chat, date=date)
+    new_message.save()
+    return HttpResponse('Message sent!')
+
+def getMessages(response, id):
+    chat = Chat.objects.get(id=id)
+
+    messages = Message.objects.filter(chat=chat)
+    messages_to_send = []
+    for message in messages:
+        messages_to_send.append({
+            'user': message.user.username,
+            'text': message.text,
+            'date': message.date
+        })
+    return JsonResponse({"messages":messages_to_send})
+
+def map(response):
+    return render (response, 'map.html')
+
+def getCrags(response):
+    crags = Crag.objects.all()
+    crags_to_send = []
+    for crag in crags:
+        crags_to_send.append({
+            'name': crag.name,
+            'latitude': crag.latitude,
+            'longitude': crag.longitude
+        })
+    return JsonResponse({'crags': crags_to_send})

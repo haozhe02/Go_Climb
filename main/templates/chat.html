@@ -23,7 +23,13 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>View Follows</title>
+		<title>Chat</title>
+        <style>
+            td {
+                border: 1px solid #dddddd;
+                padding: 8px;
+            }
+        </style>
 	</head>
 
 	<body>
@@ -55,7 +61,7 @@
 						<li><a class="nav-link" href="/search">Search Crags</a></li>
 						<li><a class="nav-link" href="/contact">Contact us</a></li>
 						{% if user.account.is_admin %}
-						<li class="active"><a class="nav-link" href="/adminPortal">Admin</a></li>
+						<li><a class="nav-link" href="/adminPortal">Admin</a></li>
 						{% endif %}
 					</ul>
 
@@ -85,29 +91,35 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<h1>View Follows</h1>
+								<h1>{{chat}}</h1>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-
 </header>
 <div class="container">
 	<div class="subforum">
-		<div class="subforum-title">
-			<h1>{{description}}</h1>
+        {% if user.is_authenticated%}
+        <div class="subforum-title"> 
+			<h1>{{chat}}</h1>
+            <table style="border-collapse: collapse; width: 100%;" id="chat">
+                
+            </table>
+            
 		</div>
-		{% for follow in follows %}
-		<div class="subforum">
-			<div class="subforum-title">
-                <b><a href="/viewProfile/{{follow.id}}">{{follow}}</a></b><br>
-				<a href="/chat/{{follow.id}}">Chat With {{follow}}</a>
-			</div> 
+        {% endif %}
+        
+           
 		</div>
-		{% endfor %}
-		<br>
+		<hr class="subforum-devider">
+        <form id="post-form">
+            {% csrf_token %}
+            <input type="hidden" name="chat_id" id="chat_id" value="{{chat.id}}">
+            <input type="text" name="message" id="message" width="100px" />
+            <input type="submit" value="Send">
+        </form>
 	</div>
 	<!--More-->
 <!---->
@@ -198,8 +210,53 @@
 		</footer>
 		<!-- End Footer Section -->	
 
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script>
+            $(document).ready(function(){
+
+                setInterval(function(){
+                    chat_id = $('#chat_id').val();
+                    $.ajax({
+                        type: 'GET',
+                        url : "/getMessages/" + chat_id +'/',
+                        success: function(response){
+                            $("#chat").empty();
+                            var messages = response.messages;
+                            for (var key in messages)
+                            {
+                                var temp="<tr><td><b>"+messages[key].user+"</b><p>"+messages[key].text+"</p>"+messages[key].date+"</td></tr>";
+                                $("#chat").append(temp);
+                            }
+                        },
+                        error: function(response){
+                            //alert('An error occured')
+                            console.log('Error');
+                        }
+                    });
+                },1000);
+                });
+                
+            $(document).on('submit','#post-form',function(e){
+                      e.preventDefault();
+                      chat_id = $('#chat_id').val();
+                      var currentTime = new Date();
+                      $.ajax({
+                        type:'POST',
+                        url:'/sendMessage/'+ chat_id +'/',
+                        data:{
+                            message:$('#message').val(),
+                            date: currentTime,
+                            csrfmiddlewaretoken: '{{ csrf_token }}', 
+                        },
+                        success: function(data){
+                           //alert(data)
+                        }
+                      });
+                      document.getElementById('message').value = ''
+                    });
+            </script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script src="{% static 'js/forum.js' %}"></script>

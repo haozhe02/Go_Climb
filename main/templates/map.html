@@ -23,7 +23,9 @@
 		<!--<link href="{% static '/css/tiny-slider.css' %}" rel="stylesheet">-->
 		<link href="{% static '/css/style.css' %}" rel="stylesheet" type="text/css">
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
-		<title>View Follows</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+		<title>Map</title>
 	</head>
 
 	<body>
@@ -55,7 +57,7 @@
 						<li><a class="nav-link" href="/search">Search Crags</a></li>
 						<li><a class="nav-link" href="/contact">Contact us</a></li>
 						{% if user.account.is_admin %}
-						<li class="active"><a class="nav-link" href="/adminPortal">Admin</a></li>
+						<li><a class="nav-link" href="/adminPortal">Admin</a></li>
 						{% endif %}
 					</ul>
 
@@ -85,29 +87,17 @@
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
-								<h1>View Follows</h1>
+								<h1>Map</h1>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-
 </header>
 <div class="container">
 	<div class="subforum">
-		<div class="subforum-title">
-			<h1>{{description}}</h1>
-		</div>
-		{% for follow in follows %}
-		<div class="subforum">
-			<div class="subforum-title">
-                <b><a href="/viewProfile/{{follow.id}}">{{follow}}</a></b><br>
-				<a href="/chat/{{follow.id}}">Chat With {{follow}}</a>
-			</div> 
-		</div>
-		{% endfor %}
-		<br>
+        <div id="map" style="height: 400px;"></div>
 	</div>
 	<!--More-->
 <!---->
@@ -198,8 +188,37 @@
 		</footer>
 		<!-- End Footer Section -->	
 
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script>
+            var map = L.map('map').setView([46.1955875, 8.0563136], 5);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                
+
+                $(document).ready(function(){
+
+                    $.ajax({
+                        type: 'GET',
+                        url : "/getCrags/",
+                        success: function(response){
+                            var crags = response.crags;
+                            console.log(crags)
+                            for (var key in crags)
+                            {
+                                L.marker([crags[key].latitude, crags[key].longitude]).addTo(map)
+                                .bindPopup(crags[key].name);
+    
+                            }
+                        },
+                        error: function(response){
+                            //alert('An error occured')
+                            console.log('Error');
+                        }
+                    });
+                    });
+            
+        </script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script src="{% static 'js/forum.js' %}"></script>

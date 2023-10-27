@@ -21,6 +21,8 @@ admin.site.register(Comment)
 admin.site.register(Tag)
 admin.site.register(Badge)
 admin.site.register(Notification)
+admin.site.register(Chat)
+admin.site.register(Message)
 
 class AccountInLine(admin.StackedInline):
     model = Account
