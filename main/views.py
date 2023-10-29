@@ -402,6 +402,8 @@ def search1(response):
 
     if response.method == 'POST':
         searchInput = response.POST['search']
+
+        print(searchInput)
         
         user = response.user
         exist = False
@@ -416,7 +418,7 @@ def search1(response):
         searchList = []
         if searchInput != "":
             for crag in crags:
-                if searchInput in crag.name.lower():
+                if str(searchInput).lower().replace(" ","") in crag.name.lower().replace(" ",""):
                     searchList.append(crag)
             crags = searchList
         
@@ -1720,7 +1722,14 @@ def notifications(response):
 
 def autoSuggest(response):
     query = response.GET.get('query', '')
-    suggestionsOri = Crag.objects.filter(name__icontains=query)[:7]
+    #suggestionsOri = Crag.objects.filter(name__icontains=query)[:7]
+    crags = Crag.objects.all()
+    suggestionsOri = []
+    for crag in crags:
+        if str(query).lower().replace(" ","") in crag.name.lower().replace(" ",""):
+            suggestionsOri.append(crag)
+    if len(suggestionsOri) > 7:
+        suggestionsOri = suggestionsOri[:7]
     suggestions = []
     for suggestion in suggestionsOri:
         suggestions.append(suggestion.name)
