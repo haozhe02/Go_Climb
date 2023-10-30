@@ -1998,7 +1998,7 @@ def contactEmergency(response):
                 latitude = response.POST['latitude']
                 longitude = response.POST['longitude']
 
-                bodyMessage = "Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " His/Her location is at (" + latitude + "," + longitude + ")!"                
+                bodyMessage = "Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " He/Her location is at (" + latitude + "," + longitude + ")!"                
             
                 message = client.messages \
                                 .create(
