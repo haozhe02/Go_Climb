@@ -86,6 +86,7 @@ urlpatterns = [
     path('getCrags/', views.getCrags, name="getCrags"),
     path('editEmergency/<int:id>/', views.editEmergency, name="editEmergency"),
     path('contactEmergency/', views.contactEmergency, name="contactEmergency"),
+    path('subscribe/', views.subscribe, name="subscribe"),
 
     
     

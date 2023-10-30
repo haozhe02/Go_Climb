@@ -2015,3 +2015,17 @@ def contactEmergency(response):
                     return JsonResponse({'message': 'Failed to Contacted!'})
             else:
                 return JsonResponse({'message': 'No Emergency Contact to contact!'})
+    return JsonResponse({'message': "Invalid Request"})
+
+def subscribe(response):
+    if response.user.is_authenticated and (response.user.account.is_premium == False):
+        response.user.account.setPremium(True)
+        text = "You have subscribed to premium!"
+        newNoti = Notification(user=response.user, text=text)
+        newNoti.save()
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/home/')

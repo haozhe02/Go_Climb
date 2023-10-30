@@ -94,6 +94,9 @@
 											<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
 											<div class="details">
 												<p>{% if user.is_authenticated%}
+													{% if user.account.is_premium %}
+													<b>Premium</b><br>
+													{% endif %}
 													@{{user}} <br>
 													{% if user.first_name and user.last_name%}
 													Name: {{user.first_name}} {{user.last_name}}<br>

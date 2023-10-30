@@ -95,6 +95,9 @@
 									<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
 									<div class="details">
 										<p>
+											{% if userProf.account.is_premium %}
+											<b>Premium</b><br>
+											{% endif %}
                                             @{{userProf}} &nbsp;&nbsp;&nbsp;<a href="/chat/{{userProf.id}}">Chat With {{userProf}}</a><br>
 											Name: {{userProf.first_name}} {{userProf.last_name}}<br>
 											Email: {{userProf.email}} 

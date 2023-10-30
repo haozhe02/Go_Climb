@@ -108,7 +108,7 @@
 							<h1 style="color: #F5F0BB;">Popular Trails</h1>
 							<p style="color: #fff;">Check out the top popular trails here.</p>
 
-							<p><a href="#0" class="btn btn-secondary me-2">Explore</a></p>
+							<p><a href="/search/" class="btn btn-secondary me-2">Explore</a></p>
 						</div>
 					</div>
 				</div>
@@ -116,13 +116,17 @@
 		</div>
 		<!-- End Popular Trails Section -->
 		<!-- Start Subscibe Section -->
-		<div class="GoClimb-plus-bg">
-			<div class="GoClimb-plus-card">
-				<h1 style="color: #F5F0BB;">Subscribe to <span class="d-block">GoClimb Plus.</span></h1>
-				<p class="mb-4" style="color: #FFF;">Subscribers enjoy an ad-free environment within the app, providing an uninterrupted climbing experience. Subscribers can access and use all augmented reality (AR) functions within the app, including advanced route tracing and navigation features.</p>
-				<p><a href="#0" class="btn btn-secondary me-2">Subscribe Now</a>
+		{% if user.is_authenticated %}
+			{% if user.account.is_premium == False %}
+				<div class="GoClimb-plus-bg">
+					<div class="GoClimb-plus-card">
+						<h1 style="color: #F5F0BB;">Subscribe to <span class="d-block">GoClimb Plus.</span></h1>
+						<p class="mb-4" style="color: #FFF;">Subscribers enjoy an ad-free environment within the app, providing an uninterrupted climbing experience. Subscribers can access and use all augmented reality (AR) functions within the app, including advanced route tracing and navigation features.</p>
+						<p><a href="/subscribe/" class="btn btn-secondary me-2">Subscribe Now</a>
+						</div>
 				</div>
-		</div>
+			{% endif %}
+		{% endif %}
 		<!-- End Subscibe Section -->
 		<!-- Start About us Section -->
 		<!-- <div class="about-us-bg">

@@ -219,6 +219,10 @@ class Account(models.Model):
     badgePosition = models.IntegerField(default=1)
     routesPosition = models.IntegerField(default=2)
 
+    def setPremium(self, status):
+        self.is_premium = status
+        self.save()
+
     def __str__(self):
         return self.user.username
     
