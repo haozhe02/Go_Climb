@@ -54,6 +54,31 @@ $(document).ready(function() {
     checkAuthentication();
 });
 
+
+function contactEmergency() {
+	if ("geolocation" in navigator) {
+	  navigator.geolocation.getCurrentPosition(function (position) {
+		const latitude = position.coords.latitude;
+		const longitude = position.coords.longitude;
+  
+		$.ajax({
+		  type: "POST",
+		  url: "/contactEmergency/", 
+		  data: {
+			latitude: latitude,
+			longitude: longitude,
+		  },
+
+		  success: function (response) {
+			alert(response.message);
+		  }
+		});
+	  });
+	}
+  }
+
+  document.getElementById("emergency").addEventListener("click", contactEmergency);
+
 (function() {
 	'use strict';
 

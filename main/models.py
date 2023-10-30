@@ -210,6 +210,7 @@ class Account(models.Model):
     savedSubTopics = models.ManyToManyField(SubTopic, blank=True, related_name='accountST')
     badges = models.ManyToManyField(Badge, blank=True, related_name='accounts')
     showingBadges = models.ManyToManyField(Badge, blank=True, related_name='accountsShowing')
+    emergencyContact = models.CharField(max_length=150, null=True)
 
     aboutPosition = models.IntegerField(default=1)
     historyPosition = models.IntegerField(default=2)
@@ -220,6 +221,10 @@ class Account(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    def setEmergencyContact(self, number):
+        self.emergencyContact = number
+        self.save()
 
     def updateAccountSuspend(self, status):
         self.accountSuspended = status

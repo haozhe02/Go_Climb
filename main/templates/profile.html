@@ -58,19 +58,21 @@
 					</ul>
 
 					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg' %}"></a></li>
+						<li style="margin-right: 5px;"><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg' %}"></a></li>
 						<!-- <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li> -->
-                        <li>
-							{% if user.is_authenticated %}
+                        {% if user.is_authenticated %}
+						<li>
 							<a class="nav-link" href="/notifications"><img src="{% static 'images/envelope-outline.svg'%}"></a></li>
-							{% endif %}
 						</li>
 						<li>
-							{% if user.is_authenticated %}
-							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
-							{% endif %}
+							<button id="emergency" style="background: transparent; border: none; padding: 8px; cursor: pointer;"><img width="30" src="{% static 'images/emergency-icon.png'%}" alt="Call Emergency"/></button>
 						</li>
+						<li>
+							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
+						</li>
+						{% endif %}
 					</ul>
+
 				</div>
 			</div>
 				
@@ -125,6 +127,11 @@
 														{% endif %}
 													{% endif %}
 
+													<br>Emergency Contact: {{user.account.emergencyContact}}
+													{% if user.is_authenticated %}
+													<br><b><a href="/editEmergency/{{user.id}}">Edit Emergency Contact</a></b>
+													{% endif %}
+
 													{% if user.is_authenticated and user.is_superuser == False %}
 													<br><b><a href="/suspendProfile/{{user.id}}">Delete Profile</a></b>
 													{% endif %}
@@ -154,9 +161,17 @@
 													<h3>Recommended Training Plans</h3>
 													<p>
 														{% for plan in training_plans %}
-														<a href="{{plan.link}}"><u>{{plan.title}}</u></a><br>
+														<a href="{{plan.link}}" target="_blank"><u>{{plan.title}}</u></a><br>
 														{% endfor %}
 													</p>
+													{% if certificates != none %}
+													<h3>Recommended Certificates</h3>
+													<p>
+														{% for cert in certificates %}
+														<a href="{{cert.link}}" target="blank"><u>{{cert.title}}</u></a><br>
+														{% endfor %}
+													</p>
+													{% endif %}
 												</div>
 												<a href="/moveup/5/"><u>Move Up</u></a>
 											</div>
@@ -172,9 +187,17 @@
 													<h3>Recommended Training Plans</h3>
 													<p>
 														{% for plan in training_plans %}
-														<a href="{{plan.link}}"><u>{{plan.title}}</u></a><br>
+														<a href="{{plan.link}}" target="blank"><u>{{plan.title}}</u></a><br>
 														{% endfor %}
 													</p>
+													{% if certificates != none %}
+													<h3>Recommended Certificates</h3>
+													<p>
+														{% for cert in certificates %}
+														<a href="{{cert.link}}" target="blank"><u>{{cert.title}}</u></a><br>
+														{% endfor %}
+													</p>
+													{% endif %}
 												</div>
 												<a href="/movedown/5/"><u>Move Down</u></a>
 											</div>

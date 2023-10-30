@@ -57,18 +57,19 @@
 					</ul>
 
 					<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-						<li><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg'%}"></a></li>
+						<li style="margin-right: 5px;"><a class="nav-link" href="/profile"><img src="{% static 'images/user.svg' %}"></a></li>
 						<!-- <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li> -->
+                        {% if user.is_authenticated %}
 						<li>
-							{% if user.is_authenticated %}
 							<a class="nav-link" href="/notifications"><img src="{% static 'images/envelope-outline.svg'%}"></a></li>
-							{% endif %}
 						</li>
 						<li>
-							{% if user.is_authenticated %}
-							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
-							{% endif %}
+							<button id="emergency" style="background: transparent; border: none; padding: 8px; cursor: pointer;"><img width="30" src="{% static 'images/emergency-icon.png'%}" alt="Call Emergency"/></button>
 						</li>
+						<li>
+							<p><a href="/logout" class="btn btn-secondary me-2">Logout</a>
+						</li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>
@@ -83,7 +84,7 @@
 
                     <div class="sign-in-or-sign-up-para">
                         <h1>Edit About</span></h1>
-                        <form action="/subtopic/{{subtopic.id}}" method="get">
+                        <form action="/profile/" method="get">
                             <button type="submit" style="border-radius: 40px; margin: auto; width:fit-content; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Cancel</button>
                         </form>
                     </div>

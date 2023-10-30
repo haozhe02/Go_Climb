@@ -12,6 +12,8 @@ from django.utils import timezone
 from datetime import datetime as dti, timedelta
 from django.views.decorators.csrf import csrf_exempt
 from geopy.geocoders import Nominatim
+import environ
+from twilio.rest import Client
 
 # Create your views here.
 def home(response):
@@ -601,6 +603,7 @@ def profile(response):
     recommendations = []
     result = {}
     training_plans = []
+    certificates = []
     if response.user.is_authenticated:
         experienced = Achievement.objects.get(title='Experienced Climber')
         advanced = Achievement.objects.get(title='Advanced Climber')  
@@ -630,6 +633,21 @@ def profile(response):
                 'link:': 'https://www.youtube.com/watch?v=2LEnGELJxw0',
                 'title': '7 Key Techniques to Master in Climbing (with Huge Announcement!)'
             })
+
+            certificates.append({
+                'link': 'https://amga.com/amga-multi-pitch-instructor/',
+                'title': 'Multi Pitch Instructor'
+            })
+
+            certificates.append({
+                'link': 'https://amga.com/rock-guide/',
+                'title': 'Rock Guide'
+            })
+
+            certificates.append({
+                'link': 'https://amga.com/alpine-guide/',
+                'title': 'Alpine Guide'
+            })
             
         elif master in achievements or advanced in achievements or experienced in achievements:
             recommendations  = Crag.objects.filter(altitude__range=(500, 799)).order_by('?')[:5]
@@ -652,6 +670,11 @@ def profile(response):
                 'link:': 'https://www.youtube.com/watch?v=2LEnGELJxw0',
                 'title': '7 Key Techniques to Master in Climbing (with Huge Announcement!)'
             })
+
+            certificates.append({
+                'link': 'https://amga.com/single-pitch-instructor/',
+                'title': 'Single Pitch Instructor'
+            })
         else:
             recommendations = Crag.objects.filter(altitude__lt=500).order_by('?')[:5]
             training_plans.append({
@@ -673,7 +696,10 @@ def profile(response):
                 'link':'https://www.youtube.com/watch?v=TIudRBkNjWA',
                 'title': 'The 5 Basic Principles of Climbing'
             })
-    return render(response, "profile.html", {'recommendations': recommendations, 'result': result, 'training_plans': training_plans})
+
+            certificates = None
+
+    return render(response, "profile.html", {'recommendations': recommendations, 'result': result, 'training_plans': training_plans, 'certificates': certificates})
 
 def calculateStatitic(user):
     one_week_ago = dti.now() - timedelta(days=7)
@@ -1140,6 +1166,21 @@ def editAbout(response, id):
         user = User.objects.get(id=id)
         editabout = EditAbout(initial={'about': user.account.about})
     return render(response, 'editAbout.html', {'editabout':editabout})
+
+def editEmergency(response, id):
+    if(response.user != User.objects.get(id=id)):
+        return redirect('/profile/')
+    if response.method == "POST":
+        form = EditEmergency(response.POST)
+        if form.is_valid():
+            user = User.objects.get(id=id)
+            number = form.cleaned_data["number"]
+            user.account.setEmergencyContact(number)
+            return redirect('/profile/')
+    else:
+        user = User.objects.get(id=id)
+        editemergency = EditEmergency(initial={'number': user.account.emergencyContact})
+    return render(response, 'editEmergencyContact.html', {'editemergency':editemergency})
 
 def followUser(response, id):
     user = response.user
@@ -1940,3 +1981,37 @@ def getCrags(response):
             'altitude': crag.altitude
         })
     return JsonResponse({'crags': crags_to_send})
+
+@csrf_exempt
+def contactEmergency(response):
+    if response.method == 'POST':
+        if response.user.is_authenticated:
+            if response.user.account.emergencyContact != None:
+                env = environ.Env()
+
+                environ.Env.read_env()
+
+                account_sid = env('TWILIO_ACCOUNT_SID')
+                auth_token = env('TWILIO_AUTH_TOKEN')
+                client = Client(account_sid, auth_token)
+
+                latitude = response.POST['latitude']
+                longitude = response.POST['longitude']
+
+                bodyMessage = "Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " His/Her location is at (" + latitude + "," + longitude + ")!"                
+            
+                message = client.messages \
+                                .create(
+                                    body=bodyMessage,
+                                    from_='+14408534336',
+                                    to=response.user.account.emergencyContact
+                                )
+
+                if message.status == "sent":
+                    return JsonResponse({'message': 'Contacted Successfully!'})
+                elif message.status == "queued":
+                    return JsonResponse({'message': 'Tried to Contacted!'})
+                else:
+                    return JsonResponse({'message': 'Failed to Contacted!'})
+            else:
+                return JsonResponse({'message': 'No Emergency Contact to contact!'})

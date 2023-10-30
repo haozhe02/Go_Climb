@@ -95,6 +95,12 @@ class EditAbout(forms.Form):
 
     about.widget.attrs.update({"class": "form-control"})
 
+class EditEmergency(forms.Form):    
+    number = forms.CharField(max_length=150)
+
+    number.widget.attrs.update({"class": "full-width has-padding has-border", 'placeholder': 'Emergency Contact Number', 'id':'number'})
+
+
 class EditSocialMedia(forms.Form):
     facebook = forms.CharField(max_length=150)
     youtube = forms.CharField(max_length=150)
