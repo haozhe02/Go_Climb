@@ -1,4 +1,5 @@
 let interval;
+let coorInterval;
 
 function checkNotifications(){
 	$.ajax({
@@ -29,6 +30,34 @@ function checkNotifications(){
 	});
 };
 
+function updateCoor() {
+	if ("geolocation" in navigator) {
+	  navigator.geolocation.getCurrentPosition(function (position) {
+		const latitude = position.coords.latitude;
+		const longitude = position.coords.longitude;
+		
+		var date = new Date();
+        var coor = "("+latitude+","+longitude+")";
+       
+		$.ajax({
+		  type: "POST",
+		  url: "/updateCoor/", 
+		  data: {
+			date: date,
+			coor: coor,
+		  },
+
+		  success: function (response) {
+			if(response.sucess == false){
+				console.log("Failed to update coordinate");
+			}
+		  }
+		});
+	  });
+	}
+  }
+
+
 function checkAuthentication(){
 	$.ajax({
 		url: '/checkAuthentication/',
@@ -38,7 +67,15 @@ function checkAuthentication(){
 				console.log("User is authenticated");
 				checkNotifications();
 
-				interval = setInterval(checkNotifications, 5000);
+				interval = setInterval(checkNotifications, 5000);				
+				if (response.tracking){
+					updateCoor();
+
+					coorInterval = setInterval(updateCoor, 60000);
+				}else{
+					clearInterval(coorInterval);
+				}
+				
 			} else {
 				console.log("User is not authenticated");
 			}
@@ -49,6 +86,9 @@ function checkAuthentication(){
 		}
 	});
 };
+
+
+
 
 $(document).ready(function() {
     checkAuthentication();

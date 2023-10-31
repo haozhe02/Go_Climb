@@ -97,6 +97,20 @@
 <div class="container">
 	<div class="subforum">
         {% if user.is_authenticated%}
+		<div class="subforum-title"> 
+			<h1>Chats </h1>
+            <table style="border-collapse: collapse; width: 100%;">
+                {% for chat in chats %}
+                <tr>
+                    <td style="border: 1px solid #dddddd;padding: 8px;">
+                        <b><a href="/directChat/{{chat.id}}/">{{chat}}</a></b>
+                    </td>   
+                </tr>
+                {% endfor %}
+            </table>
+            
+		</div>
+		<br>
         <div class="subforum-title"> 
 			<h1>Notifications</h1>
             <table style="border-collapse: collapse; width: 100%;">
@@ -111,7 +125,8 @@
             
 		</div>
 		{% else %}
-		Please Login First
+		Please Login First <br>
+		<a href="/loginUser" class="btn btn-secondary me-2">Log In</a>
         {% endif %}
         
            

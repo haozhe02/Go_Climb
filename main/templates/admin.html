@@ -113,7 +113,9 @@
 				<p>Email {{item.email}}</p>
                 <p>Message: <br>{{item.message|linebreaksbr}}</p>
                 <p>Done Contacting: {{item.status}}</p>
+				{% if item.status == False %}
                 <a href="/markContactDone/{{item.id}}">Mark as Done</a>
+				{% endif %}
 			</div>
 		</div>
 		{% endfor %}		

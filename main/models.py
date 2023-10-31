@@ -212,12 +212,28 @@ class Account(models.Model):
     showingBadges = models.ManyToManyField(Badge, blank=True, related_name='accountsShowing')
     emergencyContact = models.CharField(max_length=150, null=True)
 
+    tracking = models.BooleanField(default=False)
+    lastCoorDate = models.TextField(null=True)
+    lastCoor = models.CharField(null=True)
+
     aboutPosition = models.IntegerField(default=1)
     historyPosition = models.IntegerField(default=2)
     achievementPosition = models.IntegerField(default=3)
 
     badgePosition = models.IntegerField(default=1)
     routesPosition = models.IntegerField(default=2)
+
+    def setTracking(self, status):
+        self.tracking = status
+        self.save()
+
+    def setLastCoorDate(self, date):
+        self.lastCoorDate = date
+        self.save()
+
+    def setLastCoor(self, coor):
+        self.lastCoor = coor
+        self.save()
 
     def setPremium(self, status):
         self.is_premium = status

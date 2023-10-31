@@ -1738,7 +1738,8 @@ def checkAltitude(response):
 
 def checkAuthentication(response):
     if response.user.is_authenticated:
-        return JsonResponse({'is_authenticated': True})
+        tracking = response.user.account.tracking
+        return JsonResponse({'is_authenticated': True, 'tracking': tracking})
     else:
         return JsonResponse({'is_authenticated': False})
     
@@ -1759,7 +1760,8 @@ def notifications(response):
     notifications = []
     if response.user.is_authenticated:
         notifications = response.user.notifications.all().order_by("-id")
-    return render(response, 'notifications.html', {'notifications': notifications})    
+        chats = response.user.chats.all()
+    return render(response, 'notifications.html', {'notifications': notifications, 'chats': chats})    
 
 def autoSuggest(response):
     query = response.GET.get('query', '')
@@ -1943,15 +1945,29 @@ def chat(response, id):
     print(chats_with_both_users)
     return render(response, 'chat.html', {'chat': chats_with_both_users})
 
-def sendMessage(response, id):
-    message = response.POST['message']
-    date = response.POST['date']
-    user = response.user
+def directChat(response, id):
     chat = Chat.objects.get(id=id)
+    if response.user.is_authenticated and response.user in chat.users.all():
+        return render(response, 'chat.html', {'chat': chat})
+    else:
+        referring_page = response.META.get('HTTP_REFERER')
+        if referring_page:
+            return HttpResponseRedirect(referring_page)
+        else:
+            return redirect('/notifications/')
 
-    new_message = Message.objects.create(text=message, user=user, chat=chat, date=date)
-    new_message.save()
-    return HttpResponse('Message sent!')
+def sendMessage(response, id):
+    if response.user.is_authenticated:
+        message = response.POST['message']
+        date = response.POST['date']
+        user = response.user
+        chat = Chat.objects.get(id=id)
+
+        new_message = Message.objects.create(text=message, user=user, chat=chat, date=date)
+        new_message.save()
+        return JsonResponse({'message':'Message sent!'})
+    else:
+        return JsonResponse({'message':'Message not sent!'})
 
 def getMessages(response, id):
     chat = Chat.objects.get(id=id)
@@ -1998,7 +2014,7 @@ def contactEmergency(response):
                 latitude = response.POST['latitude']
                 longitude = response.POST['longitude']
 
-                bodyMessage = "Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " His/Her location is at (" + latitude + "," + longitude + ")!"                
+                bodyMessage = "This is from GoClimb. Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " His/Her location is at (" + latitude + "," + longitude + ")!"                
             
                 message = client.messages \
                                 .create(
@@ -2029,3 +2045,45 @@ def subscribe(response):
         return HttpResponseRedirect(referring_page)
     else:
         return redirect('/home/')
+    
+def track(response):
+    if response.user.is_authenticated:
+        response.user.account.setTracking(status=True)
+
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/profile/')
+    
+def untrack(response):
+    if response.user.is_authenticated:
+        response.user.account.setTracking(status=False)
+
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/profile/')
+
+@csrf_exempt
+def updateCoor(response):
+    if response.method == 'POST':
+        if response.user.is_authenticated:
+            date = response.POST['date']
+            coor = response.POST['coor']
+
+            if coor != None and date != None:
+                response.user.account.setLastCoorDate(date=date)
+                response.user.account.setLastCoor(coor=coor)
+
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False})
+        else:
+            return JsonResponse({'success': False})
+    else:
+        return JsonResponse({'success': False})
+    

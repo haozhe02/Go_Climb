@@ -135,6 +135,15 @@
 													<br><b><a href="/editEmergency/{{user.id}}">Edit Emergency Contact</a></b>
 													{% endif %}
 
+													<br>
+													<br>Last Coordinate: {{user.account.lastCoor}} 
+													<br>Last Coordinate Date: {{user.account.lastCoorDate}}
+													{% if user.account.tracking %}
+													<br><b><a href="/untrack/">Stop Tracking</a></b>
+													{% else %}
+													<br><b><a href="/track/">Start Tracking</a></b>
+													{% endif %}
+
 													{% if user.is_authenticated and user.is_superuser == False %}
 													<br><b><a href="/suspendProfile/{{user.id}}">Delete Profile</a></b>
 													{% endif %}
@@ -517,6 +526,7 @@
 							{% endif %}
 						{% else%}
 						<h1>Please Login First</h1>
+						<a href="/loginUser" class="btn btn-secondary me-2">Log In</a>
 						{% endif %}
 					</div>	
 			</div>

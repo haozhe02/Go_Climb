@@ -232,7 +232,6 @@
                             }
                         },
                         error: function(response){
-                            //alert('An error occured')
                             console.log('Error');
                         }
                     });
@@ -252,7 +251,7 @@
                             csrfmiddlewaretoken: '{{ csrf_token }}', 
                         },
                         success: function(data){
-                           //alert(data)
+                           console.log(data.message)
                         }
                       });
                       document.getElementById('message').value = ''

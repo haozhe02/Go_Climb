@@ -118,23 +118,30 @@
                 {% if userObj.is_superuser%}
                 Superuser <br>
                 {% endif %}
+
                 {% if userObj.account.is_admin %}
                 Admin <br>
                 {% else%}
                 User <br>
                 {% endif %}
+
                 Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
                 {% if userObj.first_name and userObj.last_name%}
                 Name: {{userObj.first_name}} {{userObj.last_name}}<br>
                 {% endif %}
+
                 {% if userObj.email %}
                 Email: {{userObj.email}} <br>
                 {% endif %}
+
                 {% if userObj.account.suspended %}
                 Status: Suspended
                 {% else %}
                 Status: Active
                 {% endif %}
+
+				<br>Last Coordinate: {{userObj.account.lastCoor}} 
+				<br>Last Coordinate Date: {{userObj.account.lastCoorDate}}
 
 				<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
 			</div>

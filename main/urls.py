@@ -87,6 +87,10 @@ urlpatterns = [
     path('editEmergency/<int:id>/', views.editEmergency, name="editEmergency"),
     path('contactEmergency/', views.contactEmergency, name="contactEmergency"),
     path('subscribe/', views.subscribe, name="subscribe"),
+    path('track/', views.track, name="track"),
+    path('untrack/', views.untrack, name="untrack"),
+    path('updateCoor/', views.updateCoor, name="updateCoor"),
+    path('directChat/<int:id>/', views.directChat, name="directChat"),
 
     
     
