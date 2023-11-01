@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from geopy.geocoders import Nominatim
 import environ
 from twilio.rest import Client
+from django.core.paginator import Paginator
 
 # Create your views here.
 def home(response):
@@ -383,6 +384,9 @@ def getQuality(index):
     for crag in crags:
         Crag.objects.create(country=crag['country'], region=crag['region'], name=crag['name'], desc=crag['desc'], rocktype=crag['rocktype'], altitude=crag['altitude'], latitude=crag['latitude'], longitude=crag['longitude'])
     return JsonResponse({'wow': "wow"})
+def clear_all_params(response):
+    url = response.path 
+    return HttpResponseRedirect(url)
 
 def search1(response):
     #file = open("static/crags.csv")
@@ -390,7 +394,7 @@ def search1(response):
     #crags = []
     #for row in csvreader:
     #    Crag.objects.create(country=row[0], region=row[1], name=row[2], desc=row[3], rocktype=row[4], altitude=row[5][:-1])
-    crags=Crag.objects.all()
+    crags=Crag.objects.all().order_by('id')
     countries = []
     for crag in crags:
         if crag.country not in countries:
@@ -400,14 +404,13 @@ def search1(response):
     sort = ""
     locations = []
 
+
     limitSearchHistory = []
     if response.user.is_authenticated:
         limitSearchHistory = SearchHistory.objects.filter(user=response.user).order_by('-id')[:20]
 
     if response.method == 'POST':
         searchInput = response.POST['search']
-
-        print(searchInput)
         
         user = response.user
         exist = False
@@ -455,6 +458,62 @@ def search1(response):
             else:
                 sortCrags = crags
                 crags = sortCrags
+        p = Paginator(crags, 10)
+        crags = p.get_page(1)
+        return render(response, 'search.html', {'crags':crags, 'countries': countries, 'search':searchInput, 'locations': locations, 'condition': condition, 'sort':sort, 'limitSearchHistory': limitSearchHistory})
+
+    if response.GET.get('search') != None:
+        searchInput = response.GET.get('search')
+        
+        user = response.user
+        exist = False
+        if user.is_authenticated:
+            for history in user.searchHistories.all():
+                if searchInput == history.text:
+                    exist = True
+
+            if not exist:
+                SearchHistory.objects.create(user=user, text=searchInput)
+        
+        searchList = []
+        if searchInput != "":
+            for crag in crags:
+                if str(searchInput).lower().replace(" ","") in crag.name.lower().replace(" ",""):
+                    searchList.append(crag)
+            crags = searchList
+
+    filterlist1 = []
+    if(response.GET.get('condition') != None):
+        condition = response.GET.get('condition')
+        if(condition != '0'):
+            for crag in crags:
+                if int(crag.altitude) >= int(condition):
+                    filterlist1.append(crag)
+            crags = filterlist1
+
+    filterlist2 = []
+    if(response.GET.get('location') != None):
+        locations = response.GET.getlist('location')
+        for country in locations:
+            for crag in crags:
+                if crag.country == country:
+                    filterlist2.append(crag)
+        crags = filterlist2
+
+    if(response.GET.get('sort') != None):
+        sort = response.GET.get('sort')
+        if(sort == 'altAsc'):
+            sortCrags = sorted(crags, key=lambda x: int(x.altitude))
+            crags = sortCrags
+        elif(sort == 'altDsc'):
+            sortCrags = sorted(crags, key=lambda x: int(x.altitude), reverse=True)
+            crags = sortCrags 
+        else:
+            sortCrags = crags
+            crags = sortCrags
+    p = Paginator(crags, 10)
+    page = response.GET.get('page')
+    crags = p.get_page(page)
     return render(response, 'search.html', {'crags':crags, 'countries': countries, 'search':searchInput, 'locations': locations, 'condition': condition, 'sort':sort, 'limitSearchHistory': limitSearchHistory})
 
 
