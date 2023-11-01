@@ -81,13 +81,16 @@
 							<div class="intro-excerpt">
 								<h1>Welcome to <span class="d-block">GoClimb.</span></h1>
 								<p class="mb-4">This is a platform for climbers all around the world to enhance their climbing experience, discover new crags, stay informed about the weather conditions along side with its hazards and connect with the climbing community</p>
+								<p>
 								{% if user.is_authenticated %}
 								<h3>Welcome {{user}}</h3>
 								{% else %}
-								<p><a href="/loginUser" class="btn btn-secondary me-2">Log In</a></p>
+								<a href="/loginUser" class="btn btn-secondary me-2">Log In</a>
 								{% endif %}
 								
-									<p><a href="#" class="btn btn-white-outline">Explore</a></p>
+								<a href="/search/" class="btn btn-white-outline">Explore </a>
+									
+								</p>
 							</div>
 						</div>
 						<!-- <div class="col-lg-7">

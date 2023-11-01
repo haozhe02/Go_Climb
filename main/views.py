@@ -61,7 +61,9 @@ def getDateTime(date):
     month = month_map.get(dates[1])
     year = int(dates[3])
 
-    hours, minutes, seconds = map(int, dates[4].split(':'))
+    hours = int(dates[4].split(':')[0])
+    minutes = int(dates[4].split(':')[1])
+    seconds = int(dates[4].split(':')[2])
 
     return dti(year, month, day, hours, minutes, seconds)
 
@@ -157,7 +159,7 @@ def weather(response):
             url2 = 'https://api.openweathermap.org/data/2.5/forecast?q={}&units=metric&appid=2f4e8d6ef5b417a779cc2ea7404460fd'
             forecast_data = requests.get(url2.format(city)).json()
 
-    if list_of_data['cod'] != '404':
+    if list_of_data['cod'] != '404' and list_of_data['cod'] != '400':
         offset_seconds = list_of_data['timezone']
 
         #datentime = list_of_data['dt']
@@ -240,7 +242,7 @@ def weather(response):
 
    
     
-    if forecast_data['cod'] != '404':
+    if forecast_data['cod'] != '404' and forecast_data['cod'] != '400':
         offset_seconds = forecast_data['city']['timezone']
         three_hours = forecast_data['list'][0]
         Hours = []
@@ -1744,17 +1746,20 @@ def checkAuthentication(response):
         return JsonResponse({'is_authenticated': False})
     
 def checkNotifications(response):
-    notifications = []
+    if response.user.is_authenticated:
+        notifications = []
 
-    for notification in response.user.notifications.all():
-        #notification.setNotified(status=False)
-        if notification.is_notified == False:
-            notifications.append(notification.text)
-            notification.setNotified(status=True)
-    if len(notifications) == 0:
-        return JsonResponse({'notify': False})
+        for notification in response.user.notifications.all():
+            #notification.setNotified(status=False)
+            if notification.is_notified == False:
+                notifications.append(notification.text)
+                notification.setNotified(status=True)
+        if len(notifications) == 0:
+            return JsonResponse({'notify': False})
+        else:
+            return JsonResponse({'notify': True, 'notifications': notifications})
     else:
-        return JsonResponse({'notify': True, 'notifications': notifications})
+        return JsonResponse({'notify': False})
 
 def notifications(response):
     notifications = []

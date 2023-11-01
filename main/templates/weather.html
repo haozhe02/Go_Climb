@@ -287,6 +287,9 @@
 				<div style="height: 250px;">
 					<br>
 					<h1>{{data.message}}</h1>
+					{% if data.cod == '400' %}
+					<h3>Try to allow location service!</h3>
+					{% endif %}
 				</div>
 				{% endif %}
 				
