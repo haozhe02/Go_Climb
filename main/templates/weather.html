@@ -133,6 +133,23 @@
 							<h2>{{data.time}}</h2>
 							<p>{{data.day}} {{data.date}}</p>
 						</div>
+						{% if reminder or hazards %}
+						<div class="center-align-card" >
+							{% if reminder %}
+							<h2>Reminder</h2>
+							<p>{{ reminder }}</p>
+							{% endif %}
+							{% if hazards %}
+							<h2>Hazards</h2>
+							<p>
+								{% for hazard in hazards %}
+								{{ hazard }} <br>
+								{% endfor %}		
+							</p>					
+							{% endif %}
+						</div>
+						{% endif %}
+						
 						{% if data.air_quality %}
 						<div class="center-align-card">
 							<h2>Air Quality</h2>
@@ -380,9 +397,9 @@
 			function reminderAndHazard(){
 				const reminder = document.getElementById('reminder');
 				const hazards = document.getElementById('hazards');
-				if (reminder && reminder.textContent.trim() !== '') {
-				  alert("Reminder:" + "\n" + reminder.textContent.trim());
-				}
+				//if (reminder && reminder.textContent.trim() !== '') {
+				//  alert("Reminder:" + "\n" + reminder.textContent.trim());
+				//}
 			
 				// Check if hazardsList exists and has list items
 				if (hazards && hazards.children.length > 0) {
