@@ -2006,7 +2006,6 @@ def chat(response, id):
         chats_with_both_users.users.add(user1)
         chats_with_both_users.users.add(user2)
         chats_with_both_users.save()
-    print(chats_with_both_users)
     return render(response, 'chat.html', {'chat': chats_with_both_users})
 
 def directChat(response, id):
