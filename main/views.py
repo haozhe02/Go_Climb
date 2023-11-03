@@ -563,7 +563,7 @@ def forum1(response):
 
     for topic in topics:
         if topic['latest_post'] != None:
-            yearitem = topic['latest_post'].date[11:15]
+            yearitem = int(topic['latest_post'].date[11:15])
             if yearitem not in years:
                 years.append(int(yearitem))
     years.sort()
