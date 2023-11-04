@@ -260,17 +260,17 @@
 						<!-- Hourly Forecast-->
 						<div class="weather-card">
 							<h1>Hourly Forecast</h1>
-							<div style="display: flex;">
+							<div style="display: flex;" class="align-items-center">
 
 								{% for hour in Hours %}
 									{% if hour.color == "orange" %}
-										<div class="weather-time-card" style="background-image: linear-gradient(orange, white);">
+										<div class="weather-time-card text-center" style="background-image: linear-gradient(orange, white);">
 
 									{% elif hour.color == "blue" %}
-										<div class="weather-time-card" style="background-image: linear-gradient(lightblue, white);">
+										<div class="weather-time-card text-center" style="background-image: linear-gradient(lightblue, white);">
 										
 									{% else %}
-										<div class="weather-time-card" style="background-image: linear-gradient(rgb(182, 158, 215), white);">											
+										<div class="weather-time-card text-center" style="background-image: linear-gradient(rgb(182, 158, 215), white);">											
 									{% endif %}
 							
 											<p class="weather-time-card">{{hour.time}}</p>
@@ -291,7 +291,7 @@
 									{% for day in Days %}
 										<div class="weather-7day">
 											<img class="img-fluid img-thumbnail" src="https://openweathermap.org/img/w/{{day.icon}}.png" alt="Image" /> 
-											<ul class="list-inline">
+											<ul class="list-inline" style="padding: 10px;">
 												<li class="list-inline-item">{{day.temp}}</li>
 												<li class="list-inline-item">{{day.day}}, {{day.date}}</li>
 										  </ul>	
