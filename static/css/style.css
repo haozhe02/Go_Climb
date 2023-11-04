@@ -92,14 +92,19 @@ a {
 
 .hero {
   background: url('../images/pexels-robert-forever-ago-2741648.jpg') #609966 no-repeat center center fixed !important;
-  background-size: cover;  padding: calc(4rem - 30px) 0 0rem 0; }
+  background-size: cover;  
+  /* padding: calc(4rem - 70px) 0 0rem 0;  */
+  padding: 20px; }
   @media (min-width: 768px) {
     .hero {
-      padding: calc(4rem - 30px) 0 4rem 0; } }
+      /* padding: calc(4rem - 70px) 0 4rem 0;  */
+      padding: 20px;
+    } }
   @media (min-width: 992px) {
     .hero {
-      padding: calc(8rem - 30px) 0 8rem 0; } }
-  .hero .intro-excerpt {
+      /* padding: calc(8rem - 70px) 0 8rem 0;  */
+      padding: 20px;
+    } }  .hero .intro-excerpt {
     position: relative;
     z-index: 4; }
     @media (min-width: 992px) {
@@ -109,13 +114,15 @@ a {
   .hero h1 {
     font-weight: 700;
     color: #40513B;
-    margin-bottom: 30px; }
+    /* margin-bottom: 10px;  */
+  }
     @media (min-width: 1400px) {
       .hero h1 {
         font-size: 54px; } }
   .hero p {
     color: #40513B;
-    margin-botom: 30px; }
+    /* margin-botom: 10px;  */
+  }
   .hero .hero-img-wrap {
     position: relative; }
     .hero .hero-img-wrap img {
@@ -220,19 +227,18 @@ a {
 
 }
 .weather-time-card{
-  width:18%; 
+  width:auto; 
   border-radius:25px; 
-  padding: 20px; 
-  text-align: center;
-  font-size: 20px;
+  padding: 10px; 
+  font-size: 1rem;
   margin-right: 10px;
-  margin-top: 10px;
+  margin-top: 10px; 
   
 }
 @media (max-width: 576px) {
   .weather-time-card {
     font-size: 10px;
-    width: 18%;
+    width:auto;
     height: auto; /* Allow height to adjust proportionally */
     padding: 3px;
     margin: 2px;
@@ -254,26 +260,27 @@ a {
   height: 14%;
   margin-top:15px;
 }
-  @media (max-width: 576px) {
-    .weather-7day {
-      /* width: 30px;
-      height: 30px; */
-    }
+@media (max-width: 576px) {
+  .weather-7day {
+    /* width: 30px;
+    height: 30px; */
   }
+}
+.weather-7day .lists{
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+  font-size: large;}
+  
+@media (max-width: 576px) {
   .weather-7day .lists{
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 15px;
-    font-size: large;}
-    
-    @media (max-width: 576px) {
-      .weather-7day .lists{
-        /* padding-left: 20px; */
-        font-size:12px;
-        padding-top: 2px;
+    /* padding-left: 20px; */
+    font-size:12px;
+    padding-top: 2px;
 
-      }
-    }
+  }
+}
+
 
 .profile-left {
   /* position: relative; */
@@ -1132,7 +1139,7 @@ textarea {
     
     .user-modal-container {
       position: relative;
-      width: 50%;
+      width: 100%;
       max-width: 600px;
       background: #FFF;
       margin: 3em auto 4em;
