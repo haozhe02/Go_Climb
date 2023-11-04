@@ -1917,6 +1917,7 @@ def generateReport(response):
         total_post_view += post.totalView
         if post.totalView >= most_popular_post.totalView:
             most_popular_post = post
+
     report = {
         'recent_users': recent_users, 
         'totalUserPastWeek': totalUserPastWeek,
@@ -1929,7 +1930,10 @@ def generateReport(response):
         'total_subtopic_view': total_subtopic_view,
         'most_popular_subtopic': most_popular_subtopic,
         'total_post_view': total_post_view,
-        'most_popular_post': most_popular_post.title,
+        'most_popular_post': most_popular_post,
+        'total_topic': MainTopic.objects.all().count(),
+        'total_subtopic': SubTopic.objects.all().count(),
+        'total_post': ForumPost.objects.all().count()
     }
     return render(response, 'report.html',{'report': report})
 
