@@ -55,7 +55,7 @@ h1{
 
 .subforum-row{
     display: grid;
-    grid-template-columns: 7% 60% 13% 20%;
+    grid-template-columns: 60% 13% 27%;
 }
 
 .subforum-column{
@@ -118,7 +118,7 @@ h1{
 
     .subforum-row{
         display: grid;
-        grid-template-columns: 10% 60% 10% 20%;
+        grid-template-columns: 60% 13% 27%;
     }
 
     .subforum-icon i{

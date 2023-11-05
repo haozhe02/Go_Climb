@@ -87,45 +87,43 @@
 						<div class="col-lg-5">
 							<div class="intro-excerpt">
 								<h1>Weather & Hazards</h1>
-								<p class="mb-4">To view air quality and UV index in your current area, ensure that you allow this site to access your location, then select to view current location.</p>
+
 							</div>
 						</div>
 						<div class="col-lg-7">
-							
+
 						</div>
+						<form method="post" class="col-md">
+							{% csrf_token %}
+							<div class="row justify-content-between align-items-center" >
+							<input type="text" placeholder="Search by name or location" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center; border: #B3C890;" name="city">
+							
+							</div>
+							<div class="row justify-content-between align-items-center" >
+								<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border: #B3C890;">Search</button>
+							</div>
+						</form>	
+						<form method="post" id="latitude-longitude">
+							{% csrf_token %}
+							<input type="hidden" name="latitude" id="latitude">
+							<input type="hidden" name="longitude" id="longitude">
+							<div class="row justify-content-between align-items-center" >
+								<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border: #B3C890;">Use Current Location</button>
+							</div>
+			
+						</form>	
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
-
+<!-- 
 		<div style="background-color: #40513B; width: 100%; height: 250px; padding:70px" >
-			
-
-			<form method="post" class="col-md">
-				{% csrf_token %}
-				<div class="row justify-content-between align-items-center" >
-				<input type="text" placeholder="Search by name or location" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;" name="city">
-				
-				</div>
-				<div class="row justify-content-between align-items-center" >
-					<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Search</button>
-				</div>
-			</form>	
-			<form method="post" id="latitude-longitude">
-				{% csrf_token %}
-				<input type="hidden" name="latitude" id="latitude">
-				<input type="hidden" name="longitude" id="longitude">
-				<div class="row justify-content-between align-items-center" >
-					<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Use Current Location</button>
-				</div>
-
-			</form>	
-			
 		
-	</div>
+		
+		</div> -->
 
 		<!--Main Section-->
-		<div class="background" style="background-color:#fffde3;">
+		<div class="background" style="padding-top: 15px;">
 			<!-- <h1 style="margin-left: 250px;">Today's Weather</h1> -->
 			<div class="container">
 				{% if data.cod == '200' %}
