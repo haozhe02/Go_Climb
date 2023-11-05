@@ -359,8 +359,8 @@
 										<a class="page-link" href="">&laquo</a>
 									</li>
 									{% endif %}
-
-									{% if crags.number == crags.paginator.num_pages %}
+									
+									{% if crags.number == crags.paginator.num_pages and crags.paginator.num_pages > 2%}
 										<li class="page-item">
 											<a class="page-link" href="?{% if search %}search={{search}}&{% endif %}{% if condition %}condition={{condition}}&{% endif %}{% if sort %}sort={{sort}}&{% endif %}{% if locations%}{% for location in locations%}location={{location}}&{% endfor%}{% endif %}page={{crags.number|add:'-2'}}">{{crags.number|add:'-2'}}</a>
 										</li>
@@ -376,7 +376,7 @@
 										</li>
 										{% endif %}
 									{% endfor %}
-									{% if crags.number == 1%}
+									{% if crags.number == 1 and crags.paginator.num_pages > 2 %}
 										<li class="page-item">
 											<a class="page-link" href="?{% if search %}search={{search}}&{% endif %}{% if condition %}condition={{condition}}&{% endif %}{% if sort %}sort={{sort}}&{% endif %}{% if locations%}{% for location in locations%}location={{location}}&{% endfor%}{% endif %}page=3">3</a>
 										</li>
@@ -463,7 +463,7 @@
 								</li>
 								{% endif %}
 
-								{% if crags.number == crags.paginator.num_pages %}
+								{% if crags.number == crags.paginator.num_pages and crags.paginator.num_pages > 2 %}
 									<li class="page-item">
 										<a class="page-link" href="?{% if search %}search={{search}}&{% endif %}{% if condition %}condition={{condition}}&{% endif %}{% if sort %}sort={{sort}}&{% endif %}{% if locations%}{% for location in locations%}location={{location}}&{% endfor%}{% endif %}page={{crags.number|add:'-2'}}">{{crags.number|add:'-2'}}</a>
 									</li>
@@ -479,7 +479,7 @@
 									</li>
 									{% endif %}
 								{% endfor %}
-								{% if crags.number == 1%}
+								{% if crags.number == 1 and crags.paginator.num_pages > 2%}
 									<li class="page-item">
 										<a class="page-link" href="?{% if search %}search={{search}}&{% endif %}{% if condition %}condition={{condition}}&{% endif %}{% if sort %}sort={{sort}}&{% endif %}{% if locations%}{% for location in locations%}location={{location}}&{% endfor%}{% endif %}page=3">3</a>
 									</li>
