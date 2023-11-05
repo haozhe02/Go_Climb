@@ -282,7 +282,7 @@ def weather(response):
         fifteen_hours = forecast_data['list'][4]
         fifteenHour = {
             'time': timezone.make_aware((dti.utcfromtimestamp(fifteen_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
-            'color': timezone.make_aware((dti.utcfromtimestamp(fifteen_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time(),
+            'color': color(timezone.make_aware((dti.utcfromtimestamp(fifteen_hours['dt']) + timedelta(seconds=offset_seconds)), timezone.utc).time()),
             'temp': str(fifteen_hours['main']['temp']) + '°C',
             'windspeed': str(fifteen_hours['wind']['speed']),
             'icon': fifteen_hours['weather'][0]['icon']
