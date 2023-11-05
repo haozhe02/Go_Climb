@@ -91,23 +91,24 @@
 								<h1>Forum</h1>
 							</div>
 						</div>
+						<form method="post" action="/searchAllMTSTP/">
+							{% csrf_token %}
+							<div class="row justify-content-between align-items-center" >
+								<input type="text" name="search" placeholder="Search for all Main Topics, Sub-Topics and Posts" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center; border: #B3C890;">								
+							</div>
+							<div class="row justify-content-between align-items-center" >
+								<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890; border: #B3C890;">Search</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
 		
 		<!--Advanced Search-->
-		<div style="background-color: #40513B; width: 100%; height: 200px; padding:70px" >
-			<form method="post" action="/searchAllMTSTP/">
-			{% csrf_token %}
-			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" placeholder="Search for all Main Topics, Sub Topics and Posts" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;">								
-			</div>
-			<div class="row justify-content-between align-items-center" >
-				<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Search</button>
-			</div>
-			</form>
-		</div>
+		<!-- <div style="background-color: #40513B; width: 100%; height: auto; padding:30px" >
+			
+		</div> -->
 
 </header>
 <div class="container">
@@ -190,9 +191,10 @@
 		{% for topic in topics %}
 			{% if topic.maintopic in section.maintopics.all %}
 			<div class="subforum-row">
-				<div class="subforum-icon subforum-column center">
-					<!-- <i class="fa fa-car center"></i> -->
-				</div>
+				
+				<!-- <div class="subforum-icon subforum-column center">
+				</div> -->
+
 				<div class="subforum-description subforum-column">
 					<h4><a href="/topic/{{topic.maintopic.id}}">{{topic.maintopic.title}}</a></h4>
 					{% if user.is_authenticated %}

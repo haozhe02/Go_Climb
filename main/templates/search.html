@@ -1,10 +1,3 @@
-<!-- /*
-* Bootstrap 5
-* Template Name: Furni
-* Template Author: Untree.co
-* Template URI: https://untree.co/
-* License: https://creativecommons.org/licenses/by/3.0/
-*/ -->
 {% load static %}
 <!doctype html>
 <html lang="en">
@@ -93,51 +86,49 @@
 								<h1>Search Crags</h1>
 							</div>
 						</div>
+						<!--Search Bar-->
+						<form method="post">
+							{% csrf_token %}
+							<div class="row justify-content-between align-items-center" >
+								<input type="text" name="search" id="search" {% if search %}value="{{search}}"{% endif %} placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center; border:#B3C890;" autocomplete="off">								
+							</div>
+							<div class="row justify-content-between align-items-center" >
+								<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border:#B3C890;">Search</button>
+							</div>
+							<div class="row justify-content-between align-items-center" >
+								<button id="startButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border:#B3C890;">Start Recording to Search By Voice</button><br>
+							</div>
+							<div class="row justify-content-between align-items-center" >
+								<button id="stopButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border:#B3C890;">Stop Recording</button>			
+							</div>
+							</form>
+							
+							<form method="get">
+								<div class="row justify-content-between align-items-center" >
+									<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;border:#B3C890;">Clear Search</button>
+								</div>
+				
+						</form>
 					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
 <!-- Search Section -->
-
-		<!--Search Bar-->
-		<div style="background-color: #40513B; width: 100%; height: max-content; padding:70px" >
-			<form method="post">
-			{% csrf_token %}
-			<div class="row justify-content-between align-items-center" >
-				<input type="text" name="search" id="search" {% if search %}value="{{search}}"{% endif %} placeholder="Search by name" style="border-radius: 40px; margin: auto; width:500px; height:60px;text-align: center;" autocomplete="off">								
-			</div>
-			<br>
-			<div style="background-color: white; height: max-content; text-align: center; border-radius: 25px; margin: auto; width: max-content;">
-				<h2>Auto suggestion</h2>
-				<ul id="suggestion-list" style="list-style-type: none;"></ul>
-			</div>
-			<div class="row justify-content-between align-items-center" >
-				<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Search</button>
-			</div>
-			<div class="row justify-content-between align-items-center" >
-				<button id="startButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Start Recording to Search By Voice</button><br>
-			</div>
-			<div class="row justify-content-between align-items-center" >
-				<button id="stopButton" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Stop Recording</button>			
-			</div>
-			</form>
 			
-			<form method="get">
-				<div class="row justify-content-between align-items-center" >
-					<button type="submit" style="border-radius: 40px; margin: auto; width:300px; height:40px;text-align: center;margin-top:10px; background-color:#B3C890;">Clear Search</button>
-				</div>
-
-			</form>
-			
-			
-		</div>
-		<div class="flexbox-container" style="background-color:#F5F0BB;">
+		<div class="flexbox-container">
 			
 		<!-- Start Search Section -->
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-3">
 					<!-- Left Column Content -->
+					<div class="search-left-card" style="background-color: white; height: max-content; text-align: center; border-radius: 30px;">
+
+						<h2>Auto suggestion</h2>
+						<ul id="suggestion-list" style="list-style-type: none;"></ul>
+
+					</div>
+					
 					<div class="search-left-card" >
 						<a href="/map" class="btn btn-secondary me-2" style="background-color:#B3C890;">View Map</a>
 					</div>
