@@ -444,7 +444,7 @@ class Account(models.Model):
             self.save()
         elif boxid == 3:
             if self.achievementPosition != 3:
-                self.achievementPosition -= 1
+                self.achievementPosition += 1
 
                 #if achievement becomes second
                 if self.achievementPosition == 2:
