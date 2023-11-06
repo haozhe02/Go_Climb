@@ -103,22 +103,44 @@
 		</div>
 		<br>
 		<div class="subforum-title">
-			<h1>Contact US</h1>
-		</div>
-		{% for item in contactus %}
-		<div class="subforum">
-			<div class="subforum-title">
-                <p>First Name: {{item.firstname}}</p>
-				<p>Last Name: {{item.lastname}}</p>
-				<p>Email {{item.email}}</p>
-                <p>Message: <br>{{item.message|linebreaksbr}}</p>
-                <p>Done Contacting: {{item.status}}</p>
-				{% if item.status == False %}
-                <a href="/markContactDone/{{item.id}}">Mark as Done</a>
-				{% endif %}
+			<h1>Contact Us - Not Yet Process</h1>
+			{% for item in contactus %}
+			{% if item.status == False%}
+			<div class="subforum">
+				<div class="subforum-title" style="background-color: #F3F3F3; color: black;">
+					<p>First Name: {{item.firstname}}</p>
+					<p>Last Name: {{item.lastname}}</p>
+					<p>Email {{item.email}}</p>
+					<p>Message: <br>{{item.message|linebreaksbr}}</p>
+					<p>Done Contacting: {{item.status}}</p>
+					<a href="/markContactDone/{{item.id}}">Mark as Done</a>
+				</div>
 			</div>
-		</div>
+			{% endif %}
 		{% endfor %}		
+		</div>
+		
+
+		<div class="subforum-title">
+			<h1>Contact Us - Done</h1>
+			{% for item in contactus %}
+				{% if item.status == True%}
+				<div class="subforum">
+					<div class="subforum-title" style="background-color: #F3F3F3; color: black;">
+						<p>First Name: {{item.firstname}}</p>
+						<p>Last Name: {{item.lastname}}</p>
+						<p>Email {{item.email}}</p>
+						<p>Message: <br>{{item.message|linebreaksbr}}</p>
+						<p>Done Contacting: {{item.status}}</p>
+						{% if item.status == False %}
+						<a href="/markContactDone/{{item.id}}">Mark as Done</a>
+						{% endif %}
+					</div>
+				</div>
+				{% endif %}
+			{% endfor %}	
+		</div>
+		
 	</div>
 	<!--More-->
 <!---->
