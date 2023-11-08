@@ -4,3 +4,4 @@ myenv/
 
 **/__pycache__/
 *.pyc
+main/__pycache__/views.cpython-311.pyc
