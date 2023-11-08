@@ -104,19 +104,23 @@ function contactEmergency() {
 		console.log('contact emergency');
 		console.log(latitude)
 		console.log(longitude)
-  
-		$.ajax({
-		  type: "POST",
-		  url: "/contactEmergency/", 
-		  data: {
-			latitude: latitude,
-			longitude: longitude,
-		  },
-
-		  success: function (response) {
-			alert(response.message);
-		  }
-		});
+		if (latitude != null && longitude != null){
+			$.ajax({
+				type: "POST",
+				url: "/contactEmergency/", 
+				data: {
+				  latitude: latitude,
+				  longitude: longitude,
+				},
+	  
+				success: function (response) {
+				  alert(response.message);
+				}
+			  });
+		}else{
+			alert('Cannot get your location!');
+		}
+		
 	  });
 	}
   }
