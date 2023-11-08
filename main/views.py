@@ -200,7 +200,7 @@ def weather(response):
             'sunrise': sunrise,
             'sunset': sunset,
         }
-        if uv_data:
+        if uv_data and uv_data['error'] == None:
             data['uv'] = uv_data['result']['uv']
             if uv_data['result']['uv'] >= 9:
                 hazards.append("UV index Too High, not recommended for climbing!")
