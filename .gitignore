@@ -1,3 +1,6 @@
 .env
 myenv/ 
 ./Go_Climb
+
+**/__pycache__/
+*.pyc
