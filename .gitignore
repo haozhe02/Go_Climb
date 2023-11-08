@@ -1,3 +1,4 @@
 .env
 myenv/ 
 ./Go_Climb
+Go_Climb/__pycache__/settings.cpython-311.pyc
