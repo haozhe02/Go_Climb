@@ -124,6 +124,7 @@
 													{% endif %}
 
 													<br>Emergency Contact: {{user.account.emergencyContact}}
+													<br>Emergency Contact Name: {{user.account.emergencyContactName}}
 													{% if user.is_authenticated %}
 													<br><b><a href="/editEmergency/{{user.id}}">Edit Emergency Contact</a></b>
 													{% endif %}

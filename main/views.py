@@ -15,6 +15,8 @@ from geopy.geocoders import Nominatim
 import environ
 from twilio.rest import Client
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 def home(response):
@@ -1235,12 +1237,13 @@ def editEmergency(response, id):
         form = EditEmergency(response.POST)
         if form.is_valid():
             user = User.objects.get(id=id)
-            number = form.cleaned_data["number"]
-            user.account.setEmergencyContact(number)
+            email = form.cleaned_data["email"]
+            name = form.cleaned_data["name"]
+            user.account.setEmergencyContact(email, name)
             return redirect('/profile/')
     else:
         user = User.objects.get(id=id)
-        editemergency = EditEmergency(initial={'number': user.account.emergencyContact})
+        editemergency = EditEmergency(initial={'email': user.account.emergencyContact, 'name':user.account.emergencyContactName})
     return render(response, 'editEmergencyContact.html', {'editemergency':editemergency})
 
 def followUser(response, id):
@@ -2065,8 +2068,8 @@ def getCrags(response):
         })
     return JsonResponse({'crags': crags_to_send})
 
-@csrf_exempt
-def contactEmergency(response):
+#@csrf_exempt
+#def contactEmergency(response):
     if response.method == 'POST':
         if response.user.is_authenticated:
             if response.user.account.emergencyContact != None:
@@ -2094,6 +2097,38 @@ def contactEmergency(response):
                     return JsonResponse({'message': 'Contacted Successfully!'})
                 elif message.status == "queued":
                     return JsonResponse({'message': 'Tried to Contacted!'})
+                else:
+                    return JsonResponse({'message': 'Failed to Contacted!'})
+            else:
+                return JsonResponse({'message': 'No Emergency Contact to contact!'})
+    return JsonResponse({'message': "Invalid Request"})
+
+@csrf_exempt
+def contactEmergency(response):
+    if response.method == 'POST':
+        if response.user.is_authenticated:
+            if response.user.account.emergencyContact != None:
+
+                latitude = response.POST['latitude']
+                longitude = response.POST['longitude']
+
+                if response.user.account.emergencyContactName != None:
+                    name = "Dear " + response.user.account.emergencyContactName + ", "
+                else:
+                    name = ""
+
+                message = name+"This is from GoClimb. Help!, "+ response.user.first_name + " " + response.user.last_name + " is in danger!" + " His/Her location is at (" + latitude + "," + longitude + ")!"                
+
+                result = send_mail(
+                    "Go Climb Emergency Contact",
+                    message,
+                    settings.EMAIL_HOST_USER,
+                    [response.user.account.emergencyContact],
+                    fail_silently=False
+                )
+
+                if result == 1:
+                    return JsonResponse({'message': 'Contacted Successfully!'})
                 else:
                     return JsonResponse({'message': 'Failed to Contacted!'})
             else:

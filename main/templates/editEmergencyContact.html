@@ -93,8 +93,13 @@
                         <form class="form" method="post" id="edit-emergency">
                             {% csrf_token %}
                             <p class="fieldset">
-                                <h2>Emergency Contact:</h2>
-                                {{editemergency.number}}
+								Email:
+                                {{editemergency.email}}
+                            </p>
+
+							<p class="fieldset">
+								Name:
+                                {{editemergency.name}}
                             </p>
         
                             <div class="row justify-content-between align-items-center">
@@ -188,19 +193,6 @@
         <!-- partial -->
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 		<!--<script src="{% static './script.js' %}"></script>-->
-        <script>
-			$(document).ready(function() {
-				$('#edit-emergency').submit(function(event) {
-					var number = $('#number').val();
-
-
-					if (number.startsWith("+") == false) {
-						alert('Please enter a valid phone number that starts with \'+\' sign');
-						event.preventDefault();
-					}
-				});
-			});
-		</script>
  
 		<script src="{% static 'js/script.js' %}"></script>
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
