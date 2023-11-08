@@ -102,6 +102,8 @@ function contactEmergency() {
 		const longitude = position.coords.longitude;
 
 		console.log('contact emergency');
+		console.log(latitude)
+		console.log(longitude)
   
 		$.ajax({
 		  type: "POST",
