@@ -180,6 +180,7 @@ def weather(response):
 
         date = finaldateNtime.date()
         timestring = finaldateNtime.time()
+        print(timestring)
         day = finaldateNtime.strftime('%A')
         sunrise = timezone.make_aware(adjusted_sunrise, timezone.utc).time()
         sunset = timezone.make_aware(adjusted_sunset, timezone.utc).time()
@@ -200,7 +201,9 @@ def weather(response):
             'sunrise': sunrise,
             'sunset': sunset,
         }
-        if uv_data and uv_data['error'] == None:
+
+        
+        if uv_data and ('result' in uv_data):
             data['uv'] = uv_data['result']['uv']
             if uv_data['result']['uv'] >= 9:
                 hazards.append("UV index Too High, not recommended for climbing!")
