@@ -111,63 +111,193 @@
 			</form>
 		</div>
 
-        
-		{% for userObj in users %}
-		<div class="subforum-row">
-			<!-- <div class="subforum-icon subforum-column center">
-			</div> -->
-			<div class="subforum-description subforum-column">
-                {% if userObj.is_superuser%}
-                Superuser <br>
-                {% endif %}
-
-                {% if userObj.account.is_admin %}
-                Admin <br>
-                {% else%}
-                User <br>
-                {% endif %}
-
-                Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
-                {% if userObj.first_name and userObj.last_name%}
-                Name: {{userObj.first_name}} {{userObj.last_name}}<br>
-                {% endif %}
-
-                {% if userObj.email %}
-                Email: {{userObj.email}} <br>
-                {% endif %}
-
-                {% if userObj.account.suspended %}
-                Status: Suspended
-                {% else %}
-                Status: Active
-                {% endif %}
-
-				<br>Last Coordinate: {{userObj.account.lastCoor}} 
-				<br>Last Coordinate Date: {{userObj.account.lastCoorDate}}
-
-				<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
-			</div>
-			<div class="subforum-stats subforum-column center">
-                {% if userObj.is_superuser == False %}
-                    {% if userObj.account.accountSuspended == False %}
-                    <a href="/suspendAccount/{{userObj.id}}">Suspend Account</a>	
-                    {% else %}
-                    <a href="/activateAccount/{{userObj.id}}">Activate Account</a>
-                    {% endif %}	
-							
-                {% endif %}	
-			</div>
-			<div class="subforum-info subforum-column center">
-				{% if userObj.is_superuser == False %}
-					{% if userObj.account.profileSuspended == False %}
-                    <a href="/suspendProfile/{{userObj.id}}">Suspend Profile</a>	
-                    {% else %}
-                    <a href="/activateProfile/{{userObj.id}}">Activate Profile</a>
-                    {% endif %}
-				{% endif %}	
-			</div>
+		<div class="subforum-title">
+			<h1>Admin Account</h1>
 		</div>
-		<hr class="subforum-devider">
+		{% for userObj in users %}
+			{% if userObj.account.is_admin %}
+			<div class="subforum-row">
+				<!-- <div class="subforum-icon subforum-column center">
+				</div> -->
+				<div class="subforum-description subforum-column">
+					{% if userObj.is_superuser%}
+					Superuser <br>
+					{% endif %}
+
+					{% if userObj.account.is_admin %}
+					Admin <br>
+					{% endif %}
+
+					Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
+					{% if userObj.first_name and userObj.last_name%}
+					Name: {{userObj.first_name}} {{userObj.last_name}}<br>
+					{% endif %}
+
+					{% if userObj.email %}
+					Email: {{userObj.email}} <br>
+					{% endif %}
+
+					{% if userObj.account.suspended %}
+					Status: Suspended
+					{% else %}
+					Status: Active
+					{% endif %}
+
+					<br>Last Coordinate: {{userObj.account.lastCoor}} 
+					<br>Last Coordinate Date: {{userObj.account.lastCoorDate}}
+
+					<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
+				</div>
+				<div class="subforum-stats subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.accountSuspended == False %}
+						<a href="/suspendAccount/{{userObj.id}}">Suspend Account</a>	
+						{% else %}
+						<a href="/activateAccount/{{userObj.id}}">Activate Account</a>
+						{% endif %}	
+								
+					{% endif %}	
+				</div>
+				<div class="subforum-info subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.profileSuspended == False %}
+						<a href="/suspendProfile/{{userObj.id}}">Suspend Profile</a>	
+						{% else %}
+						<a href="/activateProfile/{{userObj.id}}">Activate Profile</a>
+						{% endif %}
+					{% endif %}	
+				</div>
+			</div>
+			<hr class="subforum-devider">
+			{% endif %}
+		{% endfor %}
+		
+		<br>
+
+        <div class="subforum-title">
+			<h1>Premium Users</h1>
+		</div>
+		{% for userObj in users %}
+			{% if userObj.account.is_premium and userObj.account.is_admin == False %}
+			<div class="subforum-row">
+				<!-- <div class="subforum-icon subforum-column center">
+				</div> -->
+				<div class="subforum-description subforum-column">
+					<b>Premium User</b> <br>
+
+					Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
+					{% if userObj.first_name and userObj.last_name%}
+					Name: {{userObj.first_name}} {{userObj.last_name}}<br>
+					{% endif %}
+
+					{% if userObj.email %}
+					Email: {{userObj.email}} <br>
+					{% endif %}
+
+					{% if userObj.account.suspended %}
+					Status: Suspended
+					{% else %}
+					Status: Active
+					{% endif %}
+
+					{% if userObj.account.premium_mode != 'None' %}
+					<br>Premium Mode: {{userObj.account.premium_mode}}
+					{% endif %}
+
+					{% if userObj.account.premium_start != 'None' %}
+					<br>Premium Starts At: {{userObj.account.premium_start}}
+					{% endif %}
+
+					{% if userObj.account.premium_end != 'None' %}
+					<br>Premium Ends At: {{userObj.account.premium_end}}
+					{% endif %}
+
+					<br>Last Coordinate: {{userObj.account.lastCoor}} 
+					<br>Last Coordinate Date: {{userObj.account.lastCoorDate}}
+					
+					<br><a href="/promoteAdmin/{{userObj.id}}">Promote As Admin</a>
+					<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
+				</div>
+				<div class="subforum-stats subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.accountSuspended == False %}
+						<a href="/suspendAccount/{{userObj.id}}">Suspend Account</a>	
+						{% else %}
+						<a href="/activateAccount/{{userObj.id}}">Activate Account</a>
+						{% endif %}	
+								
+					{% endif %}	
+				</div>
+				<div class="subforum-info subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.profileSuspended == False %}
+						<a href="/suspendProfile/{{userObj.id}}">Suspend Profile</a>	
+						{% else %}
+						<a href="/activateProfile/{{userObj.id}}">Activate Profile</a>
+						{% endif %}
+					{% endif %}	
+				</div>
+			</div>
+			<hr class="subforum-devider">
+			{% endif %}
+		{% endfor %}
+
+		<br>
+
+		<div class="subforum-title">
+			<h1>Non Premium Users</h1>
+		</div>
+		{% for userObj in users %}
+			{% if userObj.account.is_premium == False and userObj.account.is_admin == False %}
+			<div class="subforum-row">
+				<!-- <div class="subforum-icon subforum-column center">
+				</div> -->
+				<div class="subforum-description subforum-column">
+					User <br>
+
+					Username: <a href="/viewProfile/{{userObj.id}}">{{userObj}}</a> <br>
+					{% if userObj.first_name and userObj.last_name%}
+					Name: {{userObj.first_name}} {{userObj.last_name}}<br>
+					{% endif %}
+
+					{% if userObj.email %}
+					Email: {{userObj.email}} <br>
+					{% endif %}
+
+					{% if userObj.account.suspended %}
+					Status: Suspended
+					{% else %}
+					Status: Active
+					{% endif %}
+
+					<br>Last Coordinate: {{userObj.account.lastCoor}} 
+					<br>Last Coordinate Date: {{userObj.account.lastCoorDate}}
+
+					<br><a href="/promoteAdmin/{{userObj.id}}">Promote As Admin</a>
+					<br><a href="/viewPostByUser/{{userObj.id}}">View All Post Made By This User</a>
+				</div>
+				<div class="subforum-stats subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.accountSuspended == False %}
+						<a href="/suspendAccount/{{userObj.id}}">Suspend Account</a>	
+						{% else %}
+						<a href="/activateAccount/{{userObj.id}}">Activate Account</a>
+						{% endif %}	
+								
+					{% endif %}	
+				</div>
+				<div class="subforum-info subforum-column center">
+					{% if userObj.is_superuser == False %}
+						{% if userObj.account.profileSuspended == False %}
+						<a href="/suspendProfile/{{userObj.id}}">Suspend Profile</a>	
+						{% else %}
+						<a href="/activateProfile/{{userObj.id}}">Activate Profile</a>
+						{% endif %}
+					{% endif %}	
+				</div>
+			</div>
+			<hr class="subforum-devider">
+			{% endif %}
 		{% endfor %}
 	</div>
 	<!--More-->

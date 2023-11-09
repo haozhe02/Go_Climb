@@ -95,6 +95,9 @@
 									<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
 									<div class="details">
 										<p>
+											{% if userProf.account.is_admin %}
+											<b>Admin</b> <br>
+											{% endif %}
 											{% if userProf.account.is_premium %}
 											<b>Premium</b><br>
 											{% endif %}

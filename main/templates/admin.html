@@ -99,7 +99,9 @@
 	<div class="subforum">
 		<div class="subforum-title">
 			<a href="/viewAccounts" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">View All Accounts</a>
-			<a href="/generateReport" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate Report</a>
+			<a id="genReportLink" target="_blank" href="/generateReportPDF" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate Report</a>
+			<a id="downReportLink" href="/downloadReportPDF" class="btn btn-secondary me-2" style="background-color:#B3C890 ;">Generate And Download Report</a>
+
 		</div>
 		<br>
 		<div class="subforum-title">
@@ -233,6 +235,19 @@
 
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 		<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+		<script>
+			document.getElementById("genReportLink").onclick = function() {
+				var currentTime = new Date();
+				document.getElementById("genReportLink").href="/generateReportPDF/?date="+currentTime; 
+				return true;
+			  };
+
+			  document.getElementById("downReportLink").onclick = function() {
+				var currentTime = new Date();
+				document.getElementById("downReportLink").href="/downloadReportPDF/?date="+currentTime; 
+				return true;
+			  };
+		</script>
 		<!--<script src="{% static 'js/tiny-slider.js'%}"></script>-->
 		<script src="{% static 'js/custom.js'%}"></script>
 		<script src="{% static 'js/forum.js' %}"></script>

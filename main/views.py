@@ -18,6 +18,10 @@ from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
 
+from io import BytesIO
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 # Create your views here.
 def home(response):
     return render(response, 'index.html', {})
@@ -420,7 +424,7 @@ def search1(response):
         user = response.user
         exist = False
         if user.is_authenticated:
-            for history in user.searchHistories.all():
+            for history in user.searchHistories.all() and searchInput != " ":
                 if searchInput == history.text:
                     exist = True
 
@@ -1876,72 +1880,6 @@ def logoutAR(response):
         return JsonResponse({'success': True, 'message': 'Logout Successfully'})
     else:
         return JsonResponse({'success': False, 'message': 'Logout Failed'})
-    
-def generateReport(response):
-    one_week_ago = dti.now() - timedelta(days=7)
-
-    recent_users = User.objects.filter(date_joined__gte=one_week_ago)
-
-    totalUserPastWeek = 0
-    for user in recent_users:
-        totalUserPastWeek +=1
-
-    one_month_ago = dti.now() - timedelta(days=30)
-
-    last_month_users = User.objects.filter(date_joined__gte=one_month_ago)
-
-    totalUserPastMonth = 0
-    for user in last_month_users:
-        totalUserPastMonth +=1
-
-    recent_posts_count = 0
-    last_month_posts_count = 0
-    for post in ForumPost.objects.all():
-        if getDateTime(post.date) >= one_week_ago:
-            recent_posts_count += 1
-
-        if getDateTime(post.date) >= one_month_ago:
-            last_month_posts_count +=1
-
-    total_topic_view = 0
-    most_popular_topic = MainTopic.objects.all().first()
-    for topic in MainTopic.objects.all():
-        total_topic_view += topic.totalView
-        if topic.totalView >= most_popular_topic.totalView:
-            most_popular_topic = topic
-
-    total_subtopic_view = 0
-    most_popular_subtopic = SubTopic.objects.all().first()
-    for subtopic in SubTopic.objects.all():
-        total_subtopic_view += subtopic.totalView
-        if subtopic.totalView >= most_popular_subtopic.totalView:
-            most_popular_subtopic = subtopic
-
-    total_post_view = 0
-    most_popular_post = ForumPost.objects.all().first()
-    for post in ForumPost.objects.all():
-        total_post_view += post.totalView
-        if post.totalView >= most_popular_post.totalView:
-            most_popular_post = post
-
-    report = {
-        'recent_users': recent_users, 
-        'totalUserPastWeek': totalUserPastWeek,
-        'last_month_users': last_month_users,
-        'totalUserPastMonth': totalUserPastMonth,
-        'recent_posts_count': recent_posts_count,
-        'last_month_posts_count': last_month_posts_count,
-        'total_topic_view': total_topic_view,
-        'most_popular_topic': most_popular_topic,
-        'total_subtopic_view': total_subtopic_view,
-        'most_popular_subtopic': most_popular_subtopic,
-        'total_post_view': total_post_view,
-        'most_popular_post': most_popular_post,
-        'total_topic': MainTopic.objects.all().count(),
-        'total_subtopic': SubTopic.objects.all().count(),
-        'total_post': ForumPost.objects.all().count()
-    }
-    return render(response, 'report.html',{'report': report})
 
 @csrf_exempt
 def ARcreateClimbActivity(response):
@@ -2140,12 +2078,52 @@ def contactEmergency(response):
 
 def subscribe(response):
     if response.user.is_authenticated and (response.user.account.is_premium == False):
-        response.user.account.setPremium(True)
+        if response.GET.get('date') != None:
+            start_date = getDateTime(response.GET.get('date'))
+        else:
+            start_date = dti.now()
+        mode = response.GET.get('mode')
+        if mode != None:
+            if mode == 'month':
+                end_date = (start_date + timedelta(days=31)).date()
+            elif mode == 'year':
+                end_date = (start_date + timedelta(days=365)).date()
+            else:
+                end_date = 'None'
+        else:
+            end_date = 'None'
+        response.user.account.setPremium(True, mode, start_date.date(), end_date)
         text = "You have subscribed to premium!"
+        newNoti = Notification(user=response.user, text=text)
+        newNoti.save()
+        newNoti.setNotified(False)
+    referring_page = response.META.get('HTTP_REFERER')
+
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/home/')
+    
+def unsubscribe(response):
+    if response.user.is_authenticated and (response.user.account.is_premium == True):
+        response.user.account.setPremium(False, 'None', 'None', 'None')
+        text = "You have unsubscribed from premium!"
         newNoti = Notification(user=response.user, text=text)
         newNoti.save()
     referring_page = response.META.get('HTTP_REFERER')
 
+    if referring_page:
+        return HttpResponseRedirect(referring_page)
+    else:
+        return redirect('/home/')
+    
+def promoteAdmin(response, id):
+    if response.user.is_authenticated and response.user.account.is_admin:
+        user = User.objects.get(id=id)
+        user.account.setAdmin(True)
+        user.account.setPremium(True, 'None', 'None', 'None')
+
+    referring_page = response.META.get('HTTP_REFERER')
     if referring_page:
         return HttpResponseRedirect(referring_page)
     else:
@@ -2184,6 +2162,7 @@ def updateCoor(response):
                 response.user.account.setLastCoorDate(date=date)
                 response.user.account.setLastCoor(coor=coor)
 
+
                 return JsonResponse({'success': True})
             else:
                 return JsonResponse({'success': False})
@@ -2192,3 +2171,107 @@ def updateCoor(response):
     else:
         return JsonResponse({'success': False})
     
+
+def render_to_pdf(source_template, content={}):
+    template = get_template(source_template)
+    html = template.render(content)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+def gen_report(date, user_gen):
+    one_week_ago = dti.now() - timedelta(days=7)
+
+    recent_users = User.objects.filter(date_joined__gte=one_week_ago)
+
+    totalUserPastWeek = 0
+    for user in recent_users:
+        totalUserPastWeek +=1
+
+    one_month_ago = dti.now() - timedelta(days=30)
+
+    last_month_users = User.objects.filter(date_joined__gte=one_month_ago)
+
+    totalUserPastMonth = 0
+    for user in last_month_users:
+        totalUserPastMonth +=1
+
+    recent_posts_count = 0
+    last_month_posts_count = 0
+    for post in ForumPost.objects.all():
+        if getDateTime(post.date) >= one_week_ago:
+            recent_posts_count += 1
+
+        if getDateTime(post.date) >= one_month_ago:
+            last_month_posts_count +=1
+
+    total_topic_view = 0
+    most_popular_topic = MainTopic.objects.all().first()
+    for topic in MainTopic.objects.all():
+        total_topic_view += topic.totalView
+        if topic.totalView >= most_popular_topic.totalView:
+            most_popular_topic = topic
+
+    total_subtopic_view = 0
+    most_popular_subtopic = SubTopic.objects.all().first()
+    for subtopic in SubTopic.objects.all():
+        total_subtopic_view += subtopic.totalView
+        if subtopic.totalView >= most_popular_subtopic.totalView:
+            most_popular_subtopic = subtopic
+
+    total_post_view = 0
+    most_popular_post = ForumPost.objects.all().first()
+    for post in ForumPost.objects.all():
+        total_post_view += post.totalView
+        if post.totalView >= most_popular_post.totalView:
+            most_popular_post = post
+    report = {
+        'user': user_gen,
+        'date': date,
+        'recent_users': recent_users, 
+        'totalUserPastWeek': totalUserPastWeek,
+        'last_month_users': last_month_users,
+        'totalUserPastMonth': totalUserPastMonth,
+        'recent_posts_count': recent_posts_count,
+        'last_month_posts_count': last_month_posts_count,
+        'total_topic_view': total_topic_view,
+        'most_popular_topic': most_popular_topic,
+        'total_subtopic_view': total_subtopic_view,
+        'most_popular_subtopic': most_popular_subtopic,
+        'total_post_view': total_post_view,
+        'most_popular_post': most_popular_post,
+        'total_topic': MainTopic.objects.all().count(),
+        'total_subtopic': SubTopic.objects.all().count(),
+        'total_post': ForumPost.objects.all().count()
+    }
+    return report
+
+def generateReportPDF(response):
+    if response.user.account.is_admin:
+        if response.GET.get('date') != None:
+            date = getDateTime(response.GET.get('date')).date()
+        else:
+            date = dti.now().date()
+        report = gen_report(date, response.user)
+        pdf = render_to_pdf('reportTemplate.html', report)
+        return HttpResponse(pdf, content_type='application/pdf')
+    else:
+        return redirect('/home/')
+
+def downloadReportPDF(response):
+    if response.user.account.is_admin:
+        if response.GET.get('date') != None:
+            date = getDateTime(response.GET.get('date')).date()
+        else:
+            date = dti.now().date()
+        report = gen_report(date, response.user)
+        pdf = render_to_pdf('reportTemplate.html', report)
+        result_response = HttpResponse(pdf, content_type='application/pdf')
+        filename = "Report_%s.pdf" %(report['date'])
+        content = "attachment; filename=%s" %(filename)
+        result_response['Content-Disposition'] = content
+        return result_response
+    else:
+        return redirect('/home/')

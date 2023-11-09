@@ -73,7 +73,6 @@ urlpatterns = [
     path('autoSuggest/', views.autoSuggest, name='autoSuggest'),
     path('loginAR/', views.loginAR, name="loginAR"),
     path('logoutAR/', views.logoutAR, name="logoutAR"),
-    path('generateReport/', views.generateReport, name='generateReport'),
     path('ARcreateClimbActivity/', views.ARcreateClimbActivity, name="ARcreateClimbActivity"),
     path("reactPost/<int:postid>/<int:number>/", views.reactPost, name="reactPost"),
     path("removeReactPost/<int:postid>/<int:number>/", views.removeReactPost, name="removeReactPost"),
@@ -87,10 +86,14 @@ urlpatterns = [
     path('editEmergency/<int:id>/', views.editEmergency, name="editEmergency"),
     path('contactEmergency/', views.contactEmergency, name="contactEmergency"),
     path('subscribe/', views.subscribe, name="subscribe"),
+    path('unsubscribe/', views.unsubscribe, name="unsubscribe"),
+    path('promoteAdmin/<int:id>/', views.promoteAdmin, name="promoteAdmin"),
     path('track/', views.track, name="track"),
     path('untrack/', views.untrack, name="untrack"),
     path('updateCoor/', views.updateCoor, name="updateCoor"),
     path('directChat/<int:id>/', views.directChat, name="directChat"),
+    path('generateReportPDF/', views.generateReportPDF, name='generateReportPDF'),
+    path('downloadReportPDF/', views.downloadReportPDF, name='downloadReportPDF'),
 
     
     

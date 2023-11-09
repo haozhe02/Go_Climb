@@ -196,6 +196,9 @@ class Account(models.Model):
     accountSuspended = models.BooleanField(default=False)
     profileSuspended = models.BooleanField(default=False)
     is_premium = models.BooleanField(default=False)
+    premium_mode = models.CharField(default="None", null=True)
+    premium_start = models.TextField(null=True, default="None")
+    premium_end = models.TextField(null=True, default="None")
     totalRoute = models.BigIntegerField(default=0)
     totalDistance = models.BigIntegerField(default=0)
     achievements = models.ManyToManyField(Achievement, blank=True)
@@ -236,8 +239,15 @@ class Account(models.Model):
         self.lastCoor = coor
         self.save()
 
-    def setPremium(self, status):
+    def setAdmin(self, status):
+        self.is_admin = status
+        self.save()
+
+    def setPremium(self, status, mode, start, end):
         self.is_premium = status
+        self.premium_mode = mode
+        self.premium_start = start
+        self.premium_end = end
         self.save()
 
     def __str__(self):

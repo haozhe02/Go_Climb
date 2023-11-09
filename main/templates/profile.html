@@ -87,8 +87,14 @@
 											<a class="nav-link" href="#"><img src="{% static 'images/user-profile-icon.png' %}" height="40px"></a></li>
 											<div class="details">
 												<p>{% if user.is_authenticated%}
+													{% if user.account.is_admin %}
+													<b>Admin</b> <br>
+													{% endif %}
 													{% if user.account.is_premium %}
-													<b>Premium</b><br>
+													<b>Premium</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{% if user.account.is_admin == False %}<b><a href="/unsubscribe/">Unsubscribe</a></b>{% endif %}<br>
+														{% if user.account.premium_end != 'None' and user.account.is_admin == False %}
+														Ending At: {{user.account.premium_end}} <br>
+														{% endif %}
 													{% endif %}
 													@{{user}} <br>
 													{% if user.first_name and user.last_name%}
