@@ -99,14 +99,13 @@
 	<div class="subforum">
 		<div class="subforum-title">
 			<h1>{{description}}</h1>
+			{% for follow in follows %}
+				<div class="subforum-title" style="background-color: #F3F3F3;">
+					<b><a href="/viewProfile/{{follow.id}}">{{follow}}</a></b><br>
+				</div> 
+			{% endfor %}
 		</div>
-		{% for follow in follows %}
-		<div class="subforum">
-			<div class="subforum-title">
-                <b><a href="/viewProfile/{{follow.id}}">{{follow}}</a></b><br>
-			</div> 
-		</div>
-		{% endfor %}
+		
 		<br>
 	</div>
 	<!--More-->
