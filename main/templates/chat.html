@@ -111,7 +111,7 @@
             <form id="post-form">
 				{% csrf_token %}
 				<input type="hidden" name="chat_id" id="chat_id" value="{{chat.id}}">
-				<input type="text" name="message" id="message" width="100px" />
+				<input type="text" name="message" id="message" width="100px"  style="width: 100%; min-width: 100px;" />
 				<input type="submit" value="Send">
 			</form>  
 		</div>
