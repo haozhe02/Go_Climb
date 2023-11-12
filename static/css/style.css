@@ -345,6 +345,7 @@ a {
   margin-top: 100px;
   margin-bottom: 100px;
   width: 1000px;
+  /* min-width: 1000px; */
   height: 500px;
   padding: 50px;
   box-shadow: 5px 5px 10px rgba(41, 51, 46, 0.1);
@@ -353,7 +354,7 @@ a {
 /* Adjust size for smartphones */
 @media (max-width: 576px) {
   .explore-card {
-    width: 100%; /* Expand to the full screen width */
+    width: 90%; /* Expand to the full screen width */
     height: auto; /* Allow height to adjust proportionally */
   }
 
@@ -519,7 +520,8 @@ a {
   .btn.btn-secondary {
     color: #40513B;
     background: #F5F0BB;
-    border-color: #F5F0BB; }
+    border-color: #F5F0BB;
+   }
     .btn.btn-secondary:hover {
       background: #F5F0BB;
       border-color: #F5F0BB; }
