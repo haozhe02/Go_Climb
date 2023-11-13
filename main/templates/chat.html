@@ -25,9 +25,10 @@
 		<link href="{% static '/css/forum.css' %}" rel="stylesheet">
 		<title>Chat</title>
         <style>
-            td {
+            .chat_message {
                 border: 1px solid #dddddd;
                 padding: 8px;
+				word-wrap: break-word;
             }
         </style>
 	</head>
@@ -105,9 +106,8 @@
         {% if user.is_authenticated%}
         <div class="subforum-title"> 
 			<h1>{{chat}}</h1>
-            <table style="border-collapse: collapse; width: 100%;" id="chat">
-                
-            </table>
+			<div id='chat-box' style="width: 100%;"> 
+			</div>
             <form id="post-form">
 				{% csrf_token %}
 				<input type="hidden" name="chat_id" id="chat_id" value="{{chat.id}}">
@@ -189,13 +189,15 @@
                         type: 'GET',
                         url : "/getMessages/" + chat_id +'/',
                         success: function(response){
-                            $("#chat").empty();
+                            $("#chat-box").empty();
                             var messages = response.messages;
                             for (var key in messages)
                             {
-                                var temp="<tr><td><b>"+messages[key].user+"</b><p>"+messages[key].text+"</p>"+messages[key].date+"</td></tr>";
-                                $("#chat").append(temp);
+                                //var temp="<tr><td><b>"+messages[key].user+"</b><p>"+messages[key].text+"</p>"+messages[key].date+"</td></tr>";
+                                var temp="<div class='chat_message'><b>"+messages[key].user+"</b><p>"+messages[key].text+"</p>"+messages[key].date+"</div>";
+								$("#chat-box").append(temp);
                             }
+							$("#chat-box").css("width", "100%");
                         },
                         error: function(response){
                             console.log('Error');

@@ -99,7 +99,14 @@
         {% if user.is_authenticated%}
 		<div class="subforum-title"> 
 			<h1>Chats </h1>
-            <table style="border-collapse: collapse; width: 100%;">
+			<div style="width: 100%;"> 
+				{% for chat in chats %}
+                <div style="border: 1px solid #dddddd;padding: 8px; word-wrap: break-word;">
+					<b><a href="/directChat/{{chat.id}}/">{{chat}}</a></b>
+				</div>
+                {% endfor %}
+			</div>
+            <!--<table style="border-collapse: collapse; width: 100%;">
                 {% for chat in chats %}
                 <tr>
                     <td style="border: 1px solid #dddddd;padding: 8px;">
@@ -107,21 +114,26 @@
                     </td>   
                 </tr>
                 {% endfor %}
-            </table>
+            </table>-->
             
 		</div>
 		<br>
         <div class="subforum-title"> 
 			<h1>Notifications</h1>
-            <table style="border-collapse: collapse; width: 100%;">
-                {% for notification in notifications %}
-                <tr>
-                    <td style="border: 1px solid #dddddd;padding: 8px;">
-                        {{notification}}
+			<div style="width: 100%;"> 
+				{% for notification in notifications %}
+                <div style="border: 1px solid #dddddd;padding: 8px; word-wrap: break-word;">
+					{{notification}}
+				</div>
+                {% endfor %}
+			</div>
+            <!--<table style="border-collapse: collapse; width: 100%;">
+                
+				<tr>
+                    <td style="border: 1px solid #dddddd;padding: 8px; word-wrap: break-word;">
                     </td>   
                 </tr>
-                {% endfor %}
-            </table>
+            </table>-->
             
 		</div>
 		{% else %}
