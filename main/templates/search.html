@@ -421,7 +421,10 @@
 									</div>
 								{% endif %}-->
 								<div  class="search-image-container" style="width: auto;">
-									<img src="{% static 'images/mountain.jpg'%}" alt="Image" class="search-image-result">
+									<!--<img src="{% static 'images/mountain.jpg'%}" alt="Image" class="search-image-result">-->
+									{% if crag.image %}
+									<img src="{{crag.image.url}}" alt="Image" class="search-image-result">
+									{% endif %}
 									<br>
 									<p class="result" style="font-size: 18px;">
 										Name: {{crag.name}} <br><br>

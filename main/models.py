@@ -532,6 +532,7 @@ class Crag(models.Model):
     altitude = models.BigIntegerField(default=0)
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
+    image = models.ImageField(null=True, blank=True, upload_to="images/crags/")
 
     def __str__(self):
         return self.name
