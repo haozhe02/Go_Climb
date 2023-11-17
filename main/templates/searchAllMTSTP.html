@@ -148,7 +148,11 @@
 					<br>on <small>12 Dec 2020</small>-->
 					<span>{{topic.maintopic.SubTopicCount}} Topics</span> <br>
 					<span>Total Views: {{topic.maintopic.totalView}}</span> <br>
+					{% if topic.latest_post != None %}
 					<span>Latest Post: <a href="/viewPost/{{topic.latest_post.id}}">{{topic.latest_post}}</a> by <a href="/viewProfile/{{topic.latest_post.user.id}}">{{topic.latest_post.user}}</a> on {{topic.latest_post.date}}</span>
+					{% else%}
+					<span>No Post Yet</span>
+					{% endif %}
 				</div>
 			</div>
 			<hr class="subforum-devider">
@@ -182,7 +186,11 @@
 			</div>
 			<div class="subforum-info subforum-column">
 				<span>Total Views: {{subtopic.totalView}}</span> <br>
+				{% if subtopic.posts.last != None %}
 				<span>Latest Post: <a href="/viewPost/{{subtopic.posts.last.id}}">{{subtopic.posts.last}}</a> by <a href="/viewProfile/{{subtopic.posts.last.user.id}}">{{subtopic.posts.last.user}}</a> on {{subtopic.posts.last.date}}</span>
+				{% else %}
+				<span>No Post Yet</span>
+				{% endif %}
 			</div>
 		</div>
 		<hr class="subforum-devider">
