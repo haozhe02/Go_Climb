@@ -362,8 +362,8 @@ def getQuality(index):
         return "Very Poor"
     else:
         return "Not Available"
-
-#def get_lat_long(response):
+"""
+def get_lat_long(response):
     geolocator = Nominatim(user_agent="my_geocoder")
 
     file = open("static/crags.csv")
@@ -396,6 +396,7 @@ def getQuality(index):
 def clear_all_params(response):
     url = response.path 
     return HttpResponseRedirect(url)
+"""
 
 def search1(response):
     #file = open("static/crags.csv")
@@ -2009,6 +2010,7 @@ def getCrags(response):
         })
     return JsonResponse({'crags': crags_to_send})
 
+"""
 #@csrf_exempt
 #def contactEmergency(response):
     if response.method == 'POST':
@@ -2043,7 +2045,8 @@ def getCrags(response):
             else:
                 return JsonResponse({'message': 'No Emergency Contact to contact!'})
     return JsonResponse({'message': "Invalid Request"})
-
+"""
+    
 @csrf_exempt
 def contactEmergency(response):
     if response.method == 'POST':
