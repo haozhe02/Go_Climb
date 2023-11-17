@@ -425,8 +425,8 @@ def search1(response):
         user = response.user
         exist = False
         if user.is_authenticated:
-            for history in user.searchHistories.all() and searchInput != " ":
-                if searchInput == history.text:
+            for history in user.searchHistories.all():
+                if searchInput == history.text and searchInput != " ":
                     exist = True
 
             if not exist:
