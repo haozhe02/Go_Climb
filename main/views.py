@@ -1911,6 +1911,9 @@ def reactPost(response, postid, number):
 
     referring_page = response.META.get('HTTP_REFERER')
 
+    if 'searchPost' in referring_page:
+        return redirect('/subtopic/'+str(post.topic.id))
+
     if referring_page:
         return HttpResponseRedirect(referring_page)
     else:
