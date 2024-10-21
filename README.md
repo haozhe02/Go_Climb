@@ -3,7 +3,7 @@
 
 We are using Django for developing our website 
 
-It is currently down and not running on https://goclimb.onrender.com/ anymore as the database service is expired
+It is currently down and not running on https://goclimb.onrender.com/ anymore as the database service has expired
 
 Something to note here is that because we are using a free service to deploy, so the website will be spinned down after 15 minutes of inactivity 
 
