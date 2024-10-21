@@ -3,7 +3,7 @@
 
 We are using Django for developing our website 
 
-It is live and running on https://goclimb.onrender.com/ 
+It is currently down and not running on https://goclimb.onrender.com/ anymore as the database service is expired
 
 Something to note here is that because we are using a free service to deploy, so the website will be spinned down after 15 minutes of inactivity 
 
@@ -18,7 +18,7 @@ next type in the command: python manange.py makemigrations
 
 next type in the command: python manage.py migrate 
 
-these two commands isj ust to ensure all changes to database are applied
+these two commands is use to ensure all changes to database are applied
 
 
 to run the project on localhost
